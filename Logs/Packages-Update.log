@@ -1,5 +1,9 @@
 
+<<<<<<< HEAD
 === Mon Oct 30 19:53:35 2023
+=======
+=== Thu Nov  2 21:13:23 2023
+>>>>>>> 816e798274bf3416db74b6983b2ea6c735b500f6
 
 Packages were changed.
 Update Mode: mergeDefaultDependencies
@@ -45,7 +49,11 @@ The following packages were updated:
   com.unity.timeline from version 1.6.3 to 1.7.5
   com.unity.visualscripting from version 1.7.7 to 1.9.0
 
+<<<<<<< HEAD
 === Wed Nov  1 15:37:46 2023
+=======
+=== Thu Nov  2 21:22:46 2023
+>>>>>>> 816e798274bf3416db74b6983b2ea6c735b500f6
 
 Packages were changed.
 Update Mode: resetToDefaultDependencies

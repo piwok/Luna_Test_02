@@ -248,19 +248,20 @@ MonoBehaviour:
   width: 9
   height: 9
   backgroundTilePrefab: {fileID: 0}
-  dotTypes:
-  - Blue
-  - Green
-  - Red
-  - Yellow
-  dots:
+  pieceTypes:
+  - Blue piece
+  - Green piece
+  - Red piece
+  - Yellow piece
+  pieces:
   - {fileID: 7810713835290938426, guid: cb09e6e9e321b8b4e9ac22cc5ce52016, type: 3}
   - {fileID: 7810713835290938426, guid: 83a627eb4bb174144a7399e7caba2c14, type: 3}
   - {fileID: 7810713835290938426, guid: 1af16a7e7621aa840a64c363979224ea, type: 3}
   - {fileID: 7810713835290938426, guid: 094c6a2b40c976e4ea0cf080913155c8, type: 3}
   destroyEffect: {fileID: 2119390489706356576, guid: f2cccf2c4ee7b62489e6604ff1a857a4, type: 3}
-  chosenDot: {fileID: 0}
-  secondDot: {fileID: 0}
+  chosenPiece: {fileID: 0}
+  secondPiece: {fileID: 0}
+  piecesMatched: []
 --- !u!4 &1372888949
 Transform:
   m_ObjectHideFlags: 0

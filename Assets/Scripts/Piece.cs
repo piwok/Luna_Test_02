@@ -73,7 +73,7 @@ public class Piece : MonoBehaviour
     private void OnMouseUp()
     {   if (board.currentState == boardStates.gameInputAllowed) {
             lastTouchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            //board.movePieces(calculateAngle());
+            board.movePieces(calculateAngle());
         }
     }
 

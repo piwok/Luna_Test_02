@@ -52,11 +52,9 @@ MonoBehaviour:
   wrongPosition: 0
   previousColumn: 0
   previousRow: 0
-  otherDot: {fileID: 0}
   type: 
   swipeResist: 1
   isExplored: 0
-  isMatched: 0
 --- !u!61 &2844694022596132023
 BoxCollider2D:
   m_ObjectHideFlags: 0

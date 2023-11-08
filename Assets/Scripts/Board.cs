@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 
 public enum boardStates {gameInputAllowed, movingPieces, gameInputNotAllowed};
@@ -19,6 +20,7 @@ public class Board : MonoBehaviour
     public GameObject[,] allPieces;
     public GameObject chosenPiece;
     public GameObject secondPiece;
+    public List<GameObject> piecesMatched;
 
     // Start is called before the first frame update
     void Start() {
@@ -30,6 +32,7 @@ public class Board : MonoBehaviour
         refillStartPoint[1] = new Vector2(-5, 5);
         refillStartPoint[2] = new Vector2(5, 15);
         refillStartPoint[3] = new Vector2(15, 5);
+        piecesMatched = new List<GameObject>();
         SetUp();}
 
     private void SetUp() {
@@ -52,7 +55,7 @@ public class Board : MonoBehaviour
 
     public List<List<GameObject>> lookingForAllMatches() {
         List<GameObject> piecesToExplore = new List<GameObject>();
-        List<GameObject> piecesMatched = new List<GameObject>();
+        //List<GameObject> piecesMatched = new List<GameObject>();
         List<List<GameObject>> allSolutions = new List<List<GameObject>>();
         GameObject lookingPiece;
         GameObject leftPiece;
@@ -106,14 +109,19 @@ public class Board : MonoBehaviour
                                         downPiece.GetComponent<Piece>().isExplored = true;}}}
                         }
                         if (piecesMatched.Count >= 3) {
-                            allSolutions.Add(piecesMatched);}
+                            
+                            allSolutions.Add(new List<GameObject>(piecesMatched));
+
+                            
+                        }
                         piecesMatched.Clear();
                     }
                 }
             }
         }
-    setAllPiecesUnexplored();
-    return allSolutions;
+        setAllPiecesUnexplored();
+        Debug.Log(allSolutions.Count);
+        return allSolutions;
     }
     public bool isAMatchAt(int column, int row, GameObject new_piece) {
         List<GameObject> piecesToExplore = new List<GameObject>();
@@ -176,6 +184,7 @@ public class Board : MonoBehaviour
             pieces[j].GetComponent<Piece>().isExplored = false;}}
 
     private IEnumerator destroyAllMatches (List<List<GameObject>> allSolutions) {
+            
         bool flag;
         for (int i = 0; i < 100; i++) {
             flag = true;
@@ -183,13 +192,13 @@ public class Board : MonoBehaviour
                 if ( i < solution.Count) {
                     flag = false;
                     Instantiate(destroyEffect, solution[i].transform.position, Quaternion.identity);
-                    allPieces[solution[i].transform.position.x, solution[i].transform.position.y] = null;
+                    allPieces[(int)solution[i].transform.position.x, (int)solution[i].transform.position.y] = null;
                     Destroy(solution[i]);
                     
                 }
             }
             if (flag == true) {break;}
-            yield return WaitForSeconds(0.1f);
+            yield return  new WaitForSeconds(0.1f);
         }
         StartCoroutine(colapseAllColumns());
     }
@@ -212,7 +221,7 @@ public class Board : MonoBehaviour
                 }
             }
         }
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.25f);
         StartCoroutine(fillBoardCoroutine());       
     }
 
@@ -245,44 +254,63 @@ public class Board : MonoBehaviour
 
     private IEnumerator fillBoardCoroutine() {
         refillBoard();
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.4f);
         List<List<GameObject>> allSolutions = new List<List<GameObject>>();
         allSolutions = lookingForAllMatches();        
-        while(isAMatchOnBoard(allSolutions)) {
-            yield return new WaitForSeconds(0.5f);
-            destroyAllMatches(allSolutions);
+        if (isAMatchOnBoard(allSolutions)) {
+            
+            StartCoroutine(destroyAllMatches(allSolutions));
+            yield return new WaitForSeconds(0.25f);
+            
         }
     }
 
-    private void movePieces(float swipeAngle) {   
+    public void movePieces(float swipeAngle) {
         if (swipeAngle > -45 && swipeAngle <= 45 && chosenPiece.GetComponent<Piece>().column < width) {
             //Right swipe
             if (allPieces[chosenPiece.GetComponent<Piece>().column + 1, chosenPiece.GetComponent<Piece>().row] != null) {
                 secondPiece = allPieces[chosenPiece.GetComponent<Piece>().column +1, chosenPiece.GetComponent<Piece>().row];
+                chosenPiece.GetComponent<Piece>().column += 1;
+                secondPiece.GetComponent<Piece>().column -= 1;
+                allPieces[chosenPiece.GetComponent<Piece>().column, chosenPiece.GetComponent<Piece>().row] = chosenPiece;
+                allPieces[secondPiece.GetComponent<Piece>().column, secondPiece.GetComponent<Piece>().row] = secondPiece;
             }
         }
         else if (swipeAngle > 45 && swipeAngle <= 135 && chosenPiece.GetComponent<Piece>().row < height) {
             //Up swipe
             if (allPieces[chosenPiece.GetComponent<Piece>().column, chosenPiece.GetComponent<Piece>().row + 1] != null) {
                 secondPiece = allPieces[chosenPiece.GetComponent<Piece>().column, chosenPiece.GetComponent<Piece>().row + 1];
+                chosenPiece.GetComponent<Piece>().row += 1;
+                secondPiece.GetComponent<Piece>().row -= 1;
+                allPieces[chosenPiece.GetComponent<Piece>().column, chosenPiece.GetComponent<Piece>().row] = chosenPiece;
+                allPieces[secondPiece.GetComponent<Piece>().column, secondPiece.GetComponent<Piece>().row] = secondPiece;
             }
         }
         else if ((swipeAngle > 135 || swipeAngle <= -135) && chosenPiece.GetComponent<Piece>().column > 0) {
             //Left swipe
             if (allPieces[chosenPiece.GetComponent<Piece>().column - 1, chosenPiece.GetComponent<Piece>().row] != null) {
                 secondPiece = allPieces[chosenPiece.GetComponent<Piece>().column - 1, chosenPiece.GetComponent<Piece>().row];
+                chosenPiece.GetComponent<Piece>().column -= 1;
+                secondPiece.GetComponent<Piece>().column += 1;
+                allPieces[chosenPiece.GetComponent<Piece>().column, chosenPiece.GetComponent<Piece>().row] = chosenPiece;
+                allPieces[secondPiece.GetComponent<Piece>().column, secondPiece.GetComponent<Piece>().row] = secondPiece;
             }
         }
         else if (swipeAngle >= -135 && swipeAngle < -45 && chosenPiece.GetComponent<Piece>().row > 0) {
             //Down swipe
             if (allPieces[chosenPiece.GetComponent<Piece>().column, chosenPiece.GetComponent<Piece>().row - 1] != null) {
                 secondPiece = allPieces[chosenPiece.GetComponent<Piece>().column, chosenPiece.GetComponent<Piece>().row - 1];
+                chosenPiece.GetComponent<Piece>().row -= 1;
+                secondPiece.GetComponent<Piece>().row += 1;
+                allPieces[chosenPiece.GetComponent<Piece>().column, chosenPiece.GetComponent<Piece>().row] = chosenPiece;
+                allPieces[secondPiece.GetComponent<Piece>().column, secondPiece.GetComponent<Piece>().row] = secondPiece;
             }
         }
-        currentState = boardStates.movingPieces;
+        //currentState = boardStates.movingPieces;
+        StartCoroutine(checkMoveCoroutine());
     }
 
-    public IEnumerator checkMoveCoroutine() {
+    public IEnumerator checkMoveCoroutine() { //Revisar esto esta mal
         yield return new WaitForSeconds(0.35f);
         if (!isAMatchAt(chosenPiece.GetComponent<Piece>().column, chosenPiece.GetComponent<Piece>().row, chosenPiece) & !isAMatchAt(secondPiece.GetComponent<Piece>().column, secondPiece.GetComponent<Piece>().row, secondPiece)) {
             secondPiece.GetComponent<Piece>().column = chosenPiece.GetComponent<Piece>().column;
@@ -291,8 +319,9 @@ public class Board : MonoBehaviour
             chosenPiece.GetComponent<Piece>().row = chosenPiece.GetComponent<Piece>().previousRow;
         }
         else {
-            lookingForAllMatches();
-            destroyAllMatches();
+            
+            
+            StartCoroutine(destroyAllMatches(lookingForAllMatches()));
             
         }
         secondPiece = null;

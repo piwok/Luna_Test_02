@@ -8,6 +8,7 @@ TagManager:
   - blue piece
   - yellow piece
   - green piece
+  - match finder
   layers:
   - Default
   - TransparentFX

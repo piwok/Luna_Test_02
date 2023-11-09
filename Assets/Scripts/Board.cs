@@ -11,6 +11,7 @@ public class Board : MonoBehaviour
     
     public int width;
     public int height;
+    private MatchsFinder matchsFinder;
     public GameObject backgroundTilePrefab;
     private Vector2[] refillStartPoint;
     public string[] pieceTypes;
@@ -25,6 +26,7 @@ public class Board : MonoBehaviour
     // Start is called before the first frame update
     void Start() {
         currentState = boardStates.gameInputAllowed;
+        matchsFinder = FindObjectOfType<MatchsFinder>();
         allTiles = new GameObject[width, height];
         allPieces = new GameObject[width, height];
         refillStartPoint = new Vector2[4];
@@ -33,7 +35,9 @@ public class Board : MonoBehaviour
         refillStartPoint[2] = new Vector2(5, 15);
         refillStartPoint[3] = new Vector2(15, 5);
         piecesMatched = new List<GameObject>();
-        SetUp();}
+        SetUp();
+        Debug.Log(matchsFinder.lookingForAllLegalMatches().Count);
+    }
 
     private void SetUp() {
         for (int i = 0; i < width; i++) {

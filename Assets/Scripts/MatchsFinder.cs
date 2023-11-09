@@ -83,19 +83,19 @@ public class MatchsFinder : MonoBehaviour {
         fiveTShapes.Add("fiveTShape0", tempShape);
         tempPiece1 = new int[2] {1, 0}; tempPiece2 = new int[2] {2, 0}; tempPiece3 = new int[2] {1, -1}; tempPiece4 = new int[2] {1, -2};
         tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3, tempPiece4};
-        fiveLineShapes.Add("fiveTShape1", tempShape);
+        fiveTShapes.Add("fiveTShape1", tempShape);
         tempPiece1 = new int[2] {1, 0}; tempPiece2 = new int[2] {2, 0}; tempPiece3 = new int[2] {2, 1}; tempPiece4 = new int[2] {2, -1};
         tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3, tempPiece4};
-        fiveLineShapes.Add("fiveTShape2", tempShape);
+        fiveTShapes.Add("fiveTShape2", tempShape);
         tempPiece1 = new int[2] {1, 0}; tempPiece2 = new int[2] {2, 0}; tempPiece3 = new int[2] {1, 1}; tempPiece4 = new int[2] {1, 2};
         tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3, tempPiece4};
-        fiveLineShapes.Add("fiveTShape3", tempShape);
+        fiveTShapes.Add("fiveTShape3", tempShape);
         //Five pieces L Shapes//
 
-        foreach (int[] piece in fiveLineShapes["fiveLineShape0"]) {
-            Debug.Log(piece);
-            Debug.Log(piece[1]);
-        }
+        // foreach (int[] piece in fiveLineShapes["fiveLineShape0"]) {
+        //     Debug.Log(piece);
+        //     Debug.Log(piece[1]);
+        // }
     }
     
     public List<List<GameObject>> lookingForAllLegalMatches () {
@@ -108,7 +108,6 @@ public class MatchsFinder : MonoBehaviour {
                 exploringPiece = board.allPieces[i, j];
                 if (exploringPiece.GetComponent<Piece>().isExplored == true) {}
                 else {
-                    int k = 0;
                     //looking for 5 pieces in straight line fiveLineShape0
                     // Shape0 horizontal
                     if (exploringPiece.GetComponent<Piece>().column < 5) {
@@ -124,7 +123,7 @@ public class MatchsFinder : MonoBehaviour {
                                 piece.GetComponent<Piece>().isExplored = true;
                             }
                             allLegalSolutions.Add(tempPieces);
-                            tempPieces.clear();
+                            tempPieces.Clear();
                             continue;
                         }
                     }
@@ -142,12 +141,87 @@ public class MatchsFinder : MonoBehaviour {
                                 piece.GetComponent<Piece>().isExplored = true;
                             }
                             allLegalSolutions.Add(tempPieces);
-                            tempPieces.clear();
+                            tempPieces.Clear();
+                            continue;
+                        }
+                    }
+                    //looking for 5 pieces in T fiveTShapes
+                    // Shape0
+                    if (exploringPiece.GetComponent<Piece>().column < 7 & exploringPiece.GetComponent<Piece>().row < 7 ) {
+                        foreach (int[] piece in fiveTShapes["fiveTShape0"]) {
+                            probePiece = board.allPieces[i + piece[0], j + piece[1]];
+                            if (exploringPiece.tag == probePiece.tag) {
+                                tempPieces.Add(probePiece);
+                            }
+                        }
+                        if (tempPieces.Count > 3) {
+                            tempPieces.Add(exploringPiece);
+                            foreach (GameObject piece in tempPieces) {
+                                piece.GetComponent<Piece>().isExplored = true;
+                            }
+                            allLegalSolutions.Add(tempPieces);
+                            tempPieces.Clear();
+                            continue;
+                        }
+                    }
+                    // Shape1
+                    if (exploringPiece.GetComponent<Piece>().column < 7 & exploringPiece.GetComponent<Piece>().row > 1) {
+                        foreach (int[] piece in fiveTShapes["fiveTShape1"]) {
+                            probePiece = board.allPieces[i + piece[0], j + piece[1]];
+                            if (exploringPiece.tag == probePiece.tag) {
+                                tempPieces.Add(probePiece);
+                            }
+                        }
+                        if (tempPieces.Count > 3) {
+                            tempPieces.Add(exploringPiece);
+                            foreach (GameObject piece in tempPieces) {
+                                piece.GetComponent<Piece>().isExplored = true;
+                            }
+                            allLegalSolutions.Add(tempPieces);
+                            tempPieces.Clear();
+                            continue;
+                        }
+                    }
+                    // Shape 2
+                    if (exploringPiece.GetComponent<Piece>().column < 7 & exploringPiece.GetComponent<Piece>().row < 8 & exploringPiece.GetComponent<Piece>().row > 0) {
+                        foreach (int[] piece in fiveTShapes["fiveTShape2"]) {
+                            probePiece = board.allPieces[i + piece[0], j + piece[1]];
+                            if (exploringPiece.tag == probePiece.tag) {
+                                tempPieces.Add(probePiece);
+                            }
+                        }
+                        if (tempPieces.Count > 3) {
+                            tempPieces.Add(exploringPiece);
+                            foreach (GameObject piece in tempPieces) {
+                                piece.GetComponent<Piece>().isExplored = true;
+                            }
+                            allLegalSolutions.Add(tempPieces);
+                            tempPieces.Clear();
+                            continue;
+                        }
+                    }
+                    // Shape 3
+                    if (exploringPiece.GetComponent<Piece>().column < 7 & exploringPiece.GetComponent<Piece>().row < 7) {
+                        foreach (int[] piece in fiveTShapes["fiveTShape3"]) {
+                            probePiece = board.allPieces[i + piece[0], j + piece[1]];
+                            if (exploringPiece.tag == probePiece.tag) {
+                                tempPieces.Add(probePiece);
+                            }
+                        }
+                        if (tempPieces.Count > 3) {
+                            tempPieces.Add(exploringPiece);
+                            foreach (GameObject piece in tempPieces) {
+                                piece.GetComponent<Piece>().isExplored = true;
+                            }
+                            allLegalSolutions.Add(tempPieces);
+                            tempPieces.Clear();
                             continue;
                         }
                     }
                 }
             }
         }
+    return allLegalSolutions;
     }
+    
 }

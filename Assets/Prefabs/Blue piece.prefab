@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3126461496364483704}
-  - component: {fileID: 5461622268164071131}
   - component: {fileID: 2844694022596132023}
   - component: {fileID: 5835591405398334773}
+  - component: {fileID: -8922355876500026625}
   m_Layer: 7
   m_Name: Blue piece
   m_TagString: blue piece
@@ -34,27 +34,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5461622268164071131
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7810713835290938426}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 02c6c639cf506a74885193980a394832, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentState: 0
-  column: 0
-  row: 0
-  wrongPosition: 0
-  previousColumn: 0
-  previousRow: 0
-  type: 
-  swipeResist: 1
-  isExplored: 0
 --- !u!61 &2844694022596132023
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -152,3 +131,24 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &-8922355876500026625
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7810713835290938426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02c6c639cf506a74885193980a394832, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentState: 0
+  column: 0
+  row: 0
+  wrongPosition: 0
+  previousColumn: 0
+  previousRow: 0
+  type: 
+  swipeResist: 1
+  isExplored: 0

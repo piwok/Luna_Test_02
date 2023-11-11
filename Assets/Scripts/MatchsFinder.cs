@@ -106,21 +106,21 @@ public class MatchsFinder : MonoBehaviour {
         // Four pieces Line Shapes//
         tempPiece1 = new int[2] {1, 0}; tempPiece2 = new int[2] {2, 0}; tempPiece3 = new int[2] {3, 0};
         tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3};
-        fiveLineShapes.Add("fourLineShape0", tempShape);
+        fourLineShapes.Add("fourLineShape0", tempShape);
         tempPiece1 = new int[2] {0, 1}; tempPiece2 = new int[2] {0, 2}; tempPiece3 = new int[2] {0, 3};
         tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3};
-        fiveLineShapes.Add("fourLineShape1", tempShape);
+        fourLineShapes.Add("fourLineShape1", tempShape);
         // Four pieces Square Shapes//
         tempPiece1 = new int[2] {1, 0}; tempPiece2 = new int[2] {1, 1}; tempPiece3 = new int[2] {0, 1};
         tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3};
-        fiveLineShapes.Add("fourSquareShape0", tempShape);
+        fourSquareShapes.Add("fourSquareShape0", tempShape);
         // Three pieces Line Shapes//
         tempPiece1 = new int[2] {1, 0}; tempPiece2 = new int[2] {2, 0};
         tempShape = new int[][] {tempPiece1, tempPiece2};
-        fiveLineShapes.Add("threeLineShape0", tempShape);
+        threeLineShapes.Add("threeLineShape0", tempShape);
         tempPiece1 = new int[2] {0, 1}; tempPiece2 = new int[2] {0, 2};
         tempShape = new int[][] {tempPiece1, tempPiece2};
-        fiveLineShapes.Add("threeLineShape1", tempShape);
+        threeLineShapes.Add("threeLineShape1", tempShape);
     }
     
     public List<List<GameObject>> lookingForAllLegalMatches () {
@@ -138,7 +138,7 @@ public class MatchsFinder : MonoBehaviour {
                     if (exploringPiece.GetComponent<Piece>().column < 5) {
                         foreach (int[] piece in fiveLineShapes["fiveLineShape0"]) {
                             probePiece = board.allPieces[i + piece[0], j + piece[1]];
-                            if (exploringPiece.tag == probePiece.tag) {
+                            if (exploringPiece.tag == probePiece.tag & probePiece.GetComponent<Piece>().isExplored == false) {
                                 tempPieces.Add(probePiece);
                             }
                         }
@@ -157,7 +157,7 @@ public class MatchsFinder : MonoBehaviour {
                     if (exploringPiece.GetComponent<Piece>().row < 5) {
                         foreach (int[] piece in fiveLineShapes["fiveLineShape1"]) {
                             probePiece = board.allPieces[i + piece[0], j + piece[1]];
-                            if (exploringPiece.tag == probePiece.tag) {
+                            if (exploringPiece.tag == probePiece.tag & probePiece.GetComponent<Piece>().isExplored == false) {
                                 tempPieces.Add(probePiece);
                             }
                         }
@@ -177,7 +177,7 @@ public class MatchsFinder : MonoBehaviour {
                     if (exploringPiece.GetComponent<Piece>().column < 7 & exploringPiece.GetComponent<Piece>().row < 7 ) {
                         foreach (int[] piece in fiveTShapes["fiveTShape0"]) {
                             probePiece = board.allPieces[i + piece[0], j + piece[1]];
-                            if (exploringPiece.tag == probePiece.tag) {
+                            if (exploringPiece.tag == probePiece.tag & probePiece.GetComponent<Piece>().isExplored == false) {
                                 tempPieces.Add(probePiece);
                             }
                         }
@@ -196,7 +196,7 @@ public class MatchsFinder : MonoBehaviour {
                     if (exploringPiece.GetComponent<Piece>().column < 7 & exploringPiece.GetComponent<Piece>().row > 1) {
                         foreach (int[] piece in fiveTShapes["fiveTShape1"]) {
                             probePiece = board.allPieces[i + piece[0], j + piece[1]];
-                            if (exploringPiece.tag == probePiece.tag) {
+                            if (exploringPiece.tag == probePiece.tag & probePiece.GetComponent<Piece>().isExplored == false) {
                                 tempPieces.Add(probePiece);
                             }
                         }
@@ -215,7 +215,7 @@ public class MatchsFinder : MonoBehaviour {
                     if (exploringPiece.GetComponent<Piece>().column < 7 & exploringPiece.GetComponent<Piece>().row < 8 & exploringPiece.GetComponent<Piece>().row > 0) {
                         foreach (int[] piece in fiveTShapes["fiveTShape2"]) {
                             probePiece = board.allPieces[i + piece[0], j + piece[1]];
-                            if (exploringPiece.tag == probePiece.tag) {
+                            if (exploringPiece.tag == probePiece.tag & probePiece.GetComponent<Piece>().isExplored == false) {
                                 tempPieces.Add(probePiece);
                             }
                         }
@@ -234,7 +234,7 @@ public class MatchsFinder : MonoBehaviour {
                     if (exploringPiece.GetComponent<Piece>().column < 7 & exploringPiece.GetComponent<Piece>().row < 7) {
                         foreach (int[] piece in fiveTShapes["fiveTShape3"]) {
                             probePiece = board.allPieces[i + piece[0], j + piece[1]];
-                            if (exploringPiece.tag == probePiece.tag) {
+                            if (exploringPiece.tag == probePiece.tag & probePiece.GetComponent<Piece>().isExplored == false) {
                                 tempPieces.Add(probePiece);
                             }
                         }
@@ -249,12 +249,12 @@ public class MatchsFinder : MonoBehaviour {
                         }
                     tempPieces.Clear();
                     }
-                    //looking for 5 pieces in L fiveTShapes
+                    //looking for 5 pieces in fiveLShapes
                     // Shape 0
                     if (exploringPiece.GetComponent<Piece>().column < 7 & exploringPiece.GetComponent<Piece>().row < 7) {
                         foreach (int[] piece in fiveLShapes["fiveLShape0"]) {
                             probePiece = board.allPieces[i + piece[0], j + piece[1]];
-                            if (exploringPiece.tag == probePiece.tag) {
+                            if (exploringPiece.tag == probePiece.tag & probePiece.GetComponent<Piece>().isExplored == false) {
                                 tempPieces.Add(probePiece);
                             }
                         }
@@ -273,7 +273,7 @@ public class MatchsFinder : MonoBehaviour {
                     if (exploringPiece.GetComponent<Piece>().column < 7 & exploringPiece.GetComponent<Piece>().row < 7) {
                         foreach (int[] piece in fiveLShapes["fiveLShape1"]) {
                             probePiece = board.allPieces[i + piece[0], j + piece[1]];
-                            if (exploringPiece.tag == probePiece.tag) {
+                            if (exploringPiece.tag == probePiece.tag & probePiece.GetComponent<Piece>().isExplored == false) {
                                 tempPieces.Add(probePiece);
                             }
                         }
@@ -289,10 +289,10 @@ public class MatchsFinder : MonoBehaviour {
                     tempPieces.Clear();
                     }
                     // Shape 2
-                    if (exploringPiece.GetComponent<Piece>().column < 7 & exploringPiece.GetComponent<Piece>().row < 7) {
+                    if (exploringPiece.GetComponent<Piece>().column < 7 & exploringPiece.GetComponent<Piece>().row > 1) {
                         foreach (int[] piece in fiveLShapes["fiveLShape2"]) {
                             probePiece = board.allPieces[i + piece[0], j + piece[1]];
-                            if (exploringPiece.tag == probePiece.tag) {
+                            if (exploringPiece.tag == probePiece.tag & probePiece.GetComponent<Piece>().isExplored == false) {
                                 tempPieces.Add(probePiece);
                             }
                         }
@@ -311,7 +311,7 @@ public class MatchsFinder : MonoBehaviour {
                     if (exploringPiece.GetComponent<Piece>().column < 7 & exploringPiece.GetComponent<Piece>().row < 7) {
                         foreach (int[] piece in fiveLShapes["fiveLShape3"]) {
                             probePiece = board.allPieces[i + piece[0], j + piece[1]];
-                            if (exploringPiece.tag == probePiece.tag) {
+                            if (exploringPiece.tag == probePiece.tag & probePiece.GetComponent<Piece>().isExplored == false) {
                                 tempPieces.Add(probePiece);
                             }
                         }
@@ -328,14 +328,14 @@ public class MatchsFinder : MonoBehaviour {
                     }
                     //looking for 4 pieces in fourLineShapes
                     // Shape 0
-                    if (exploringPiece.GetComponent<Piece>().column < 7 & exploringPiece.GetComponent<Piece>().row < 7) {
+                    if (exploringPiece.GetComponent<Piece>().column < 6) {
                         foreach (int[] piece in fourLineShapes["fourLineShape0"]) {
                             probePiece = board.allPieces[i + piece[0], j + piece[1]];
-                            if (exploringPiece.tag == probePiece.tag) {
+                            if (exploringPiece.tag == probePiece.tag & probePiece.GetComponent<Piece>().isExplored == false) {
                                 tempPieces.Add(probePiece);
                             }
                         }
-                        if (tempPieces.Count > 3) {
+                        if (tempPieces.Count > 2) {
                             tempPieces.Add(exploringPiece);
                             foreach (GameObject piece in tempPieces) {
                                 piece.GetComponent<Piece>().isExplored = true;
@@ -347,10 +347,10 @@ public class MatchsFinder : MonoBehaviour {
                     tempPieces.Clear();
                     }
                     // Shape 1
-                    if (exploringPiece.GetComponent<Piece>().column < 7 & exploringPiece.GetComponent<Piece>().row < 7) {
+                    if (exploringPiece.GetComponent<Piece>().row < 6) {
                         foreach (int[] piece in fourLineShapes["fourLineShape1"]) {
                             probePiece = board.allPieces[i + piece[0], j + piece[1]];
-                            if (exploringPiece.tag == probePiece.tag) {
+                            if (exploringPiece.tag == probePiece.tag & probePiece.GetComponent<Piece>().isExplored == false) {
                                 tempPieces.Add(probePiece);
                             }
                         }
@@ -367,14 +367,14 @@ public class MatchsFinder : MonoBehaviour {
                     }
                     //looking for 4 pieces in fourSquareShapes
                     // Shape 0
-                    if (exploringPiece.GetComponent<Piece>().column < 7 & exploringPiece.GetComponent<Piece>().row < 7) {
+                    if (exploringPiece.GetComponent<Piece>().column < 8 & exploringPiece.GetComponent<Piece>().row < 8) {
                         foreach (int[] piece in fourSquareShapes["fourSquareShape0"]) {
                             probePiece = board.allPieces[i + piece[0], j + piece[1]];
-                            if (exploringPiece.tag == probePiece.tag) {
+                            if (exploringPiece.tag == probePiece.tag & probePiece.GetComponent<Piece>().isExplored == false) {
                                 tempPieces.Add(probePiece);
                             }
                         }
-                        if (tempPieces.Count > 3) {
+                        if (tempPieces.Count > 2) {
                             tempPieces.Add(exploringPiece);
                             foreach (GameObject piece in tempPieces) {
                                 piece.GetComponent<Piece>().isExplored = true;
@@ -387,14 +387,14 @@ public class MatchsFinder : MonoBehaviour {
                     }
                     //looking for 3 pieces in threeLineShapes
                     // Shape 0
-                    if (exploringPiece.GetComponent<Piece>().column < 7 & exploringPiece.GetComponent<Piece>().row < 7) {
+                    if (exploringPiece.GetComponent<Piece>().column < 7) {
                         foreach (int[] piece in threeLineShapes["threeLineShape0"]) {
                             probePiece = board.allPieces[i + piece[0], j + piece[1]];
-                            if (exploringPiece.tag == probePiece.tag) {
+                            if (exploringPiece.tag == probePiece.tag & probePiece.GetComponent<Piece>().isExplored == false) {
                                 tempPieces.Add(probePiece);
                             }
                         }
-                        if (tempPieces.Count > 3) {
+                        if (tempPieces.Count > 1) {
                             tempPieces.Add(exploringPiece);
                             foreach (GameObject piece in tempPieces) {
                                 piece.GetComponent<Piece>().isExplored = true;
@@ -406,14 +406,14 @@ public class MatchsFinder : MonoBehaviour {
                     tempPieces.Clear();
                     }
                     // Shape 1
-                    if (exploringPiece.GetComponent<Piece>().column < 7 & exploringPiece.GetComponent<Piece>().row < 7) {
+                    if (exploringPiece.GetComponent<Piece>().row < 7) {
                         foreach (int[] piece in threeLineShapes["threeLineShape1"]) {
                             probePiece = board.allPieces[i + piece[0], j + piece[1]];
-                            if (exploringPiece.tag == probePiece.tag) {
+                            if (exploringPiece.tag == probePiece.tag & probePiece.GetComponent<Piece>().isExplored == false) {
                                 tempPieces.Add(probePiece);
                             }
                         }
-                        if (tempPieces.Count > 3) {
+                        if (tempPieces.Count > 1) {
                             tempPieces.Add(exploringPiece);
                             foreach (GameObject piece in tempPieces) {
                                 piece.GetComponent<Piece>().isExplored = true;

@@ -36,7 +36,7 @@ public class Board : MonoBehaviour
         refillStartPoint[3] = new Vector2(15, 5);
         piecesMatched = new List<GameObject>();
         SetUp();
-        Debug.Log(matchsFinder.lookingForAllLegalMatches().Count);
+        matchsFinder.lookingForAllLegalMatches();
     }
 
     private void SetUp() {
@@ -124,7 +124,7 @@ public class Board : MonoBehaviour
             }
         }
         setAllPiecesUnexplored();
-        Debug.Log(allSolutions.Count);
+        
         return allSolutions;
     }
     public bool isAMatchAt(int column, int row, GameObject new_piece) {
@@ -260,7 +260,7 @@ public class Board : MonoBehaviour
         refillBoard();
         yield return new WaitForSeconds(0.4f);
         List<List<GameObject>> allSolutions = new List<List<GameObject>>();
-        allSolutions = lookingForAllMatches();        
+        allSolutions = matchsFinder.lookingForAllLegalMatches();        
         if (isAMatchOnBoard(allSolutions)) {
             
             StartCoroutine(destroyAllMatches(allSolutions));
@@ -325,7 +325,7 @@ public class Board : MonoBehaviour
         else {
             
             
-            StartCoroutine(destroyAllMatches(lookingForAllMatches()));
+            StartCoroutine(destroyAllMatches(matchsFinder.lookingForAllLegalMatches()));
             
         }
         secondPiece = null;

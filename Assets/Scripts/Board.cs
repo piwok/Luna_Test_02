@@ -21,7 +21,7 @@ public class Board : MonoBehaviour
     public GameObject[,] allPieces;
     public GameObject chosenPiece;
     public GameObject secondPiece;
-    public List<GameObject> piecesMatched;
+    
 
     // Start is called before the first frame update
     void Start() {
@@ -34,9 +34,8 @@ public class Board : MonoBehaviour
         refillStartPoint[1] = new Vector2(-5, 5);
         refillStartPoint[2] = new Vector2(5, 15);
         refillStartPoint[3] = new Vector2(15, 5);
-        piecesMatched = new List<GameObject>();
         SetUp();
-        matchsFinder.lookingForAllLegalMatches();
+        
     }
 
     private void SetUp() {
@@ -57,76 +56,7 @@ public class Board : MonoBehaviour
                 piece.GetComponent<Piece>().row = j;}}
     }
 
-    public List<List<GameObject>> lookingForAllMatches() {
-        List<GameObject> piecesToExplore = new List<GameObject>();
-        //List<GameObject> piecesMatched = new List<GameObject>();
-        List<List<GameObject>> allSolutions = new List<List<GameObject>>();
-        GameObject lookingPiece;
-        GameObject leftPiece;
-        GameObject rightPiece;
-        GameObject upPiece;
-        GameObject downPiece;
-        int exploredColumn;
-        int exploredRow;
-        for (int i = 0; i < width; i++) {
-            for (int j = 0; j < height; j++) {
-                if (allPieces[i, j] != null) {
-                    if (allPieces[i,j].GetComponent<Piece>().isExplored == true) {}
-                    else {
-                        piecesToExplore.Add(allPieces[i,j]);
-                        while (piecesToExplore.Count > 0) {
-                            lookingPiece = piecesToExplore[0];
-                            exploredColumn = lookingPiece.GetComponent<Piece>().column;
-                            exploredRow = lookingPiece.GetComponent<Piece>().row;
-                            piecesToExplore.RemoveAt(0);
-                            //left piece
-                            if (exploredColumn > 0) {
-                                if (allPieces[exploredColumn - 1, exploredRow] != null) {
-                                    leftPiece = allPieces[exploredColumn - 1, exploredRow];
-                                    if (leftPiece.GetComponent<Piece>().isExplored == false && lookingPiece.tag == leftPiece.tag) {
-                                        piecesToExplore.Add(leftPiece);
-                                        piecesMatched.Add(leftPiece);
-                                        leftPiece.GetComponent<Piece>().isExplored = true;}}}
-                            //right piece
-                            if (exploredColumn < width - 1) {
-                                if (allPieces[exploredColumn + 1, exploredRow] != null) {
-                                    rightPiece = allPieces[exploredColumn + 1, exploredRow];
-                                    if (rightPiece.GetComponent<Piece>().isExplored == false && lookingPiece.tag == rightPiece.tag) {
-                                        piecesToExplore.Add(rightPiece);
-                                        piecesMatched.Add(rightPiece);
-                                        rightPiece.GetComponent<Piece>().isExplored = true;}}}
-                            //up piece
-                            if (exploredRow < height - 1) {
-                                if (allPieces[exploredColumn, exploredRow + 1] != null) {
-                                    upPiece = allPieces[exploredColumn, exploredRow + 1];
-                                    if (upPiece.GetComponent<Piece>().isExplored == false && lookingPiece.tag == upPiece.tag) {
-                                        piecesToExplore.Add(upPiece);
-                                        piecesMatched.Add(upPiece);
-                                        upPiece.GetComponent<Piece>().isExplored = true;}}}
-                            //down_piece
-                            if (exploredRow > 0) {
-                                if (allPieces[exploredColumn, exploredRow - 1] != null) {
-                                    downPiece = allPieces[exploredColumn, exploredRow - 1];
-                                    if (downPiece.GetComponent<Piece>().isExplored == false && lookingPiece.tag == downPiece.tag) {
-                                        piecesToExplore.Add(downPiece);
-                                        piecesMatched.Add(downPiece);
-                                        downPiece.GetComponent<Piece>().isExplored = true;}}}
-                        }
-                        if (piecesMatched.Count >= 3) {
-                            
-                            allSolutions.Add(new List<GameObject>(piecesMatched));
-
-                            
-                        }
-                        piecesMatched.Clear();
-                    }
-                }
-            }
-        }
-        setAllPiecesUnexplored();
-        
-        return allSolutions;
-    }
+    
     public bool isAMatchAt(int column, int row, GameObject new_piece) {
         List<GameObject> piecesToExplore = new List<GameObject>();
         int matchLength = 0;
@@ -202,7 +132,7 @@ public class Board : MonoBehaviour
                 }
             }
             if (flag == true) {break;}
-            yield return  new WaitForSeconds(0.1f);
+            yield return  new WaitForSeconds(0.15f);
         }
         StartCoroutine(colapseAllColumns());
     }
@@ -258,7 +188,7 @@ public class Board : MonoBehaviour
 
     private IEnumerator fillBoardCoroutine() {
         refillBoard();
-        yield return new WaitForSeconds(0.4f);
+        yield return new WaitForSeconds(0.35f);
         List<List<GameObject>> allSolutions = new List<List<GameObject>>();
         allSolutions = matchsFinder.lookingForAllLegalMatches();        
         if (isAMatchOnBoard(allSolutions)) {
@@ -315,7 +245,7 @@ public class Board : MonoBehaviour
     }
 
     public IEnumerator checkMoveCoroutine() { //Revisar esto esta mal
-        yield return new WaitForSeconds(0.35f);
+        yield return new WaitForSeconds(0.3f);
         if (!isAMatchAt(chosenPiece.GetComponent<Piece>().column, chosenPiece.GetComponent<Piece>().row, chosenPiece) & !isAMatchAt(secondPiece.GetComponent<Piece>().column, secondPiece.GetComponent<Piece>().row, secondPiece)) {
             secondPiece.GetComponent<Piece>().column = chosenPiece.GetComponent<Piece>().column;
             secondPiece.GetComponent<Piece>().row = chosenPiece.GetComponent<Piece>().row;

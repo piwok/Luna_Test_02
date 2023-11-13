@@ -7,7 +7,10 @@ public class MatchsFinder : MonoBehaviour {
     private List<int[]> pieceTypes;
     public GameObject[] pieces;
     private Board board;
+    private string[] shapeNames;
     private IDictionary<string, int[][]> shapes;
+    private IDictionary<string, Dictionary<string, int>> shapesBoardLimits;
+    private IDictionary<string, int> boardLimits;
     private int[] tempPiece1;
     private int[] tempPiece2;
     private int[] tempPiece3;
@@ -15,7 +18,6 @@ public class MatchsFinder : MonoBehaviour {
     private int[][] tempShape;
     //variables for lookingForAllMatches method//
     public List<GameObject> piecesMatched;
-    
     // --------------------------------------- //
 
     // 5 pieces math in FiveLineShape0          5 pieces math in FiveLineShape1
@@ -64,57 +66,90 @@ public class MatchsFinder : MonoBehaviour {
     void Start() {
         board = FindObjectOfType<Board>();
         shapes = new Dictionary<string, int[][]>();
+        shapeNames = new string[15] {"fiveLineShape0", "fiveLineShape1", "fiveTShape0", "fiveTShape1", "fiveTShape2", "fiveTShape3",
+        "fiveLShape0", "fiveLShape1", "fiveLShape2", "fiveLShape3", "fourLineShape0", "fourLineShape1", "fourSquareShape0", "threeLineShape0", "threeLineShape1"}
+        shapesBoardLimits = new Dictionary<string, Dictionary<string, int>>();
         // Five pieces Line Shapes//
         tempPiece1 = new int[2] {1, 0}; tempPiece2 = new int[2] {2, 0}; tempPiece3 = new int[2] {3, 0}; tempPiece4 = new int[2] {4, 0};
         tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3, tempPiece4};
         shapes.Add("fiveLineShape0", tempShape);
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 4}, {"minRow", 0}, {"maxRow", 8}};
+        shapesBoardLimits.Add("fiveLineShape0", new Dictionary<string, int>(boardLimits));
         tempPiece1 = new int[2] {0, 1}; tempPiece2 = new int[2] {0, 2}; tempPiece3 = new int[2] {0, 3}; tempPiece4 = new int[2] {0, 4};
         tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3, tempPiece4};
         shapes.Add("fiveLineShape1", tempShape);
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 8}, {"minRow", 0}, {"maxRow", 4}};
+        shapesBoardLimits.Add("fiveLineShape1", new Dictionary<string, int>(boardLimits));
         // Five pieces T Shapes//
         tempPiece1 = new int[2] {0, 1}; tempPiece2 = new int[2] {0, 2}; tempPiece3 = new int[2] {1, 1}; tempPiece4 = new int[2] {2, 1};
         tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3, tempPiece4};
         shapes.Add("fiveTShape0", tempShape);
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 6}, {"minRow", 0}, {"maxRow", 6}};
+        shapesBoardLimits.Add("fiveTShape0", new Dictionary<string, int>(boardLimits));
         tempPiece1 = new int[2] {1, 0}; tempPiece2 = new int[2] {2, 0}; tempPiece3 = new int[2] {1, -1}; tempPiece4 = new int[2] {1, -2};
         tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3, tempPiece4};
         shapes.Add("fiveTShape1", tempShape);
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 6}, {"minRow", 0}, {"maxRow", 6}};
+        shapesBoardLimits.Add("fiveTShape1", new Dictionary<string, int>(boardLimits));
         tempPiece1 = new int[2] {1, 0}; tempPiece2 = new int[2] {2, 0}; tempPiece3 = new int[2] {2, 1}; tempPiece4 = new int[2] {2, -1};
         tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3, tempPiece4};
         shapes.Add("fiveTShape2", tempShape);
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 6}, {"minRow", 1}, {"maxRow", 7}};
+        shapesBoardLimits.Add("fiveTShape2", new Dictionary<string, int>(boardLimits));
         tempPiece1 = new int[2] {1, 0}; tempPiece2 = new int[2] {2, 0}; tempPiece3 = new int[2] {1, 1}; tempPiece4 = new int[2] {1, 2};
         tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3, tempPiece4};
         shapes.Add("fiveTShape3", tempShape);
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 6}, {"minRow", 0}, {"maxRow", 6}};
+        shapesBoardLimits.Add("fiveTShape3", new Dictionary<string, int>(boardLimits));
         //Five pieces L Shapes//
         tempPiece1 = new int[2] {0, 1}; tempPiece2 = new int[2] {0, 2}; tempPiece3 = new int[2] {1, 0}; tempPiece4 = new int[2] {2, 0};
         tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3, tempPiece4};
         shapes.Add("fiveLShape0", tempShape);
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 0}, {"minRow", 0}, {"maxRow", 0}};
+        shapesBoardLimits.Add("fiveLShape0", new Dictionary<string, int>(boardLimits));
         tempPiece1 = new int[2] {0, 1}; tempPiece2 = new int[2] {0, 2}; tempPiece3 = new int[2] {1, 2}; tempPiece4 = new int[2] {2, 2};
         tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3, tempPiece4};
         shapes.Add("fiveLShape1", tempShape);
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 0}, {"minRow", 0}, {"maxRow", 0}};
+        shapesBoardLimits.Add("fiveLShape1", new Dictionary<string, int>(boardLimits));
         tempPiece1 = new int[2] {1, 0}; tempPiece2 = new int[2] {2, 0}; tempPiece3 = new int[2] {2, -1}; tempPiece4 = new int[2] {2, -2};
         tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3, tempPiece4};
         shapes.Add("fiveLShape2", tempShape);
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 0}, {"minRow", 0}, {"maxRow", 0}};
+        shapesBoardLimits.Add("fiveLShape2", new Dictionary<string, int>(boardLimits));
         tempPiece1 = new int[2] {1, 0}; tempPiece2 = new int[2] {2, 0}; tempPiece3 = new int[2] {2, 1}; tempPiece4 = new int[2] {2, 2};
         tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3, tempPiece4};
         shapes.Add("fiveLShape3", tempShape);
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 0}, {"minRow", 0}, {"maxRow", 0}};
+        shapesBoardLimits.Add("fiveLShape3", new Dictionary<string, int>(boardLimits));
         // Four pieces Line Shapes//
         tempPiece1 = new int[2] {1, 0}; tempPiece2 = new int[2] {2, 0}; tempPiece3 = new int[2] {3, 0};
         tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3};
         shapes.Add("fourLineShape0", tempShape);
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 0}, {"minRow", 0}, {"maxRow", 0}};
+        shapesBoardLimits.Add("fourLineShape0", new Dictionary<string, int>(boardLimits));
         tempPiece1 = new int[2] {0, 1}; tempPiece2 = new int[2] {0, 2}; tempPiece3 = new int[2] {0, 3};
         tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3};
         shapes.Add("fourLineShape1", tempShape);
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 0}, {"minRow", 0}, {"maxRow", 0}};
+        shapesBoardLimits.Add("fourLineShape1", new Dictionary<string, int>(boardLimits));
         // Four pieces Square Shapes//
         tempPiece1 = new int[2] {1, 0}; tempPiece2 = new int[2] {1, 1}; tempPiece3 = new int[2] {0, 1};
         tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3};
         shapes.Add("fourSquareShape0", tempShape);
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 0}, {"minRow", 0}, {"maxRow", 0}};
+        shapesBoardLimits.Add("fourSquareShape0", new Dictionary<string, int>(boardLimits));
         // Three pieces Line Shapes//
         tempPiece1 = new int[2] {1, 0}; tempPiece2 = new int[2] {2, 0};
         tempShape = new int[][] {tempPiece1, tempPiece2};
         shapes.Add("threeLineShape0", tempShape);
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 0}, {"minRow", 0}, {"maxRow", 0}};
+        shapesBoardLimits.Add("threeLineShape0", new Dictionary<string, int>(boardLimits));
         tempPiece1 = new int[2] {0, 1}; tempPiece2 = new int[2] {0, 2};
         tempShape = new int[][] {tempPiece1, tempPiece2};
         shapes.Add("threeLineShape1", tempShape);
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 0}, {"minRow", 0}, {"maxRow", 0}};
+        shapesBoardLimits.Add("threeLineShape1", new Dictionary<string, int>(boardLimits));
     }
     
     public List<List<GameObject>> lookingForAllLegalMatches () {
@@ -526,7 +561,7 @@ public class MatchsFinder : MonoBehaviour {
         int exploringColumn = exploringPiece.GetComponent<Piece>().column;
         int exploringRow = exploringPiece.GetComponent<Piece>().row;
 
-        if (exploringColumn > minColumn & exploringColumn < maxColumn & exploringRow > minRow & exploringRow < maxRow) {
+        if (exploringColumn >= minColumn & exploringColumn <= maxColumn & exploringRow >= minRow & exploringRow <= maxRow) {
             tempPieces.Add(exploringPiece);
             foreach (int[] shape in shapes[shape]) {
                 probePiece = board.allPieces[i + shape[0], j + shape[1]];

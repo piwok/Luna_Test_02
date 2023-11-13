@@ -118,17 +118,24 @@ public class Board : MonoBehaviour
             pieces[j].GetComponent<Piece>().isExplored = false;}}
 
     private IEnumerator destroyAllMatches (List<List<GameObject>> allSolutions) {
+        // foreach (List<GameObject> solution in allSolutions) {
+        //     foreach (GameObject piece in solution) {
+        //         Debug.Log(piece.tag);
+        //     }
+        // }
             
         bool flag;
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 5; i++) {
             flag = true;
             foreach (List<GameObject> solution in allSolutions) {
+                
                 if ( i < solution.Count) {
-                    flag = false;
-                    Instantiate(destroyEffect, solution[i].transform.position, Quaternion.identity);
-                    allPieces[(int)solution[i].transform.position.x, (int)solution[i].transform.position.y] = null;
-                    Destroy(solution[i]);
-                    
+                    if (solution[i] != null) {
+                        flag = false;
+                        Instantiate(destroyEffect, solution[i].transform.position, Quaternion.identity);
+                        allPieces[(int)solution[i].transform.position.x, (int)solution[i].transform.position.y] = null;
+                        Destroy(solution[i]);
+                    }
                 }
             }
             if (flag == true) {break;}

@@ -19,7 +19,6 @@ public class MatchsFinder : MonoBehaviour {
     //variables for lookingForAllMatches method//
     public List<GameObject> piecesMatched;
     // --------------------------------------- //
-
     // 5 pieces math in FiveLineShape0          5 pieces math in FiveLineShape1
     //    
     //      O X X X X                                       X 
@@ -27,37 +26,24 @@ public class MatchsFinder : MonoBehaviour {
     //                                                      X
     //                                                      X
     //                                                      O
-
     // 5 pieces math in FiveTshape0             5 pieces math in FiveTShape1             5 pieces math in FiveTShape2            5 pieces math in FiveTShape 3                                                          
     //    X                                             O X X                                       X                                       X                                       
     //    X X X                                           X                                     O X X                                       X
     //    O                                               X                                         X                                     O X X                               
-
-
-
     // 5 pieces math in FiveLShape 0            5 pieces math in FiveLShape1            5 pieces math in FiveLShape2            5 pieces math in FiveLShape3
     //    X                                               X X X                                   O X X                                      X
     //    X                                               X                                           X                                      X
     //    O X X                                           O                                           X                                  O X X
-
-
-
     // 4 pieces math in FourLineShape0          4 pieces math in FourLineShape1
     //    
     //      O X X X                                         X 
     //                                                      X
     //                                                      X
     //                                                      O
-
-
-    
     // 4 pieces math in SquareShape0
     //    
     //      X X
     //      O X
-
-
-
     // 3 pieces math in ThreeLineShape0         3 pieces math in ThreeLineShape1
     //    
     //      O X X                                           X
@@ -67,418 +53,108 @@ public class MatchsFinder : MonoBehaviour {
         board = FindObjectOfType<Board>();
         shapes = new Dictionary<string, int[][]>();
         shapeNames = new string[15] {"fiveLineShape0", "fiveLineShape1", "fiveTShape0", "fiveTShape1", "fiveTShape2", "fiveTShape3",
-        "fiveLShape0", "fiveLShape1", "fiveLShape2", "fiveLShape3", "fourLineShape0", "fourLineShape1", "fourSquareShape0", "threeLineShape0", "threeLineShape1"}
+        "fiveLShape0", "fiveLShape1", "fiveLShape2", "fiveLShape3", "fourLineShape0", "fourLineShape1", "fourSquareShape0", "threeLineShape0", "threeLineShape1"};
         shapesBoardLimits = new Dictionary<string, Dictionary<string, int>>();
         // Five pieces Line Shapes//
         tempPiece1 = new int[2] {1, 0}; tempPiece2 = new int[2] {2, 0}; tempPiece3 = new int[2] {3, 0}; tempPiece4 = new int[2] {4, 0};
         tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3, tempPiece4};
         shapes.Add("fiveLineShape0", tempShape);
-        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 4}, {"minRow", 0}, {"maxRow", 8}};
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 4}, {"minRow", 0}, {"maxRow", 8}, {"matchSize", 5}};
         shapesBoardLimits.Add("fiveLineShape0", new Dictionary<string, int>(boardLimits));
         tempPiece1 = new int[2] {0, 1}; tempPiece2 = new int[2] {0, 2}; tempPiece3 = new int[2] {0, 3}; tempPiece4 = new int[2] {0, 4};
         tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3, tempPiece4};
         shapes.Add("fiveLineShape1", tempShape);
-        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 8}, {"minRow", 0}, {"maxRow", 4}};
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 8}, {"minRow", 0}, {"maxRow", 4}, {"matchSize", 5}};
         shapesBoardLimits.Add("fiveLineShape1", new Dictionary<string, int>(boardLimits));
         // Five pieces T Shapes//
         tempPiece1 = new int[2] {0, 1}; tempPiece2 = new int[2] {0, 2}; tempPiece3 = new int[2] {1, 1}; tempPiece4 = new int[2] {2, 1};
         tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3, tempPiece4};
         shapes.Add("fiveTShape0", tempShape);
-        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 6}, {"minRow", 0}, {"maxRow", 6}};
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 6}, {"minRow", 0}, {"maxRow", 6}, {"matchSize", 5}};
         shapesBoardLimits.Add("fiveTShape0", new Dictionary<string, int>(boardLimits));
         tempPiece1 = new int[2] {1, 0}; tempPiece2 = new int[2] {2, 0}; tempPiece3 = new int[2] {1, -1}; tempPiece4 = new int[2] {1, -2};
         tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3, tempPiece4};
         shapes.Add("fiveTShape1", tempShape);
-        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 6}, {"minRow", 0}, {"maxRow", 6}};
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 6}, {"minRow", 0}, {"maxRow", 6}, {"matchSize", 5}};
         shapesBoardLimits.Add("fiveTShape1", new Dictionary<string, int>(boardLimits));
         tempPiece1 = new int[2] {1, 0}; tempPiece2 = new int[2] {2, 0}; tempPiece3 = new int[2] {2, 1}; tempPiece4 = new int[2] {2, -1};
         tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3, tempPiece4};
         shapes.Add("fiveTShape2", tempShape);
-        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 6}, {"minRow", 1}, {"maxRow", 7}};
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 6}, {"minRow", 1}, {"maxRow", 7}, {"matchSize", 5}};
         shapesBoardLimits.Add("fiveTShape2", new Dictionary<string, int>(boardLimits));
         tempPiece1 = new int[2] {1, 0}; tempPiece2 = new int[2] {2, 0}; tempPiece3 = new int[2] {1, 1}; tempPiece4 = new int[2] {1, 2};
         tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3, tempPiece4};
         shapes.Add("fiveTShape3", tempShape);
-        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 6}, {"minRow", 0}, {"maxRow", 6}};
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 6}, {"minRow", 0}, {"maxRow", 6}, {"matchSize", 5}};
         shapesBoardLimits.Add("fiveTShape3", new Dictionary<string, int>(boardLimits));
         //Five pieces L Shapes//
         tempPiece1 = new int[2] {0, 1}; tempPiece2 = new int[2] {0, 2}; tempPiece3 = new int[2] {1, 0}; tempPiece4 = new int[2] {2, 0};
         tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3, tempPiece4};
         shapes.Add("fiveLShape0", tempShape);
-        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 0}, {"minRow", 0}, {"maxRow", 0}};
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 6}, {"minRow", 0}, {"maxRow", 6}, {"matchSize", 5}};
         shapesBoardLimits.Add("fiveLShape0", new Dictionary<string, int>(boardLimits));
         tempPiece1 = new int[2] {0, 1}; tempPiece2 = new int[2] {0, 2}; tempPiece3 = new int[2] {1, 2}; tempPiece4 = new int[2] {2, 2};
         tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3, tempPiece4};
         shapes.Add("fiveLShape1", tempShape);
-        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 0}, {"minRow", 0}, {"maxRow", 0}};
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 6}, {"minRow", 0}, {"maxRow", 6}, {"matchSize", 5}};
         shapesBoardLimits.Add("fiveLShape1", new Dictionary<string, int>(boardLimits));
         tempPiece1 = new int[2] {1, 0}; tempPiece2 = new int[2] {2, 0}; tempPiece3 = new int[2] {2, -1}; tempPiece4 = new int[2] {2, -2};
         tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3, tempPiece4};
         shapes.Add("fiveLShape2", tempShape);
-        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 0}, {"minRow", 0}, {"maxRow", 0}};
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 6}, {"minRow", 2}, {"maxRow", 8}, {"matchSize", 5}};
         shapesBoardLimits.Add("fiveLShape2", new Dictionary<string, int>(boardLimits));
         tempPiece1 = new int[2] {1, 0}; tempPiece2 = new int[2] {2, 0}; tempPiece3 = new int[2] {2, 1}; tempPiece4 = new int[2] {2, 2};
         tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3, tempPiece4};
         shapes.Add("fiveLShape3", tempShape);
-        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 0}, {"minRow", 0}, {"maxRow", 0}};
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 6}, {"minRow", 0}, {"maxRow", 6}, {"matchSize", 5}};
         shapesBoardLimits.Add("fiveLShape3", new Dictionary<string, int>(boardLimits));
         // Four pieces Line Shapes//
         tempPiece1 = new int[2] {1, 0}; tempPiece2 = new int[2] {2, 0}; tempPiece3 = new int[2] {3, 0};
         tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3};
         shapes.Add("fourLineShape0", tempShape);
-        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 0}, {"minRow", 0}, {"maxRow", 0}};
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 5}, {"minRow", 0}, {"maxRow", 8}, {"matchSize", 4}};
         shapesBoardLimits.Add("fourLineShape0", new Dictionary<string, int>(boardLimits));
         tempPiece1 = new int[2] {0, 1}; tempPiece2 = new int[2] {0, 2}; tempPiece3 = new int[2] {0, 3};
         tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3};
         shapes.Add("fourLineShape1", tempShape);
-        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 0}, {"minRow", 0}, {"maxRow", 0}};
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 8}, {"minRow", 0}, {"maxRow", 5}, {"matchSize", 4}};
         shapesBoardLimits.Add("fourLineShape1", new Dictionary<string, int>(boardLimits));
         // Four pieces Square Shapes//
         tempPiece1 = new int[2] {1, 0}; tempPiece2 = new int[2] {1, 1}; tempPiece3 = new int[2] {0, 1};
         tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3};
         shapes.Add("fourSquareShape0", tempShape);
-        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 0}, {"minRow", 0}, {"maxRow", 0}};
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 7}, {"minRow", 0}, {"maxRow", 7}, {"matchSize", 4}};
         shapesBoardLimits.Add("fourSquareShape0", new Dictionary<string, int>(boardLimits));
         // Three pieces Line Shapes//
         tempPiece1 = new int[2] {1, 0}; tempPiece2 = new int[2] {2, 0};
         tempShape = new int[][] {tempPiece1, tempPiece2};
         shapes.Add("threeLineShape0", tempShape);
-        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 0}, {"minRow", 0}, {"maxRow", 0}};
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 6}, {"minRow", 0}, {"maxRow", 8}, {"matchSize", 3}};
         shapesBoardLimits.Add("threeLineShape0", new Dictionary<string, int>(boardLimits));
         tempPiece1 = new int[2] {0, 1}; tempPiece2 = new int[2] {0, 2};
         tempShape = new int[][] {tempPiece1, tempPiece2};
         shapes.Add("threeLineShape1", tempShape);
-        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 0}, {"minRow", 0}, {"maxRow", 0}};
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 8}, {"minRow", 0}, {"maxRow", 6}, {"matchSize", 3}};
         shapesBoardLimits.Add("threeLineShape1", new Dictionary<string, int>(boardLimits));
     }
     
     public List<List<GameObject>> lookingForAllLegalMatches () {
         List<List<GameObject>> allLegalSolutions = new List<List<GameObject>>();
+        List<GameObject> tempSolution = new List<GameObject>();
         GameObject exploringPiece;
         List<GameObject> tempPieces = new List<GameObject>();
-        GameObject probePiece;
         for (int i = 0; i < board.width; i++) {
             for (int j = 0; j < board.height; j++) {
                 exploringPiece = board.allPieces[i, j];
-                if (exploringPiece.GetComponent<Piece>().isExplored == true) {}
-                else {
-                    //looking for 5 pieces in straight line fiveLineShape0
-                    // Shape0 horizontal
-                    if (exploringPiece.GetComponent<Piece>().column < 5) {
-                        tempPieces.Add(exploringPiece);
-                        foreach (int[] piece in shapes["fiveLineShape0"]) {
-                            probePiece = board.allPieces[i + piece[0], j + piece[1]];
-                            if (exploringPiece.tag == probePiece.tag & probePiece.GetComponent<Piece>().isExplored == false) {
-                                tempPieces.Add(probePiece);
-                            }
-                        }
-                        if (tempPieces.Count > 4) {
-                            
-                            foreach (GameObject piece in tempPieces) {
-                                piece.GetComponent<Piece>().isExplored = true;
-                            }
-                            allLegalSolutions.Add(new List<GameObject>(tempPieces));
-                            tempPieces.Clear();
-                            continue;
-                        }
-                    tempPieces.Clear();
+                for (int k = 0; k < shapeNames.Length; k++) {
+                    tempSolution = checkShapeMatch (exploringPiece, shapeNames[k], shapesBoardLimits[shapeNames[k]]["minColumn"], shapesBoardLimits[shapeNames[k]]["maxColumn"],
+                        shapesBoardLimits[shapeNames[k]]["minRow"], shapesBoardLimits[shapeNames[k]]["maxRow"], shapesBoardLimits[shapeNames[k]]["matchSize"]);
+                    if (tempSolution != null) {
+                        allLegalSolutions.Add(new List<GameObject>(tempSolution));
                     }
-                    // Shape1 vertical
-                    if (exploringPiece.GetComponent<Piece>().row < 5) {
-                        tempPieces.Add(exploringPiece);
-                        foreach (int[] piece in shapes["fiveLineShape1"]) {
-                            probePiece = board.allPieces[i + piece[0], j + piece[1]];
-                            if (exploringPiece.tag == probePiece.tag & probePiece.GetComponent<Piece>().isExplored == false) {
-                                tempPieces.Add(probePiece);
-                            }
-                        }
-                        if (tempPieces.Count > 4) {
-                            
-                            foreach (GameObject piece in tempPieces) {
-                                piece.GetComponent<Piece>().isExplored = true;
-                            }
-                            allLegalSolutions.Add(new List<GameObject>(tempPieces));
-                            tempPieces.Clear();
-                            continue;
-                        }
-                    tempPieces.Clear();
-                    }
-                    //looking for 5 pieces in fiveTShapes
-                    // Shape0
-                    if (exploringPiece.GetComponent<Piece>().column < 7 & exploringPiece.GetComponent<Piece>().row < 7 ) {
-                         tempPieces.Add(exploringPiece);
-                        foreach (int[] piece in shapes["fiveTShape0"]) {
-                            probePiece = board.allPieces[i + piece[0], j + piece[1]];
-                            if (exploringPiece.tag == probePiece.tag & probePiece.GetComponent<Piece>().isExplored == false) {
-                                tempPieces.Add(probePiece);
-                            }
-                        }
-                        if (tempPieces.Count > 4) {
-                           
-                            foreach (GameObject piece in tempPieces) {
-                                piece.GetComponent<Piece>().isExplored = true;
-                            }
-                            allLegalSolutions.Add(new List<GameObject>(tempPieces));
-                            tempPieces.Clear();
-                            continue;
-                        }
-                    tempPieces.Clear();
-                    }
-                    // Shape1
-                    if (exploringPiece.GetComponent<Piece>().column < 7 & exploringPiece.GetComponent<Piece>().row > 1) {
-                        tempPieces.Add(exploringPiece);
-                        foreach (int[] piece in shapes["fiveTShape1"]) {
-                            probePiece = board.allPieces[i + piece[0], j + piece[1]];
-                            if (exploringPiece.tag == probePiece.tag & probePiece.GetComponent<Piece>().isExplored == false) {
-                                tempPieces.Add(probePiece);
-                            }
-                        }
-                        if (tempPieces.Count > 4) {
-                            
-                            foreach (GameObject piece in tempPieces) {
-                                piece.GetComponent<Piece>().isExplored = true;
-                            }
-                            allLegalSolutions.Add(new List<GameObject>(tempPieces));
-                            tempPieces.Clear();
-                            continue;
-                        }
-                    tempPieces.Clear();
-                    }
-                    // Shape 2
-                    if (exploringPiece.GetComponent<Piece>().column < 7 & exploringPiece.GetComponent<Piece>().row < 8 & exploringPiece.GetComponent<Piece>().row > 0) {
-                        tempPieces.Add(exploringPiece);
-                        foreach (int[] piece in shapes["fiveTShape2"]) {
-                            probePiece = board.allPieces[i + piece[0], j + piece[1]];
-                            if (exploringPiece.tag == probePiece.tag & probePiece.GetComponent<Piece>().isExplored == false) {
-                                tempPieces.Add(probePiece);
-                            }
-                        }
-                        if (tempPieces.Count > 4) {
-                            
-                            foreach (GameObject piece in tempPieces) {
-                                piece.GetComponent<Piece>().isExplored = true;
-                            }
-                            allLegalSolutions.Add(new List<GameObject>(tempPieces));
-                            tempPieces.Clear();
-                            continue;
-                        }
-                    tempPieces.Clear();
-                    }
-                    // Shape 3
-                    if (exploringPiece.GetComponent<Piece>().column < 7 & exploringPiece.GetComponent<Piece>().row < 7) {
-                        tempPieces.Add(exploringPiece);
-                        foreach (int[] piece in shapes["fiveTShape3"]) {
-                            probePiece = board.allPieces[i + piece[0], j + piece[1]];
-                            if (exploringPiece.tag == probePiece.tag & probePiece.GetComponent<Piece>().isExplored == false) {
-                                tempPieces.Add(probePiece);
-                            }
-                        }
-                        if (tempPieces.Count > 4) {
-                            
-                            foreach (GameObject piece in tempPieces) {
-                                piece.GetComponent<Piece>().isExplored = true;
-                            }
-                            allLegalSolutions.Add(new List<GameObject>(tempPieces));
-                            tempPieces.Clear();
-                            continue;
-                        }
-                    tempPieces.Clear();
-                    }
-                    //looking for 5 pieces in fiveLShapes
-                    // Shape 0
-                    if (exploringPiece.GetComponent<Piece>().column < 7 & exploringPiece.GetComponent<Piece>().row < 7) {
-                        tempPieces.Add(exploringPiece);
-                        foreach (int[] piece in shapes["fiveLShape0"]) {
-                            probePiece = board.allPieces[i + piece[0], j + piece[1]];
-                            if (exploringPiece.tag == probePiece.tag & probePiece.GetComponent<Piece>().isExplored == false) {
-                                tempPieces.Add(probePiece);
-                            }
-                        }
-                        if (tempPieces.Count > 4) {
-                           
-                            foreach (GameObject piece in tempPieces) {
-                                piece.GetComponent<Piece>().isExplored = true;
-                            }
-                            allLegalSolutions.Add(new List<GameObject>(tempPieces));
-                            tempPieces.Clear();
-                            continue;
-                        }
-                    tempPieces.Clear();
-                    }
-                    // Shape 1
-                    if (exploringPiece.GetComponent<Piece>().column < 7 & exploringPiece.GetComponent<Piece>().row < 7) {
-                        tempPieces.Add(exploringPiece);
-                        foreach (int[] piece in shapes["fiveLShape1"]) {
-                            probePiece = board.allPieces[i + piece[0], j + piece[1]];
-                            if (exploringPiece.tag == probePiece.tag & probePiece.GetComponent<Piece>().isExplored == false) {
-                                tempPieces.Add(probePiece);
-                            }
-                        }
-                        if (tempPieces.Count > 4) {
-                            
-                            foreach (GameObject piece in tempPieces) {
-                                piece.GetComponent<Piece>().isExplored = true;
-                            }
-                            allLegalSolutions.Add(new List<GameObject>(tempPieces));
-                            tempPieces.Clear();
-                            continue;
-                        }
-                    tempPieces.Clear();
-                    }
-                    // Shape 2
-                    if (exploringPiece.GetComponent<Piece>().column < 7 & exploringPiece.GetComponent<Piece>().row > 1) {
-                        tempPieces.Add(exploringPiece);
-                        foreach (int[] piece in shapes["fiveLShape2"]) {
-                            probePiece = board.allPieces[i + piece[0], j + piece[1]];
-                            if (exploringPiece.tag == probePiece.tag & probePiece.GetComponent<Piece>().isExplored == false) {
-                                tempPieces.Add(probePiece);
-                            }
-                        }
-                        if (tempPieces.Count > 4) {
-                            
-                            foreach (GameObject piece in tempPieces) {
-                                piece.GetComponent<Piece>().isExplored = true;
-                            }
-                            allLegalSolutions.Add(new List<GameObject>(tempPieces));
-                            tempPieces.Clear();
-                            continue;
-                        }
-                    tempPieces.Clear();
-                    }
-                    // Shape 3
-                    if (exploringPiece.GetComponent<Piece>().column < 7 & exploringPiece.GetComponent<Piece>().row < 7) {
-                        tempPieces.Add(exploringPiece);
-                        foreach (int[] piece in shapes["fiveLShape3"]) {
-                            probePiece = board.allPieces[i + piece[0], j + piece[1]];
-                            if (exploringPiece.tag == probePiece.tag & probePiece.GetComponent<Piece>().isExplored == false) {
-                                tempPieces.Add(probePiece);
-                            }
-                        }
-                        if (tempPieces.Count > 4) {
-                            
-                            foreach (GameObject piece in tempPieces) {
-                                piece.GetComponent<Piece>().isExplored = true;
-                            }
-                            allLegalSolutions.Add(new List<GameObject>(tempPieces));
-                            tempPieces.Clear();
-                            continue;
-                        }
-                    tempPieces.Clear();
-                    }
-                    //looking for 4 pieces in fourLineShapes
-                    // Shape 0
-                    if (exploringPiece.GetComponent<Piece>().column < 6) {
-                        tempPieces.Add(exploringPiece);
-                        foreach (int[] piece in shapes["fourLineShape0"]) {
-                            probePiece = board.allPieces[i + piece[0], j + piece[1]];
-                            if (exploringPiece.tag == probePiece.tag & probePiece.GetComponent<Piece>().isExplored == false) {
-                                tempPieces.Add(probePiece);
-                            }
-                        }
-                        if (tempPieces.Count > 3) {
-                            
-                            foreach (GameObject piece in tempPieces) {
-                                piece.GetComponent<Piece>().isExplored = true;
-                            }
-                            allLegalSolutions.Add(new List<GameObject>(tempPieces));
-                            tempPieces.Clear();
-                            continue;
-                        }
-                    tempPieces.Clear();
-                    }
-                    // Shape 1
-                    if (exploringPiece.GetComponent<Piece>().row < 6) {
-                         tempPieces.Add(exploringPiece);
-                        foreach (int[] piece in shapes["fourLineShape1"]) {
-                            probePiece = board.allPieces[i + piece[0], j + piece[1]];
-                            if (exploringPiece.tag == probePiece.tag & probePiece.GetComponent<Piece>().isExplored == false) {
-                                tempPieces.Add(probePiece);
-                            }
-                        }
-                        if (tempPieces.Count > 3) {
-                           
-                            foreach (GameObject piece in tempPieces) {
-                                piece.GetComponent<Piece>().isExplored = true;
-                            }
-                            allLegalSolutions.Add(new List<GameObject>(tempPieces));
-                            tempPieces.Clear();
-                            continue;
-                        }
-                    tempPieces.Clear();
-                    }
-                    //looking for 4 pieces in fourSquareShapes
-                    // Shape 0
-                    if (exploringPiece.GetComponent<Piece>().column < 8 & exploringPiece.GetComponent<Piece>().row < 8) {
-                        tempPieces.Add(exploringPiece);
-                        foreach (int[] piece in shapes["fourSquareShape0"]) {
-                            probePiece = board.allPieces[i + piece[0], j + piece[1]];
-                            if (exploringPiece.tag == probePiece.tag & probePiece.GetComponent<Piece>().isExplored == false) {
-                                tempPieces.Add(probePiece);
-                            }
-                        }
-                        if (tempPieces.Count >3) {
-                        
-                            foreach (GameObject piece in tempPieces) {
-                                piece.GetComponent<Piece>().isExplored = true;
-                            }
-                            allLegalSolutions.Add(new List<GameObject>(tempPieces));
-                            tempPieces.Clear();
-                            continue;
-                        }
-                    tempPieces.Clear();
-                    }
-                    //looking for 3 pieces in threeLineShapes
-                    // Shape 0
-                    if (exploringPiece.GetComponent<Piece>().column < 7) {
-                        tempPieces.Add(exploringPiece);
-                        foreach (int[] piece in shapes["threeLineShape0"]) {
-                            probePiece = board.allPieces[i + piece[0], j + piece[1]];
-                            if (exploringPiece.tag == probePiece.tag & probePiece.GetComponent<Piece>().isExplored == false) {
-                                tempPieces.Add(probePiece);
-                            }
-                        }
-                        if (tempPieces.Count > 2) {
-                            
-                            foreach (GameObject piece in tempPieces) {
-                                piece.GetComponent<Piece>().isExplored = true;
-                            }
-                            allLegalSolutions.Add(new List<GameObject>(tempPieces));
-                            tempPieces.Clear();
-                            continue;
-                        }
-                    tempPieces.Clear();
-                    }
-                    // Shape 1
-                    if (exploringPiece.GetComponent<Piece>().row < 7) {
-                        tempPieces.Add(exploringPiece);
-                        foreach (int[] piece in shapes["threeLineShape1"]) {
-                            probePiece = board.allPieces[i + piece[0], j + piece[1]];
-                            if (exploringPiece.tag == probePiece.tag & probePiece.GetComponent<Piece>().isExplored == false) {
-                                tempPieces.Add(probePiece);
-                            }
-                        }
-                        if (tempPieces.Count > 2) {
-                            
-                            foreach (GameObject piece in tempPieces) {
-                                piece.GetComponent<Piece>().isExplored = true;
-                            }
-                            allLegalSolutions.Add(new List<GameObject>(tempPieces));
-                            tempPieces.Clear();
-                            continue;
-                        }
-                    tempPieces.Clear();
-                    }
-                    
                 }
             }
         }
-    
-    foreach (List<GameObject> solution in allLegalSolutions) {
-        
-        foreach (GameObject pieceGO in solution) {
-            
-        }
-    }
     return allLegalSolutions;
     }
 
@@ -560,11 +236,11 @@ public class MatchsFinder : MonoBehaviour {
         List<GameObject> tempPieces = new List<GameObject>();
         int exploringColumn = exploringPiece.GetComponent<Piece>().column;
         int exploringRow = exploringPiece.GetComponent<Piece>().row;
-
+        GameObject probePiece;
         if (exploringColumn >= minColumn & exploringColumn <= maxColumn & exploringRow >= minRow & exploringRow <= maxRow) {
             tempPieces.Add(exploringPiece);
-            foreach (int[] shape in shapes[shape]) {
-                probePiece = board.allPieces[i + shape[0], j + shape[1]];
+            foreach (int[] shapePoint in shapes[shape]) {
+                probePiece = board.allPieces[exploringColumn + shapePoint[0], exploringRow + shapePoint[1]];
                 if (exploringPiece.tag == probePiece.tag) {
                     tempPieces.Add(probePiece);
                 }

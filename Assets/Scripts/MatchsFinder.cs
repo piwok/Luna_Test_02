@@ -146,16 +146,21 @@ public class MatchsFinder : MonoBehaviour {
         for (int i = 0; i < board.width; i++) {
             for (int j = 0; j < board.height; j++) {
                 exploringPiece = board.allPieces[i, j];
-                for (int k = 0; k < shapeNames.Length; k++) {
-                    tempSolution = checkShapeMatch (exploringPiece, shapeNames[k], shapesBoardLimits[shapeNames[k]]["minColumn"], shapesBoardLimits[shapeNames[k]]["maxColumn"],
-                        shapesBoardLimits[shapeNames[k]]["minRow"], shapesBoardLimits[shapeNames[k]]["maxRow"], shapesBoardLimits[shapeNames[k]]["matchSize"]);
-                    if (tempSolution != null) {
-                        allLegalSolutions.Add(new List<GameObject>(tempSolution));
-                    }
+                if (exploringPiece.GetComponent<Piece>().isExplored == true) {
+                    continue;
+                }
+                else {
+                    for (int k = 0; k < shapeNames.Length; k++) {
+                        tempSolution = checkShapeMatch (exploringPiece, shapeNames[k], shapesBoardLimits[shapeNames[k]]["minColumn"], shapesBoardLimits[shapeNames[k]]["maxColumn"],
+                            shapesBoardLimits[shapeNames[k]]["minRow"], shapesBoardLimits[shapeNames[k]]["maxRow"], shapesBoardLimits[shapeNames[k]]["matchSize"]);
+                        if (tempSolution != null) {
+                            allLegalSolutions.Add(new List<GameObject>(tempSolution));
+                        }
+                    }   
                 }
             }
         }
-    return allLegalSolutions;
+        return allLegalSolutions;
     }
 
 
@@ -241,7 +246,7 @@ public class MatchsFinder : MonoBehaviour {
             tempPieces.Add(exploringPiece);
             foreach (int[] shapePoint in shapes[shape]) {
                 probePiece = board.allPieces[exploringColumn + shapePoint[0], exploringRow + shapePoint[1]];
-                if (exploringPiece.tag == probePiece.tag) {
+                if (exploringPiece.tag == probePiece.tag & probePiece.GetComponent<Piece>().isExplored == false) {
                     tempPieces.Add(probePiece);
                 }
                 else {
@@ -249,6 +254,9 @@ public class MatchsFinder : MonoBehaviour {
                 }
             }
             if (tempPieces.Count == matchSize) {
+                foreach (GameObject piece in tempPieces) {
+                    piece.GetComponent<Piece>().isExplored = true;
+                }
                 return tempPieces;
             }
         }

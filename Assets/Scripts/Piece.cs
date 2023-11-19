@@ -41,14 +41,14 @@ public class Piece : MonoBehaviour
         else if (wrongPosition == true & (Mathf.Abs(targetColumn - transform.position.x) > 0.05f || Mathf.Abs(targetRow - transform.position.y) > 0.05f)) {
             if (Mathf.Abs(targetColumn - transform.position.x) > 0.05f) {
                 tempPosition = new Vector2(targetColumn, transform.position.y);
-                transform.position = Vector2.Lerp(transform.position, tempPosition, 0.05f);
+                transform.position = Vector2.Lerp(transform.position, tempPosition, 25f*Time.deltaTime);
                 if (board.allPieces[column, row] != this.gameObject) {
                     board.allPieces[column, row] = this.gameObject;
                 }
             }
             if (Mathf.Abs(targetRow - transform.position.y) > 0.05f) {
                 tempPosition = new Vector2(transform.position.x, targetRow);
-                transform.position = Vector2.Lerp(transform.position, tempPosition, 0.05f);
+                transform.position = Vector2.Lerp(transform.position, tempPosition, 25f*Time.deltaTime);
                 if (board.allPieces[column, row] != this.gameObject) {
                     board.allPieces[column, row] = this.gameObject;
                 }

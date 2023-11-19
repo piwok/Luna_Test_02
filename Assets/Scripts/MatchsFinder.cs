@@ -19,6 +19,7 @@ public class MatchsFinder : MonoBehaviour {
     //variables for lookingForAllMatches method//
     public List<GameObject> piecesMatched;
     // --------------------------------------- //
+
     // 5 pieces math in FiveLineShape0          5 pieces math in FiveLineShape1
     //    
     //      O X X X X                                       X 
@@ -26,25 +27,25 @@ public class MatchsFinder : MonoBehaviour {
     //                                                      X
     //                                                      X
     //                                                      O
-    // 5 pieces math in FiveTshape0             5 pieces math in FiveTShape1             5 pieces math in FiveTShape2            5 pieces math in FiveTShape 3                                                          
+    // 5 pieces match in FiveTshape0             5 pieces match in FiveTShape1             5 pieces match in FiveTShape2            5 pieces match in FiveTShape 3                                                          
     //    X                                             O X X                                       X                                       X                                       
     //    X X X                                           X                                     O X X                                       X
     //    O                                               X                                         X                                     O X X                               
-    // 5 pieces math in FiveLShape 0            5 pieces math in FiveLShape1            5 pieces math in FiveLShape2            5 pieces math in FiveLShape3
+    // 5 pieces match in FiveLShape 0            5 pieces match in FiveLShape1            5 pieces match in FiveLShape2            5 pieces match in FiveLShape3
     //    X                                               X X X                                   O X X                                      X
     //    X                                               X                                           X                                      X
     //    O X X                                           O                                           X                                  O X X
-    // 4 pieces math in FourLineShape0          4 pieces math in FourLineShape1
+    // 4 pieces match in FourLineShape0          4 pieces match in FourLineShape1
     //    
     //      O X X X                                         X 
     //                                                      X
     //                                                      X
     //                                                      O
-    // 4 pieces math in SquareShape0
+    // 4 pieces match in SquareShape0
     //    
     //      X X
     //      O X
-    // 3 pieces math in ThreeLineShape0         3 pieces math in ThreeLineShape1
+    // 3 pieces match in ThreeLineShape0         3 pieces match in ThreeLineShape1
     //    
     //      O X X                                           X
     //                                                      X                                    

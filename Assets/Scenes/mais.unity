@@ -260,6 +260,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pieces: []
+  piecesMatched: []
 --- !u!1 &1372888947
 GameObject:
   m_ObjectHideFlags: 0
@@ -300,13 +301,12 @@ MonoBehaviour:
   - Yellow piece
   pieces:
   - {fileID: 7810713835290938426, guid: cb09e6e9e321b8b4e9ac22cc5ce52016, type: 3}
-  - {fileID: 7810713835290938426, guid: 83a627eb4bb174144a7399e7caba2c14, type: 3}
-  - {fileID: 7810713835290938426, guid: 1af16a7e7621aa840a64c363979224ea, type: 3}
-  - {fileID: 7810713835290938426, guid: 094c6a2b40c976e4ea0cf080913155c8, type: 3}
+  - {fileID: 7810713835290938426, guid: f4a4476d36d58d94097b4e225a0d930e, type: 3}
+  - {fileID: 7810713835290938426, guid: ba671ba319bb65e448c7c5d363e8318e, type: 3}
+  - {fileID: 7810713835290938426, guid: f717376fc859db846b68fd607e0a55e6, type: 3}
   destroyEffect: {fileID: 2119390489706356576, guid: f2cccf2c4ee7b62489e6604ff1a857a4, type: 3}
   chosenPiece: {fileID: 0}
   secondPiece: {fileID: 0}
-  piecesMatched: []
 --- !u!4 &1372888949
 Transform:
   m_ObjectHideFlags: 0

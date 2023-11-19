@@ -76,7 +76,7 @@ public class MatchsFinder : MonoBehaviour {
         tempPiece1 = new int[2] {1, 0}; tempPiece2 = new int[2] {2, 0}; tempPiece3 = new int[2] {1, -1}; tempPiece4 = new int[2] {1, -2};
         tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3, tempPiece4};
         shapes.Add("fiveTShape1", tempShape);
-        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 6}, {"minRow", 0}, {"maxRow", 6}, {"matchSize", 5}};
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 6}, {"minRow", 2}, {"maxRow", 8}, {"matchSize", 5}};
         shapesBoardLimits.Add("fiveTShape1", new Dictionary<string, int>(boardLimits));
         tempPiece1 = new int[2] {1, 0}; tempPiece2 = new int[2] {2, 0}; tempPiece3 = new int[2] {2, 1}; tempPiece4 = new int[2] {2, -1};
         tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3, tempPiece4};
@@ -144,6 +144,7 @@ public class MatchsFinder : MonoBehaviour {
         List<GameObject> tempSolution = new List<GameObject>();
         GameObject exploringPiece;
         List<GameObject> tempPieces = new List<GameObject>();
+        //looking for matches of size 5//
         for (int i = 0; i < board.width; i++) {
             for (int j = 0; j < board.height; j++) {
                 exploringPiece = board.allPieces[i, j];
@@ -151,7 +152,43 @@ public class MatchsFinder : MonoBehaviour {
                     continue;
                 }
                 else {
-                    for (int k = 0; k < shapeNames.Length; k++) {
+                    for (int k = 0; k <= 9; k++) {
+                        tempSolution = checkShapeMatch (exploringPiece, shapeNames[k], shapesBoardLimits[shapeNames[k]]["minColumn"], shapesBoardLimits[shapeNames[k]]["maxColumn"],
+                            shapesBoardLimits[shapeNames[k]]["minRow"], shapesBoardLimits[shapeNames[k]]["maxRow"], shapesBoardLimits[shapeNames[k]]["matchSize"]);
+                        if (tempSolution != null) {
+                            allLegalSolutions.Add(new List<GameObject>(tempSolution));
+                        }
+                    }   
+                }
+            }
+        }
+        //looking for matches of size 4//
+        for (int i = 0; i < board.width; i++) {
+            for (int j = 0; j < board.height; j++) {
+                exploringPiece = board.allPieces[i, j];
+                if (exploringPiece.GetComponent<Piece>().isExplored == true) {
+                    continue;
+                }
+                else {
+                    for (int k = 10; k <= 12; k++) {
+                        tempSolution = checkShapeMatch (exploringPiece, shapeNames[k], shapesBoardLimits[shapeNames[k]]["minColumn"], shapesBoardLimits[shapeNames[k]]["maxColumn"],
+                            shapesBoardLimits[shapeNames[k]]["minRow"], shapesBoardLimits[shapeNames[k]]["maxRow"], shapesBoardLimits[shapeNames[k]]["matchSize"]);
+                        if (tempSolution != null) {
+                            allLegalSolutions.Add(new List<GameObject>(tempSolution));
+                        }
+                    }   
+                }
+            }
+        }
+        //looking for matches of size 3//
+        for (int i = 0; i < board.width; i++) {
+            for (int j = 0; j < board.height; j++) {
+                exploringPiece = board.allPieces[i, j];
+                if (exploringPiece.GetComponent<Piece>().isExplored == true) {
+                    continue;
+                }
+                else {
+                    for (int k = 13; k <= 14; k++) {
                         tempSolution = checkShapeMatch (exploringPiece, shapeNames[k], shapesBoardLimits[shapeNames[k]]["minColumn"], shapesBoardLimits[shapeNames[k]]["maxColumn"],
                             shapesBoardLimits[shapeNames[k]]["minRow"], shapesBoardLimits[shapeNames[k]]["maxRow"], shapesBoardLimits[shapeNames[k]]["matchSize"]);
                         if (tempSolution != null) {
@@ -246,6 +283,10 @@ public class MatchsFinder : MonoBehaviour {
         if (exploringColumn >= minColumn & exploringColumn <= maxColumn & exploringRow >= minRow & exploringRow <= maxRow) {
             tempPieces.Add(exploringPiece);
             foreach (int[] shapePoint in shapes[shape]) {
+                // Debug.Log(shape);
+                // Debug.Log(exploringPiece);
+                // Debug.Log(exploringColumn);
+                // Debug.Log(exploringRow);
                 probePiece = board.allPieces[exploringColumn + shapePoint[0], exploringRow + shapePoint[1]];
                 if (exploringPiece.tag == probePiece.tag & probePiece.GetComponent<Piece>().isExplored == false) {
                     tempPieces.Add(probePiece);

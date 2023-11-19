@@ -139,7 +139,7 @@ public class Board : MonoBehaviour
                 }
             }
             if (flag == true) {break;}
-            yield return  new WaitForSeconds(0.15f);
+            yield return  new WaitForSeconds(0.05f);
         }
         StartCoroutine(colapseAllColumns());
     }

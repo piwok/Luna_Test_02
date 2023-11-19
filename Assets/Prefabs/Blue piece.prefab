@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3126461496364483704}
-  - component: {fileID: 5461622268164071131}
   - component: {fileID: 2844694022596132023}
   - component: {fileID: 5835591405398334773}
+  - component: {fileID: -8922355876500026625}
   m_Layer: 7
   m_Name: Blue piece
   m_TagString: blue piece
@@ -34,29 +34,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5461622268164071131
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7810713835290938426}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 02c6c639cf506a74885193980a394832, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  currentState: 0
-  column: 0
-  row: 0
-  wrongPosition: 0
-  previousColumn: 0
-  previousRow: 0
-  otherDot: {fileID: 0}
-  type: 
-  swipeResist: 1
-  isExplored: 0
-  isMatched: 0
 --- !u!61 &2844694022596132023
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -93,7 +70,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 0.8787879, y: 0.8787879}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -143,7 +120,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: e5a349affbe64cb4d8e60180e0029fc7, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1d9a067f19f7bea42a1886890dbcd52a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -154,3 +131,24 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &-8922355876500026625
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7810713835290938426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02c6c639cf506a74885193980a394832, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentState: 0
+  column: 0
+  row: 0
+  wrongPosition: 0
+  previousColumn: 0
+  previousRow: 0
+  type: 
+  swipeResist: 1
+  isExplored: 0

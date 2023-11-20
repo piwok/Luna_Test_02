@@ -46,7 +46,7 @@ public class Board : MonoBehaviour
                 // backgroundTile.transform.parent = this.transform;
                 // backgroundTile.name = "(" + i + "," + j + ")";
                 int pieceIndex = Random.Range(0, pieces.Length);
-                while (isAMatchAt(i, j, pieces[pieceIndex])) {
+                while (matchsFinder.isLegalMatchAt(i, j, pieces[pieceIndex])) {
                     pieceIndex = Random.Range(0, pieces.Length);}
                 GameObject piece = Instantiate(pieces[pieceIndex], tempPosition, Quaternion.identity);
                 allPieces[i, j] = piece;
@@ -57,57 +57,7 @@ public class Board : MonoBehaviour
     }
 
     
-    public bool isAMatchAt(int column, int row, GameObject new_piece) {
-        List<GameObject> piecesToExplore = new List<GameObject>();
-        int matchLength = 0;
-        piecesToExplore.Add(new_piece);
-        int exploredColumn;
-        int exploredRow;
-        while (piecesToExplore.Count > 0) {
-            GameObject exploringPiece = piecesToExplore[0];
-            exploringPiece.GetComponent<Piece>().isExplored = true;
-            piecesToExplore.RemoveAt(0);
-            if (matchLength == 0) {
-                exploredColumn = column;
-                exploredRow = row;}
-            else {
-                exploredColumn = exploringPiece.GetComponent<Piece>().column;
-                exploredRow = exploringPiece.GetComponent<Piece>().row;}
-            matchLength += 1;
-            //left piece
-            if (exploredColumn > 0) {
-                if (allPieces[exploredColumn - 1, exploredRow] != null) {
-                    GameObject leftPiece = allPieces[exploredColumn - 1, exploredRow];
-                    if (leftPiece.tag == exploringPiece.tag & leftPiece.GetComponent<Piece>().isExplored == false) {
-                        leftPiece.GetComponent<Piece>().isExplored = true;
-                        piecesToExplore.Add(leftPiece);}}}
-            //right piece
-            if (exploredColumn < width - 1) {
-                if (allPieces[exploredColumn + 1, exploredRow] != null) {
-                    GameObject rightPiece = allPieces[exploredColumn + 1, exploredRow];
-                    if (rightPiece.tag == exploringPiece.tag & rightPiece.GetComponent<Piece>().isExplored == false) {
-                        rightPiece.GetComponent<Piece>().isExplored = true;
-                        piecesToExplore.Add(rightPiece);}}}            
-            //up piece
-            if (exploredRow < height - 1) {
-                if (allPieces[exploredColumn, exploredRow + 1] != null) {
-                    GameObject upPiece = allPieces[exploredColumn, exploredRow + 1];
-                    if (upPiece.tag == exploringPiece.tag & upPiece.GetComponent<Piece>().isExplored == false) {
-                        upPiece.GetComponent<Piece>().isExplored = true;
-                        piecesToExplore.Add(upPiece);}}}
-            //down piece
-            if (exploredRow > 0) {
-                if (allPieces[exploredColumn, exploredRow - 1] != null) {
-                    GameObject downPiece = allPieces[exploredColumn, exploredRow - 1];
-                    if (downPiece.tag == exploringPiece.tag & downPiece.GetComponent<Piece>().isExplored == false) {
-                        downPiece.GetComponent<Piece>().isExplored = true;
-                        piecesToExplore.Add(downPiece);}}}
-        }
-        setAllPiecesUnexplored();
-        if (matchLength > 2) {
-            return true;}
-        return false;        
-    }
+   
 
     public void setAllPiecesUnexplored () {
         for (int i = 0; i < width; i++) {
@@ -118,12 +68,6 @@ public class Board : MonoBehaviour
             pieces[j].GetComponent<Piece>().isExplored = false;}}
 
     private IEnumerator destroyAllMatches (List<List<GameObject>> allSolutions) {
-        // foreach (List<GameObject> solution in allSolutions) {
-        //     foreach (GameObject piece in solution) {
-        //         Debug.Log(piece.tag);
-        //     }
-        // }
-            
         bool flag;
         for (int i = 0; i < 5; i++) {
             flag = true;
@@ -253,7 +197,7 @@ public class Board : MonoBehaviour
 
     public IEnumerator checkMoveCoroutine() { //Revisar esto esta mal
         yield return new WaitForSeconds(0.3f);
-        if (!isAMatchAt(chosenPiece.GetComponent<Piece>().column, chosenPiece.GetComponent<Piece>().row, chosenPiece) & !isAMatchAt(secondPiece.GetComponent<Piece>().column, secondPiece.GetComponent<Piece>().row, secondPiece)) {
+        if (!matchsFinder.isLegalMatchAt(chosenPiece.GetComponent<Piece>().column, chosenPiece.GetComponent<Piece>().row, chosenPiece) & !matchsFinder.isLegalMatchAt(secondPiece.GetComponent<Piece>().column, secondPiece.GetComponent<Piece>().row, secondPiece)) {
             secondPiece.GetComponent<Piece>().column = chosenPiece.GetComponent<Piece>().column;
             secondPiece.GetComponent<Piece>().row = chosenPiece.GetComponent<Piece>().row;
             chosenPiece.GetComponent<Piece>().column = chosenPiece.GetComponent<Piece>().previousColumn;

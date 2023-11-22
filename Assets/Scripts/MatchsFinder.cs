@@ -173,7 +173,7 @@ public class MatchsFinder : MonoBehaviour {
             foreach (int[] shapePoint in shapes[shape]) {
                 probePiece = board.allPieces[exploringColumn + shapePoint[0], exploringRow + shapePoint[1]];
                 if (probePiece == null) {
-                    
+                    Debug.Log("aquiiiiiiii");
                     continue;
                 }
                 if (exploringPiece.tag == probePiece.tag & probePiece.GetComponent<Piece>().isExplored == false) {
@@ -194,18 +194,23 @@ public class MatchsFinder : MonoBehaviour {
     }
 
     public bool isLegalMatchAt(int column, int row, GameObject newPiece) {
+        
         foreach (string currentShape in shapeNames) {
             
+            
             List<GameObject> tempSolution = new List<GameObject>();
+            
             tempSolution = checkShapeMatch (newPiece, column, row, currentShape, shapesBoardLimits[currentShape]["minColumn"],
                 shapesBoardLimits[currentShape]["maxColumn"], shapesBoardLimits[currentShape]["minRow"],
                 shapesBoardLimits[currentShape]["maxRow"], shapesBoardLimits[currentShape]["matchSize"]);
             
             if (tempSolution != null) {
                 
+                board.setAllPiecesUnexplored();
                 return true;
             }
         }
+        board.setAllPiecesUnexplored();
         return false;    
     }
 

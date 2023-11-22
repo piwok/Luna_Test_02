@@ -46,8 +46,12 @@ public class Board : MonoBehaviour
                 // backgroundTile.transform.parent = this.transform;
                 // backgroundTile.name = "(" + i + "," + j + ")";
                 int pieceIndex = Random.Range(0, pieces.Length);
-                while (matchsFinder.isLegalMatchAt(i, j, pieces[pieceIndex])) {
-                    pieceIndex = Random.Range(0, pieces.Length);}
+                bool isAMatch = matchsFinder.isLegalMatchAt(i, j, pieces[pieceIndex]);
+                
+                while (isAMatch) {
+                    
+                    pieceIndex = Random.Range(0, pieces.Length);
+                    isAMatch = matchsFinder.isLegalMatchAt(i, j, pieces[pieceIndex]);}
                 GameObject piece = Instantiate(pieces[pieceIndex], tempPosition, Quaternion.identity);
                 allPieces[i, j] = piece;
                 piece.transform.parent = this.transform;
@@ -195,8 +199,8 @@ public class Board : MonoBehaviour
         StartCoroutine(checkMoveCoroutine());
     }
 
-    public IEnumerator checkMoveCoroutine() { //Revisar esto esta mal
-        yield return new WaitForSeconds(0.3f);
+    public IEnumerator checkMoveCoroutine() {
+        yield return new WaitForSeconds(0.7f);
         if (!matchsFinder.isLegalMatchAt(chosenPiece.GetComponent<Piece>().column, chosenPiece.GetComponent<Piece>().row, chosenPiece) & !matchsFinder.isLegalMatchAt(secondPiece.GetComponent<Piece>().column, secondPiece.GetComponent<Piece>().row, secondPiece)) {
             secondPiece.GetComponent<Piece>().column = chosenPiece.GetComponent<Piece>().column;
             secondPiece.GetComponent<Piece>().row = chosenPiece.GetComponent<Piece>().row;

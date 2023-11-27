@@ -173,7 +173,7 @@ public class MatchsFinder : MonoBehaviour {
             foreach (int[] shapePoint in shapes[shape]) {
                 probePiece = board.allPieces[exploringColumn + shapePoint[0], exploringRow + shapePoint[1]];
                 if (probePiece == null) {
-                    Debug.Log("aquiiiiiiii");
+                    
                     continue;
                 }
                 if (exploringPiece.tag == probePiece.tag & probePiece.GetComponent<Piece>().isExplored == false) {

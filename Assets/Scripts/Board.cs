@@ -201,6 +201,8 @@ public class Board : MonoBehaviour
 
     public IEnumerator checkMoveCoroutine() {
         yield return new WaitForSeconds(0.7f);
+        Debug.Log(chosenPiece);
+        Debug.Log(secondPiece);
         if (!matchsFinder.isLegalMatchAt(chosenPiece.GetComponent<Piece>().column, chosenPiece.GetComponent<Piece>().row, chosenPiece) & !matchsFinder.isLegalMatchAt(secondPiece.GetComponent<Piece>().column, secondPiece.GetComponent<Piece>().row, secondPiece)) {
             secondPiece.GetComponent<Piece>().column = chosenPiece.GetComponent<Piece>().column;
             secondPiece.GetComponent<Piece>().row = chosenPiece.GetComponent<Piece>().row;

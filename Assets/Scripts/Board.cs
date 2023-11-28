@@ -58,6 +58,7 @@ public class Board : MonoBehaviour
                 piece.GetComponent<Piece>().type = pieceTypes[pieceIndex];
                 piece.GetComponent<Piece>().column = i;
                 piece.GetComponent<Piece>().row = j;}}
+        matchsFinder.lookingForAllLegalMatches();
     }
 
     
@@ -75,14 +76,16 @@ public class Board : MonoBehaviour
         bool flag;
         for (int i = 0; i < 5; i++) {
             flag = true;
-            foreach (List<GameObject> solution in allSolutions) {
+            if (allSolutions != null){
+                foreach (List<GameObject> solution in allSolutions) {
                 
-                if ( i < solution.Count) {
-                    if (solution[i] != null) {
-                        flag = false;
-                        Instantiate(destroyEffect, solution[i].transform.position, Quaternion.identity);
-                        allPieces[(int)solution[i].transform.position.x, (int)solution[i].transform.position.y] = null;
-                        Destroy(solution[i]);
+                    if ( i < solution.Count) {
+                        if (solution[i] != null) {
+                            flag = false;
+                            Instantiate(destroyEffect, solution[i].transform.position, Quaternion.identity);
+                            allPieces[(int)solution[i].transform.position.x, (int)solution[i].transform.position.y] = null;
+                            Destroy(solution[i]);
+                        }
                     }
                 }
             }
@@ -145,12 +148,14 @@ public class Board : MonoBehaviour
         refillBoard();
         yield return new WaitForSeconds(0.35f);
         List<List<GameObject>> allSolutions = new List<List<GameObject>>();
-        allSolutions = matchsFinder.lookingForAllLegalMatches();        
-        if (isAMatchOnBoard(allSolutions)) {
+        allSolutions = matchsFinder.lookingForAllLegalMatches();
+        if (allSolutions != null) {        
+            if (isAMatchOnBoard(allSolutions)) {
             
-            StartCoroutine(destroyAllMatches(allSolutions));
-            yield return new WaitForSeconds(0.25f);
+                StartCoroutine(destroyAllMatches(allSolutions));
+                yield return new WaitForSeconds(0.25f);
             
+            }
         }
     }
 
@@ -201,8 +206,7 @@ public class Board : MonoBehaviour
 
     public IEnumerator checkMoveCoroutine() {
         yield return new WaitForSeconds(0.7f);
-        Debug.Log(chosenPiece);
-        Debug.Log(secondPiece);
+        
         if (!matchsFinder.isLegalMatchAt(chosenPiece.GetComponent<Piece>().column, chosenPiece.GetComponent<Piece>().row, chosenPiece) & !matchsFinder.isLegalMatchAt(secondPiece.GetComponent<Piece>().column, secondPiece.GetComponent<Piece>().row, secondPiece)) {
             secondPiece.GetComponent<Piece>().column = chosenPiece.GetComponent<Piece>().column;
             secondPiece.GetComponent<Piece>().row = chosenPiece.GetComponent<Piece>().row;

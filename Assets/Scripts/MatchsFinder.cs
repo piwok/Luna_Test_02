@@ -141,28 +141,115 @@ public class MatchsFinder : MonoBehaviour {
     
     public List<List<GameObject>> lookingForAllLegalMatches () {
         List<List<GameObject>> allLegalSolutions = new List<List<GameObject>>();
+        List<GameObject> allThreeSizeInitialSolutions = new List<GameObject>();
         List<GameObject> tempSolution = new List<GameObject>();
         GameObject exploringPiece;
+        string exploringShape;
+        int exploringColumn;
+        int exploringRow;
+        List<GameObject> horizontalThreeInitial = new List<GameObject>();
+        List<GameObject> verticalThreeInitial = new List<GameObject>();
         List<GameObject> tempPieces = new List<GameObject>();
-        foreach (string currentShape in shapeNames) {
-            for (int i = 0; i < board.width; i++) {
-                for (int j = 0; j < board.height; j++) {
-                    exploringPiece = board.allPieces[i, j];
-                    if (exploringPiece.GetComponent<Piece>().isExplored == true) {
-                        continue;
-                    }
-                    else {
-                        tempSolution = checkShapeMatch (exploringPiece, i, j, currentShape, shapesBoardLimits[currentShape]["minColumn"], shapesBoardLimits[currentShape]["maxColumn"],
-                            shapesBoardLimits[currentShape]["minRow"], shapesBoardLimits[currentShape]["maxRow"], shapesBoardLimits[currentShape]["matchSize"]);
-                        if (tempSolution != null) {
-                            allLegalSolutions.Add(new List<GameObject>(tempSolution));
-                        }
+        //looking for three size horizontal line 
+        for (int i = 0; i < board.width; i++) {
+            for (int j = 0; j < board.height; j++) {
+                exploringPiece = board.allPieces[i, j];
+                
+                if (i < board.width - 2) {
+                    if (board.allPieces[i, j].GetComponent<Piece>().type == board.allPieces[i + 1, j].GetComponent<Piece>().type
+                    & board.allPieces[i + 1, j].GetComponent<Piece>().type == board.allPieces[i + 2, j].GetComponent<Piece>().type) {
+                        allThreeSizeInitialSolutions.Add(board.allPieces[i, j]);
+                        allThreeSizeInitialSolutions.Add(board.allPieces[i + 1, j]);
+                        allThreeSizeInitialSolutions.Add(board.allPieces[i + 2, j]);
                     }
                 }
+
             }
         }
+        //looking for three size vertical line
+        for (int i = 0; i < board.width; i++) {
+            for (int j = 0; j < board.height; j++) {
+                exploringPiece = board.allPieces[i, j];
+                if (j < board.height - 2) {
+                    if (board.allPieces[i, j].GetComponent<Piece>().type == board.allPieces[i, j + 1].GetComponent<Piece>().type
+                    & board.allPieces[i, j + 1].GetComponent<Piece>().type == board.allPieces[i, j + 2].GetComponent<Piece>().type) {
+                        allThreeSizeInitialSolutions.Add(board.allPieces[i, j]);
+                        allThreeSizeInitialSolutions.Add(board.allPieces[i, j + 1]);
+                        allThreeSizeInitialSolutions.Add(board.allPieces[i, j + 2]);
+                    }
+                }
+
+            }
+        }
+        //looking for 5 size shape matchs in the points of allThreeInitialSolutios
+        foreach(GameObject pointToExplore in allThreeSizeInitialSolutions) {
+            exploringPiece = pointToExplore;
+            exploringColumn = exploringPiece.GetComponent<Piece>().column;
+            exploringRow = exploringPiece.GetComponent<Piece>().row;
+            for (int i = 0; i < 12; i++) {
+                exploringShape = shapeNames[i];
+                tempPieces = checkShapeMatch(exploringPiece, exploringColumn, exploringRow, exploringShape,
+                    shapesBoardLimits[exploringShape]["minColumn"], shapesBoardLimits[exploringShape]["maxColumn"],
+                    shapesBoardLimits[exploringShape]["minRow"], shapesBoardLimits[exploringShape]["maxRow"],
+                    shapesBoardLimits[exploringShape]["matchSize"]);
+                if (tempPieces != null) {
+                    allLegalSolutions.Add(new List<GameObject>(tempPieces));
+                }
+            }
+
+        }
+        //looking for 4 size squares shape matchs in the points of allThreeInitialSolutios
+        for (int i = 0; i < board.width; i++) {
+            for (int j = 0; j < board.height; j++) {
+                exploringPiece = board.allPieces[i, j];
+                exploringColumn = exploringPiece.GetComponent<Piece>().column;
+                exploringRow = exploringPiece.GetComponent<Piece>().row;
+                exploringShape = "fourSquareShape0";
+                tempPieces = checkShapeMatch(exploringPiece, exploringColumn, exploringRow, exploringShape,
+                    shapesBoardLimits[exploringShape]["minColumn"], shapesBoardLimits[exploringShape]["maxColumn"],
+                    shapesBoardLimits[exploringShape]["minRow"], shapesBoardLimits[exploringShape]["maxRow"],
+                    shapesBoardLimits[exploringShape]["matchSize"]);
+                if (tempPieces != null) {
+                    allLegalSolutions.Add(new List<GameObject>(tempPieces));
+                } 
+            }
+        }
+        //looking for 3 size shape matchs in the points of allThreeInitialSolutios
+        foreach(GameObject pointToExplore in allThreeSizeInitialSolutions) {
+            exploringPiece = pointToExplore;
+            exploringColumn = exploringPiece.GetComponent<Piece>().column;
+            exploringRow = exploringPiece.GetComponent<Piece>().row;
+            for (int i = 13; i < 15; i++) {
+                exploringShape = shapeNames[i];
+                tempPieces = checkShapeMatch(exploringPiece, exploringColumn, exploringRow, exploringShape,
+                    shapesBoardLimits[exploringShape]["minColumn"], shapesBoardLimits[exploringShape]["maxColumn"],
+                    shapesBoardLimits[exploringShape]["minRow"], shapesBoardLimits[exploringShape]["maxRow"],
+                    shapesBoardLimits[exploringShape]["matchSize"]);
+                if (tempPieces != null) {
+                    allLegalSolutions.Add(new List<GameObject>(tempPieces));
+                }
+            }
+
+        }
+
+
+
+
+        
+            
+        
+        foreach(List<GameObject> solution in allLegalSolutions) {
+            foreach(GameObject pointOfSolution in solution) {
+            Debug.Log(pointOfSolution);
+            Debug.Log(pointOfSolution.GetComponent<Piece>().column);
+            Debug.Log(pointOfSolution.GetComponent<Piece>().row);
+            }
+        }
+        
         return allLegalSolutions;
     }
+    //inside checkShapeMatch is a must to get the minColumn, minRow, etc from the shape string directly, avoid
+    //to pass as parameters minRow, maxRow, etc
     private List<GameObject> checkShapeMatch (GameObject exploringPiece, int column, int row, string shape, int minColumn, int maxColumn, int minRow, int maxRow, int matchSize) {
         List<GameObject> tempPieces = new List<GameObject>();
         int exploringColumn = column;

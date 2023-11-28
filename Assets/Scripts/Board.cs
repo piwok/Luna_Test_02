@@ -16,7 +16,6 @@ public class Board : MonoBehaviour
     private Vector2[] refillStartPoint;
     public string[] pieceTypes;
     public GameObject[] pieces;
-    public GameObject destroyEffect;
     private GameObject[,] allTiles;
     public GameObject[,] allPieces;
     public GameObject chosenPiece;
@@ -39,27 +38,48 @@ public class Board : MonoBehaviour
     }
 
     private void SetUp() {
+        List<List<GameObject>> matchsToEliminate = new List<List<GameObject>>();
+        int column;
+        int row;
+
+        //initial board generation with matches
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 Vector2 tempPosition = new Vector2(i, j);
-                // GameObject backgroundTile = Instantiate(backgroundTilePrefab, tempPosition, Quaternion.identity) as GameObject;
-                // backgroundTile.transform.parent = this.transform;
-                // backgroundTile.name = "(" + i + "," + j + ")";
                 int pieceIndex = Random.Range(0, pieces.Length);
-                bool isAMatch = matchsFinder.isLegalMatchAt(i, j, pieces[pieceIndex]);
-                
-                while (isAMatch) {
-                    
-                    pieceIndex = Random.Range(0, pieces.Length);
-                    isAMatch = matchsFinder.isLegalMatchAt(i, j, pieces[pieceIndex]);}
+                bool isAMatch = matchsFinder.isLegalMatchInBoard();
                 GameObject piece = Instantiate(pieces[pieceIndex], tempPosition, Quaternion.identity);
                 allPieces[i, j] = piece;
                 piece.transform.parent = this.transform;
                 piece.GetComponent<Piece>().type = pieceTypes[pieceIndex];
                 piece.GetComponent<Piece>().column = i;
-                piece.GetComponent<Piece>().row = j;}}
-        matchsFinder.lookingForAllLegalMatches();
+                piece.GetComponent<Piece>().row = j;
+            }
+        }
+        //loop changing colors of pieces in a match until there is not matches
+        matchsToEliminate = matchsFinder.lookingForAllLegalMatches();
+        while(matchsToEliminate.Count > 0) {
+            foreach (List<GameObject> solution in matchsToEliminate) {
+                foreach (GameObject pieceToChange in solution) {
+                    int pieceIndex = Random.Range(0, pieces.Length);
+                    Vector2 tempPosition = new Vector2((int)pieceToChange.transform.position.x, (int)pieceToChange.transform.position.y);
+                    GameObject newPiece = Instantiate(pieces[pieceIndex], tempPosition, Quaternion.identity);
+                    newPiece.transform.parent = this.transform;
+                    newPiece.GetComponent<Piece>().type = pieceTypes[pieceIndex];
+                    newPiece.GetComponent<Piece>().column = pieceToChange.GetComponent<Piece>().column;
+                    newPiece.GetComponent<Piece>().row = pieceToChange.GetComponent<Piece>().row;
+                    allPieces[newPiece.GetComponent<Piece>().column, newPiece.GetComponent<Piece>().row] = newPiece;
+                    Destroy(pieceToChange);
+                }
+            }
+        matchsToEliminate = matchsFinder.lookingForAllLegalMatches();
+
+        }
+
     }
+
+        
+    
 
     
    
@@ -82,9 +102,7 @@ public class Board : MonoBehaviour
                     if ( i < solution.Count) {
                         if (solution[i] != null) {
                             flag = false;
-                            Instantiate(destroyEffect, solution[i].transform.position, Quaternion.identity);
-                            allPieces[(int)solution[i].transform.position.x, (int)solution[i].transform.position.y] = null;
-                            Destroy(solution[i]);
+                            solution[i].GetComponent<Piece>().destroyObject();
                         }
                     }
                 }
@@ -207,7 +225,7 @@ public class Board : MonoBehaviour
     public IEnumerator checkMoveCoroutine() {
         yield return new WaitForSeconds(0.7f);
         
-        if (!matchsFinder.isLegalMatchAt(chosenPiece.GetComponent<Piece>().column, chosenPiece.GetComponent<Piece>().row, chosenPiece) & !matchsFinder.isLegalMatchAt(secondPiece.GetComponent<Piece>().column, secondPiece.GetComponent<Piece>().row, secondPiece)) {
+        if (!matchsFinder.isLegalMatchInBoard()) {
             secondPiece.GetComponent<Piece>().column = chosenPiece.GetComponent<Piece>().column;
             secondPiece.GetComponent<Piece>().row = chosenPiece.GetComponent<Piece>().row;
             chosenPiece.GetComponent<Piece>().column = chosenPiece.GetComponent<Piece>().previousColumn;

@@ -152,3 +152,4 @@ MonoBehaviour:
   type: 
   swipeResist: 1
   isExplored: 0
+  destroyEffect: {fileID: 2119390489706356576, guid: f2cccf2c4ee7b62489e6604ff1a857a4, type: 3}

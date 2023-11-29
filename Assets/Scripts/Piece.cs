@@ -22,6 +22,7 @@ public class Piece : MonoBehaviour
     private float swipeAngle = 0;
     public float swipeResist = 1f;
     public bool isExplored = false;
+    public GameObject destroyEffect;
     void Start() {
       targetColumn = (int) transform.position.x;
       targetRow = (int) transform.position.y;
@@ -29,6 +30,12 @@ public class Piece : MonoBehaviour
       previousColumn = column;
       previousRow = row;
       wrongPosition = false;
+    }
+    public void destroyObject() {
+        Instantiate(destroyEffect, gameObject.transform.position, Quaternion.identity);
+        board.allPieces[gameObject.GetComponent<Piece>().column, gameObject.GetComponent<Piece>().row] = null;
+        Destroy(gameObject);
+        
     }
 
     // Update is called once per frame
@@ -57,9 +64,7 @@ public class Piece : MonoBehaviour
         else if (wrongPosition == true & Mathf.Abs(targetColumn - transform.position.x) < 0.05f & Mathf.Abs(targetRow - transform.position.y) < 0.05f) {
             tempPosition = new Vector2(targetColumn, targetRow);
             transform.position = tempPosition;
-            
             wrongPosition = false;
-            
         }
     }
 

@@ -39,8 +39,7 @@ public class Board : MonoBehaviour
 
     private void SetUp() {
         List<List<GameObject>> matchsToEliminate = new List<List<GameObject>>();
-        int column;
-        int row;
+        
 
         //initial board generation with matches
         for (int i = 0; i < width; i++) {
@@ -75,6 +74,7 @@ public class Board : MonoBehaviour
         matchsToEliminate = matchsFinder.lookingForAllLegalMatches();
 
         }
+        setAllPiecesUnexplored();
 
     }
 
@@ -223,7 +223,7 @@ public class Board : MonoBehaviour
     }
 
     public IEnumerator checkMoveCoroutine() {
-        yield return new WaitForSeconds(0.7f);
+        yield return new WaitForSeconds(0.35f);
         
         if (!matchsFinder.isLegalMatchInBoard()) {
             secondPiece.GetComponent<Piece>().column = chosenPiece.GetComponent<Piece>().column;

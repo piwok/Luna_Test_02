@@ -275,8 +275,9 @@ public class MatchsFinder : MonoBehaviour {
         List<List<GameObject>> allLegalSolutions = new List<List<GameObject>>();
         allLegalSolutions = lookingForAllLegalMatches();        
         if (allLegalSolutions.Count > 0) {
-            return true;
             board.setAllPiecesUnexplored();
+            return true;
+            
         }
         board.setAllPiecesUnexplored();
         return false;   

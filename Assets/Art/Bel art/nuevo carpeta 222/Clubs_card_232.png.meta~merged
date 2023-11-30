@@ -1,12 +1,12 @@
 fileFormatVersion: 2
 <<<<<<< HEAD
-guid: 1f56db87512c35c4f8f52c756bd0c9ab
-=======
-<<<<<<< HEAD:Assets/Art/Bel art/nuevo carpeta 222/Clubs_card_232.png.meta
 guid: ae7c09b8c036a4340b040b4fb736f804
 =======
-guid: 1f56db87512c35c4f8f52c756bd0c9ab
->>>>>>> master:Assets/Art/Bel art/nuevo carpeta 222/Diamond_card_yellow_232.png.meta
+<<<<<<< HEAD:Assets/Art/Bel art/nuevo carpeta 222/Background_blue_test_v2.png.meta
+guid: 93d5cffa63245954888aba50298f0b49
+=======
+guid: ae7c09b8c036a4340b040b4fb736f804
+>>>>>>> master:Assets/Art/Bel art/nuevo carpeta 222/Clubs_card_232.png.meta
 >>>>>>> master
 TextureImporter:
   internalIDToNameTable: []
@@ -56,7 +56,15 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
+<<<<<<< HEAD
   spritePixelsToUnits: 232
+=======
+<<<<<<< HEAD:Assets/Art/Bel art/nuevo carpeta 222/Background_blue_test_v2.png.meta
+  spritePixelsToUnits: 126
+=======
+  spritePixelsToUnits: 232
+>>>>>>> master:Assets/Art/Bel art/nuevo carpeta 222/Clubs_card_232.png.meta
+>>>>>>> master
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1

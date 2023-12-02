@@ -38,7 +38,7 @@ public class Board : MonoBehaviour
     }
 
     private void SetUp() {
-        List<List<GameObject>> matchsToEliminate = new List<List<GameObject>>();
+        List<Solution> matchsToEliminate = new List<Solution>();
         
 
         //initial board generation with matches
@@ -58,8 +58,8 @@ public class Board : MonoBehaviour
         //loop changing colors of pieces in a match until there is not matches
         matchsToEliminate = matchsFinder.lookingForAllLegalMatches();
         while(matchsToEliminate.Count > 0) {
-            foreach (List<GameObject> solution in matchsToEliminate) {
-                foreach (GameObject pieceToChange in solution) {
+            foreach (Solution solution in matchsToEliminate) {
+                foreach (GameObject pieceToChange in solution.getSolutionPieces()) {
                     int pieceIndex = Random.Range(0, pieces.Length);
                     Vector2 tempPosition = new Vector2((int)pieceToChange.transform.position.x, (int)pieceToChange.transform.position.y);
                     GameObject newPiece = Instantiate(pieces[pieceIndex], tempPosition, Quaternion.identity);
@@ -77,13 +77,6 @@ public class Board : MonoBehaviour
         setAllPiecesUnexplored();
 
     }
-
-        
-    
-
-    
-   
-
     public void setAllPiecesUnexplored () {
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
@@ -92,17 +85,23 @@ public class Board : MonoBehaviour
         for (int j = 0; j < pieces.Length; j++) {
             pieces[j].GetComponent<Piece>().isExplored = false;}}
 
-    private IEnumerator destroyAllMatches (List<List<GameObject>> allSolutions) {
+    private IEnumerator destroyAllMatches (List<Solution> allSolutions) {
         bool flag;
+        //tests porpuses
+        foreach (Solution solution in allSolutions) {
+                    Debug.Log(solution.getShape());
+                    Debug.Log(solution.getType());
+                }
         for (int i = 0; i < 5; i++) {
             flag = true;
             if (allSolutions != null){
-                foreach (List<GameObject> solution in allSolutions) {
                 
-                    if ( i < solution.Count) {
-                        if (solution[i] != null) {
+                foreach (Solution solution in allSolutions) {
+                
+                    if ( i < solution.getSolutionPieces().Count) {
+                        if (solution.getSolutionPieces()[i] != null) {
                             flag = false;
-                            solution[i].GetComponent<Piece>().destroyObject();
+                            solution.getSolutionPieces()[i].GetComponent<Piece>().destroyObject();
                         }
                     }
                 }
@@ -135,7 +134,7 @@ public class Board : MonoBehaviour
         StartCoroutine(fillBoardCoroutine());       
     }
 
-    public bool isAMatchOnBoard(List<List<GameObject>> allSolutions) {
+    public bool isAMatchOnBoard(List<Solution> allSolutions) {
         if (allSolutions.Count > 0) {
             return true;
         } else {
@@ -165,7 +164,7 @@ public class Board : MonoBehaviour
     private IEnumerator fillBoardCoroutine() {
         refillBoard();
         yield return new WaitForSeconds(0.35f);
-        List<List<GameObject>> allSolutions = new List<List<GameObject>>();
+        List<Solution> allSolutions = new List<Solution>();
         allSolutions = matchsFinder.lookingForAllLegalMatches();
         if (allSolutions != null) {        
             if (isAMatchOnBoard(allSolutions)) {
@@ -232,8 +231,10 @@ public class Board : MonoBehaviour
             chosenPiece.GetComponent<Piece>().row = chosenPiece.GetComponent<Piece>().previousRow;
         }
         else {
-            
-            
+            secondPiece.GetComponent<Piece>().previousColumn = secondPiece.GetComponent<Piece>().column;
+            secondPiece.GetComponent<Piece>().previousRow = secondPiece.GetComponent<Piece>().row;
+            chosenPiece.GetComponent<Piece>().previousColumn = chosenPiece.GetComponent<Piece>().column;
+            chosenPiece.GetComponent<Piece>().previousRow = chosenPiece.GetComponent<Piece>().row;
             StartCoroutine(destroyAllMatches(matchsFinder.lookingForAllLegalMatches()));
             
         }

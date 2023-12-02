@@ -7,6 +7,7 @@ public class MatchsFinder : MonoBehaviour {
     private List<int[]> pieceTypes;
     public GameObject[] pieces;
     private Board board;
+    private Solution test;
     private string[] shapeNames;
     private IDictionary<string, int[][]> shapes;
     private IDictionary<string, Dictionary<string, int>> shapesBoardLimits;
@@ -139,10 +140,11 @@ public class MatchsFinder : MonoBehaviour {
         shapesBoardLimits.Add("threeLineShape1", new Dictionary<string, int>(boardLimits));
     }
     
-    public List<List<GameObject>> lookingForAllLegalMatches () {
-        List<List<GameObject>> allLegalSolutions = new List<List<GameObject>>();
+    public List<Solution> lookingForAllLegalMatches () {
+        //List<List<GameObject>> allLegalSolutions = new List<List<GameObject>>();
+        List<Solution> allLegalSolutions = new List<Solution>();
         List<GameObject> allThreeSizeInitialSolutions = new List<GameObject>();
-        List<GameObject> tempSolution = new List<GameObject>();
+        Solution tempSolution;
         GameObject exploringPiece;
         string exploringShape;
         int exploringColumn;
@@ -185,8 +187,8 @@ public class MatchsFinder : MonoBehaviour {
             }
         }
         //looking for 5 size shape matchs in the points of allThreeInitialSolutios
-        foreach(GameObject pointToExplore in allThreeSizeInitialSolutions) {
-            exploringPiece = pointToExplore;
+        foreach(GameObject pieceToExplore in allThreeSizeInitialSolutions) {
+            exploringPiece = pieceToExplore;
             exploringColumn = exploringPiece.GetComponent<Piece>().column;
             exploringRow = exploringPiece.GetComponent<Piece>().row;
             for (int i = 0; i < 12; i++) {
@@ -196,7 +198,8 @@ public class MatchsFinder : MonoBehaviour {
                     shapesBoardLimits[exploringShape]["minRow"], shapesBoardLimits[exploringShape]["maxRow"],
                     shapesBoardLimits[exploringShape]["matchSize"]);
                 if (tempPieces != null) {
-                    allLegalSolutions.Add(new List<GameObject>(tempPieces));
+                    tempSolution = new Solution(tempPieces, exploringShape, exploringPiece.GetComponent<Piece>().type);
+                    allLegalSolutions.Add(tempSolution);
                 }
             }
         }
@@ -213,7 +216,8 @@ public class MatchsFinder : MonoBehaviour {
                         shapesBoardLimits[exploringShape]["minRow"], shapesBoardLimits[exploringShape]["maxRow"],
                         shapesBoardLimits[exploringShape]["matchSize"]);
                     if (tempPieces != null) {
-                        allLegalSolutions.Add(new List<GameObject>(tempPieces));
+                        tempSolution = new Solution(tempPieces, exploringShape, exploringPiece.GetComponent<Piece>().type);
+                        allLegalSolutions.Add(tempSolution);
                     }
                 }
                 else {
@@ -233,7 +237,8 @@ public class MatchsFinder : MonoBehaviour {
                     shapesBoardLimits[exploringShape]["minRow"], shapesBoardLimits[exploringShape]["maxRow"],
                     shapesBoardLimits[exploringShape]["matchSize"]);
                 if (tempPieces != null) {
-                    allLegalSolutions.Add(new List<GameObject>(tempPieces));
+                    tempSolution = new Solution(tempPieces, exploringShape, exploringPiece.GetComponent<Piece>().type);
+                    allLegalSolutions.Add(tempSolution);
                 }
             }
 
@@ -272,7 +277,7 @@ public class MatchsFinder : MonoBehaviour {
     }
 
     public bool isLegalMatchInBoard() {
-        List<List<GameObject>> allLegalSolutions = new List<List<GameObject>>();
+        List<Solution> allLegalSolutions = new List<Solution>();
         allLegalSolutions = lookingForAllLegalMatches();        
         if (allLegalSolutions.Count > 0) {
             board.setAllPiecesUnexplored();

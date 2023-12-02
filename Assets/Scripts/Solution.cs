@@ -7,10 +7,14 @@ public class Solution
     private List<GameObject> solutionPieces;
     private string shape;
     private string type;
-    public Solution(List<GameObject> asolutionPieces, string ashape, string atype) {
+    private string color;
+    private int size;
+    public Solution(List<GameObject> asolutionPieces, string ashape, string atype, string acolor) {
         solutionPieces = asolutionPieces;
         shape = ashape;
         type = atype;
+        color = acolor;
+        size = solutionPieces.Count;
 
     }
     //Setters and getters
@@ -23,6 +27,9 @@ public class Solution
     public void setType (string value) {
         type = value;
     }
+    public void setColor (string value) {
+        color = value;
+    }
     public List<GameObject> getSolutionPieces () {
         return solutionPieces;
     }
@@ -31,6 +38,12 @@ public class Solution
     }
     public string getType () {
         return type;
+    }
+    public string getColor () {
+        return color;
+    }
+    public int getSize () {
+        return size;
     }
     
 }

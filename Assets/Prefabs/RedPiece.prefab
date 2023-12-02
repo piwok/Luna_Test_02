@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5835591405398334773}
   - component: {fileID: -8922355876500026625}
   m_Layer: 7
-  m_Name: Red piece
+  m_Name: RedPiece
   m_TagString: red piece
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -149,7 +149,8 @@ MonoBehaviour:
   wrongPosition: 0
   previousColumn: 0
   previousRow: 0
-  type: 
+  type: Regular
+  color: Red
   swipeResist: 1
   isExplored: 0
   destroyEffect: {fileID: 2119390489706356576, guid: f2cccf2c4ee7b62489e6604ff1a857a4, type: 3}

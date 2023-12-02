@@ -12,7 +12,6 @@ public class Board : MonoBehaviour
     public int width;
     public int height;
     private MatchsFinder matchsFinder;
-    public GameObject backgroundTilePrefab;
     private Vector2[] refillStartPoint;
     public string[] pieceTypes;
     public GameObject[] pieces;
@@ -20,6 +19,7 @@ public class Board : MonoBehaviour
     public GameObject[,] allPieces;
     public GameObject chosenPiece;
     public GameObject secondPiece;
+    public GameObject tntPiece;
     
 
     // Start is called before the first frame update
@@ -28,11 +28,6 @@ public class Board : MonoBehaviour
         matchsFinder = FindObjectOfType<MatchsFinder>();
         allTiles = new GameObject[width, height];
         allPieces = new GameObject[width, height];
-        refillStartPoint = new Vector2[4];
-        refillStartPoint[0] = new Vector2(5, -5);
-        refillStartPoint[1] = new Vector2(-5, 5);
-        refillStartPoint[2] = new Vector2(5, 15);
-        refillStartPoint[3] = new Vector2(15, 5);
         SetUp();
         
     }
@@ -50,7 +45,6 @@ public class Board : MonoBehaviour
                 GameObject piece = Instantiate(pieces[pieceIndex], tempPosition, Quaternion.identity);
                 allPieces[i, j] = piece;
                 piece.transform.parent = this.transform;
-                piece.GetComponent<Piece>().type = pieceTypes[pieceIndex];
                 piece.GetComponent<Piece>().column = i;
                 piece.GetComponent<Piece>().row = j;
             }
@@ -64,14 +58,13 @@ public class Board : MonoBehaviour
                     Vector2 tempPosition = new Vector2((int)pieceToChange.transform.position.x, (int)pieceToChange.transform.position.y);
                     GameObject newPiece = Instantiate(pieces[pieceIndex], tempPosition, Quaternion.identity);
                     newPiece.transform.parent = this.transform;
-                    newPiece.GetComponent<Piece>().type = pieceTypes[pieceIndex];
                     newPiece.GetComponent<Piece>().column = pieceToChange.GetComponent<Piece>().column;
                     newPiece.GetComponent<Piece>().row = pieceToChange.GetComponent<Piece>().row;
                     allPieces[newPiece.GetComponent<Piece>().column, newPiece.GetComponent<Piece>().row] = newPiece;
                     Destroy(pieceToChange);
                 }
             }
-        matchsToEliminate = matchsFinder.lookingForAllLegalMatches();
+            matchsToEliminate = matchsFinder.lookingForAllLegalMatches();
 
         }
         setAllPiecesUnexplored();
@@ -82,22 +75,36 @@ public class Board : MonoBehaviour
             for (int j = 0; j < height; j++) {
                 if (allPieces[i, j] != null) {
                 allPieces[i, j].GetComponent<Piece>().isExplored = false;}}}
-        for (int j = 0; j < pieces.Length; j++) {
-            pieces[j].GetComponent<Piece>().isExplored = false;}}
+        }
 
     private IEnumerator destroyAllMatches (List<Solution> allSolutions) {
+        List<GameObject> piecesToCreate = new List<GameObject>();
+        GameObject tempPiece;
         bool flag;
-        //tests porpuses
         foreach (Solution solution in allSolutions) {
-                    Debug.Log(solution.getShape());
-                    Debug.Log(solution.getType());
-                }
+            
+            if (solution.getSize() > 3) {
+                Vector2 tempPosition = new Vector2(solution.getSolutionPieces()[0].GetComponent<Piece>().column, solution.getSolutionPieces()[0].GetComponent<Piece>().row);
+                tempPiece = Instantiate(tntPiece, tempPosition, Quaternion.identity);
+                if (solution.getColor() == "Red") {
+                    tempPiece.GetComponent<SpriteRenderer>().color = Color.red;
+                    tempPiece.GetComponent<Piece>().color = "Red";}
+                if (solution.getColor() == "Blue") {tempPiece.GetComponent<SpriteRenderer>().color = Color.blue;
+                    tempPiece.GetComponent<Piece>().color = "Blue";}
+                if (solution.getColor() == "Yellow") {tempPiece.GetComponent<SpriteRenderer>().color = Color.yellow;
+                    tempPiece.GetComponent<Piece>().color = "Yellow";}
+                if (solution.getColor() == "Green") {tempPiece.GetComponent<SpriteRenderer>().color = Color.green;
+                    tempPiece.GetComponent<Piece>().color = "Green";}
+                tempPiece.GetComponent<Piece>().column = solution.getSolutionPieces()[0].GetComponent<Piece>().column;
+                tempPiece.GetComponent<Piece>().row = solution.getSolutionPieces()[0].GetComponent<Piece>().row;
+                piecesToCreate.Add(tempPiece);
+            }
+        }
         for (int i = 0; i < 5; i++) {
+            
             flag = true;
             if (allSolutions != null){
-                
                 foreach (Solution solution in allSolutions) {
-                
                     if ( i < solution.getSolutionPieces().Count) {
                         if (solution.getSolutionPieces()[i] != null) {
                             flag = false;
@@ -108,6 +115,9 @@ public class Board : MonoBehaviour
             }
             if (flag == true) {break;}
             yield return  new WaitForSeconds(0.05f);
+        }
+        foreach (GameObject newTnt in piecesToCreate) {
+            allPieces[newTnt.GetComponent<Piece>().column, newTnt.GetComponent<Piece>().row] = newTnt;
         }
         StartCoroutine(colapseAllColumns());
     }
@@ -146,12 +156,11 @@ public class Board : MonoBehaviour
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 if (allPieces[i, j] == null) {
-                    Vector2 tempPosition = refillStartPoint[Random.Range(0, 4)];
+                    Vector2 tempPosition = new Vector2(i, 15);
                     int pieceIndex = Random.Range(0, pieces.Length);
                     GameObject piece = Instantiate(pieces[pieceIndex], tempPosition, Quaternion.identity);
                     allPieces[i, j] = piece;
                     piece.transform.parent = this.transform;
-                    piece.GetComponent<Piece>().type = pieceTypes[pieceIndex];
                     piece.GetComponent<Piece>().column = i;
                     piece.GetComponent<Piece>().row = j;
                     piece.GetComponent<Piece>().previousColumn = piece.GetComponent<Piece>().column;
@@ -222,7 +231,7 @@ public class Board : MonoBehaviour
     }
 
     public IEnumerator checkMoveCoroutine() {
-        yield return new WaitForSeconds(0.35f);
+        yield return new WaitForSeconds(0.20f);
         
         if (!matchsFinder.isLegalMatchInBoard()) {
             secondPiece.GetComponent<Piece>().column = chosenPiece.GetComponent<Piece>().column;

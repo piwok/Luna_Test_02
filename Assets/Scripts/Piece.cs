@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static TntPiece;
 
 public enum piecesState {enter, wait, move, falling, destroy};
 
@@ -12,7 +13,9 @@ public class Piece : MonoBehaviour
     public bool wrongPosition;
     public int previousColumn;
     public int previousRow;
+    private int[][] tntTargets = new int[8][];
     public string type;
+    public string color;
     private Board board;
     private Vector2 firstTouchPosition;
     private Vector2 lastTouchPosition;
@@ -30,11 +33,34 @@ public class Piece : MonoBehaviour
       previousColumn = column;
       previousRow = row;
       wrongPosition = false;
+      tntTargets[0] = new int[] {-1, -1}; tntTargets[1] = new int[] {-1, 0}; tntTargets[2] = new int[] {-1, 1};
+      tntTargets[3] = new int[] {0, 1}; tntTargets[4] = new int[] {1, 1}; tntTargets[5] = new int [] {1, 0};
+      tntTargets[6] = new int[] {1, -1}; tntTargets[7] = new int[] {0, -1};
     }
     public void destroyObject() {
-        Instantiate(destroyEffect, gameObject.transform.position, Quaternion.identity);
-        board.allPieces[gameObject.GetComponent<Piece>().column, gameObject.GetComponent<Piece>().row] = null;
-        Destroy(gameObject);
+        
+        GameObject pieceToDestroy = gameObject;
+        if (gameObject.GetComponent<Piece>().type == "SpecialTnt") {
+            //TntPiece.specialPower();
+            Instantiate(destroyEffect, gameObject.transform.position, Quaternion.identity);
+            board.allPieces[gameObject.GetComponent<Piece>().column, gameObject.GetComponent<Piece>().row] = null;
+            //Destroy(gameObject);
+            foreach(int[] target in tntTargets) {
+                if(column + target[0] >= 0 & row + target[1] >= 0 & column + target[0] < 9 & row + target[1] < 9) {
+                    Instantiate(destroyEffect, gameObject.transform.position, Quaternion.identity);
+                    board.allPieces[column + target[0], row + target[1]] = null;
+                    Destroy(pieceToDestroy);
+
+                }
+            }
+            Debug.Log("BOOM");
+
+        }
+        if (gameObject.GetComponent<Piece>().type == "Regular") { 
+            Instantiate(destroyEffect, gameObject.transform.position, Quaternion.identity);
+            board.allPieces[gameObject.GetComponent<Piece>().column, gameObject.GetComponent<Piece>().row] = null;
+            Destroy(gameObject);
+        }
         
     }
 
@@ -82,7 +108,7 @@ public class Piece : MonoBehaviour
         }
     }
 
-    float calculateAngle() {
+    private float calculateAngle() {
         if (Mathf.Abs(lastTouchPosition.y - firstTouchPosition.y) > swipeResist || Mathf.Abs(lastTouchPosition.x - firstTouchPosition.x) > swipeResist) {
             swipeAngle = Mathf.Atan2(lastTouchPosition.y - firstTouchPosition.y, lastTouchPosition.x - firstTouchPosition.x)*180/Mathf.PI;
             return swipeAngle;

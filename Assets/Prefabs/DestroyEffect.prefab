@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1469144987137019986}
   - component: {fileID: 807365679439402968}
   m_Layer: 1
-  m_Name: Destroy effect
+  m_Name: DestroyEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

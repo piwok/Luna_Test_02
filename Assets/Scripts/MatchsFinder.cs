@@ -141,7 +141,6 @@ public class MatchsFinder : MonoBehaviour {
     }
     
     public List<Solution> lookingForAllLegalMatches () {
-        //List<List<GameObject>> allLegalSolutions = new List<List<GameObject>>();
         List<Solution> allLegalSolutions = new List<Solution>();
         List<GameObject> allThreeSizeInitialSolutions = new List<GameObject>();
         Solution tempSolution;
@@ -157,8 +156,8 @@ public class MatchsFinder : MonoBehaviour {
             for (int j = 0; j < board.height; j++) {
                 exploringPiece = board.allPieces[i, j];
                 if (exploringPiece != null & board.allPieces[i + 1, j] != null & board.allPieces[i + 2, j] != null) {
-                    if (board.allPieces[i, j].GetComponent<Piece>().type == board.allPieces[i + 1, j].GetComponent<Piece>().type
-                    & board.allPieces[i + 1, j].GetComponent<Piece>().type == board.allPieces[i + 2, j].GetComponent<Piece>().type) {
+                    if (board.allPieces[i, j].GetComponent<Piece>().color == board.allPieces[i + 1, j].GetComponent<Piece>().color
+                    & board.allPieces[i + 1, j].GetComponent<Piece>().color == board.allPieces[i + 2, j].GetComponent<Piece>().color) {
                         allThreeSizeInitialSolutions.Add(board.allPieces[i, j]);
                         allThreeSizeInitialSolutions.Add(board.allPieces[i + 1, j]);
                         allThreeSizeInitialSolutions.Add(board.allPieces[i + 2, j]);
@@ -174,8 +173,8 @@ public class MatchsFinder : MonoBehaviour {
             for (int j = 0; j < board.height - 2; j++) {
                 exploringPiece = board.allPieces[i, j];
                 if (exploringPiece != null & board.allPieces[i, j + 1] != null & board.allPieces[i, j + 2] != null) {
-                    if (board.allPieces[i, j].GetComponent<Piece>().type == board.allPieces[i, j + 1].GetComponent<Piece>().type
-                    & board.allPieces[i, j + 1].GetComponent<Piece>().type == board.allPieces[i, j + 2].GetComponent<Piece>().type) {
+                    if (board.allPieces[i, j].GetComponent<Piece>().color == board.allPieces[i, j + 1].GetComponent<Piece>().color
+                    & board.allPieces[i, j + 1].GetComponent<Piece>().color == board.allPieces[i, j + 2].GetComponent<Piece>().color) {
                         allThreeSizeInitialSolutions.Add(board.allPieces[i, j]);
                         allThreeSizeInitialSolutions.Add(board.allPieces[i, j + 1]);
                         allThreeSizeInitialSolutions.Add(board.allPieces[i, j + 2]);
@@ -198,7 +197,8 @@ public class MatchsFinder : MonoBehaviour {
                     shapesBoardLimits[exploringShape]["minRow"], shapesBoardLimits[exploringShape]["maxRow"],
                     shapesBoardLimits[exploringShape]["matchSize"]);
                 if (tempPieces != null) {
-                    tempSolution = new Solution(tempPieces, exploringShape, exploringPiece.GetComponent<Piece>().type);
+                    tempSolution = new Solution(tempPieces, exploringShape,
+                    exploringPiece.GetComponent<Piece>().type, exploringPiece.GetComponent<Piece>().color);
                     allLegalSolutions.Add(tempSolution);
                 }
             }
@@ -216,7 +216,8 @@ public class MatchsFinder : MonoBehaviour {
                         shapesBoardLimits[exploringShape]["minRow"], shapesBoardLimits[exploringShape]["maxRow"],
                         shapesBoardLimits[exploringShape]["matchSize"]);
                     if (tempPieces != null) {
-                        tempSolution = new Solution(tempPieces, exploringShape, exploringPiece.GetComponent<Piece>().type);
+                        tempSolution = new Solution(tempPieces, exploringShape,
+                        exploringPiece.GetComponent<Piece>().type, exploringPiece.GetComponent<Piece>().color);
                         allLegalSolutions.Add(tempSolution);
                     }
                 }
@@ -237,7 +238,8 @@ public class MatchsFinder : MonoBehaviour {
                     shapesBoardLimits[exploringShape]["minRow"], shapesBoardLimits[exploringShape]["maxRow"],
                     shapesBoardLimits[exploringShape]["matchSize"]);
                 if (tempPieces != null) {
-                    tempSolution = new Solution(tempPieces, exploringShape, exploringPiece.GetComponent<Piece>().type);
+                    tempSolution = new Solution(tempPieces, exploringShape,
+                    exploringPiece.GetComponent<Piece>().type, exploringPiece.GetComponent<Piece>().color);
                     allLegalSolutions.Add(tempSolution);
                 }
             }
@@ -259,7 +261,7 @@ public class MatchsFinder : MonoBehaviour {
                 if (probePiece == null) {
                     continue;
                 }
-                if (exploringPiece.GetComponent<Piece>().type == probePiece.GetComponent<Piece>().type & probePiece.GetComponent<Piece>().isExplored == false) {
+                if (exploringPiece.GetComponent<Piece>().color == probePiece.GetComponent<Piece>().color & probePiece.GetComponent<Piece>().isExplored == false) {
                     tempPieces.Add(probePiece);
                 }
                 else {

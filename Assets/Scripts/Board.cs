@@ -106,7 +106,7 @@ public class Board : MonoBehaviour
     public void movePieces(Vector2 touchDownPosition, Vector2 touchUpPosition) {
         if(Mathf.Abs(touchUpPosition.x - touchDownPosition.x) > swipeResist || Mathf.Abs(touchUpPosition.y - touchDownPosition.y) > swipeResist ) {
             float swipeAngle = calculateAngle(touchDownPosition, touchUpPosition);
-            if (swipeAngle > -45 & swipeAngle <= 45 & chosenPiece.GetComponent<Piece>().column < width) {
+            if (swipeAngle > -45 & swipeAngle <= 45 & chosenPiece.GetComponent<Piece>().column < width - 1) {
                 //Right swipe
                 if (allPieces[chosenPiece.GetComponent<Piece>().column + 1, chosenPiece.GetComponent<Piece>().row] != null) {
                     secondPiece = allPieces[chosenPiece.GetComponent<Piece>().column +1, chosenPiece.GetComponent<Piece>().row];
@@ -118,7 +118,7 @@ public class Board : MonoBehaviour
                     secondPiece.GetComponent<Piece>().wrongPosition = true;
                 }
             }
-            else if (swipeAngle > 45 & swipeAngle <= 135 & chosenPiece.GetComponent<Piece>().row < height) {
+            else if (swipeAngle > 45 & swipeAngle <= 135 & chosenPiece.GetComponent<Piece>().row < height - 1) {
                 //Up swipe
                 if (allPieces[chosenPiece.GetComponent<Piece>().column, chosenPiece.GetComponent<Piece>().row + 1] != null) {
                     secondPiece = allPieces[chosenPiece.GetComponent<Piece>().column, chosenPiece.GetComponent<Piece>().row + 1];

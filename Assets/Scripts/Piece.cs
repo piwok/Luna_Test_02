@@ -22,6 +22,7 @@ public class Piece : MonoBehaviour
     private Vector2 touchUpPosition;
     public bool isExplored = false;
     public GameObject destroyEffect;
+    public List<int[]> tntTargets;
     
     // Start is called before the first frame update
     void Start()
@@ -31,9 +32,15 @@ public class Piece : MonoBehaviour
         previousColumn = column;
         previousRow = row;
         wrongPosition = false;
-        // tntTargets[0] = new int[] {-1, -1}; tntTargets[1] = new int[] {-1, 0}; tntTargets[2] = new int[] {-1, 1};
-        // tntTargets[3] = new int[] {0, 1}; tntTargets[4] = new int[] {1, 1}; tntTargets[5] = new int [] {1, 0};
-        // tntTargets[6] = new int[] {1, -1}; tntTargets[7] = new int[] {0, -1};
+        tntTargets = new List<int[]>();
+        tntTargets.Add(new int[] {-1, -1}); 
+        tntTargets.Add(new int[] {-1, 0});
+        tntTargets.Add(new int[] {-1, 1});
+        tntTargets.Add(new int[] {0, 1});
+        tntTargets.Add(new int[] {1, 1});
+        tntTargets.Add(new int [] {1, 0});
+        tntTargets.Add(new int[] {1, -1});
+        tntTargets.Add(new int[] {0, -1});
         
     }
 

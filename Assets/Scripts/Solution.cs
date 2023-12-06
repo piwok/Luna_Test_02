@@ -14,7 +14,7 @@ public class Solution
         shape = ashape;
         type = atype;
         color = acolor;
-        size = solutionPieces.Count;
+        size = asolutionPieces.Count;
 
     }
     //Setters and getters

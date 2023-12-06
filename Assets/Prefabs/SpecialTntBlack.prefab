@@ -13,8 +13,8 @@ GameObject:
   - component: {fileID: 5835591405398334773}
   - component: {fileID: -8922355876500026625}
   m_Layer: 7
-  m_Name: GreenPiece
-  m_TagString: green piece
+  m_Name: SpecialTntBlack
+  m_TagString: yellow piece
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -120,7 +120,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: d12f8b28391d5e94fa413004e86218bd, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 3dc6c7b23ae4de3479c420a3ba236936, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -128,7 +128,7 @@ SpriteRenderer:
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!114 &-8922355876500026625
@@ -143,14 +143,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02c6c639cf506a74885193980a394832, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  board: {fileID: 0}
   currentState: 0
   column: 0
   row: 0
-  wrongPosition: 0
+  tempPosition: {x: 0, y: 0}
   previousColumn: 0
   previousRow: 0
-  type: Regular
-  color: Green
-  swipeResist: 1
+  wrongPosition: 0
+  type: SpecialTnt
+  color: Yellow
+  isSpecialPiece: 0
   isExplored: 0
   destroyEffect: {fileID: 2119390489706356576, guid: f2cccf2c4ee7b62489e6604ff1a857a4, type: 3}

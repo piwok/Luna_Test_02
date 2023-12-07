@@ -303,7 +303,7 @@ MonoBehaviour:
   - {fileID: 7810713835290938426, guid: cb09e6e9e321b8b4e9ac22cc5ce52016, type: 3}
   - {fileID: 7810713835290938426, guid: f4a4476d36d58d94097b4e225a0d930e, type: 3}
   - {fileID: 7810713835290938426, guid: ba671ba319bb65e448c7c5d363e8318e, type: 3}
-  - {fileID: 7810713835290938426, guid: f717376fc859db846b68fd607e0a55e6, type: 3}
+  - {fileID: 7810713835290938426, guid: f75879f1adbfcbc46a2df377994d49c3, type: 3}
   destroyEffect: {fileID: 2119390489706356576, guid: f2cccf2c4ee7b62489e6604ff1a857a4, type: 3}
   chosenPiece: {fileID: 0}
   secondPiece: {fileID: 0}

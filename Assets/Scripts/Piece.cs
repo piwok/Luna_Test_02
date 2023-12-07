@@ -33,8 +33,14 @@ public class Piece : MonoBehaviour
         previousRow = row;
         wrongPosition = false;
         tntTargets = new List<int[]>();
+        //one square distance points
         tntTargets.Add(new int[] {-1, -1}); tntTargets.Add(new int[] {-1, 0}); tntTargets.Add(new int[] {-1, 1}); tntTargets.Add(new int[] {0, 1}); tntTargets.Add(new int[] {1, 1});
         tntTargets.Add(new int [] {1, 0}); tntTargets.Add(new int[] {1, -1}); tntTargets.Add(new int[] {0, -1});
+        //two square distancepoints
+        tntTargets.Add(new int[] {-2, -2});tntTargets.Add(new int[] {-2, -1});tntTargets.Add(new int[] {-2, 0});tntTargets.Add(new int[] {-2, 1});tntTargets.Add(new int[] {-2, 2});
+        tntTargets.Add(new int[] {-1, 2});tntTargets.Add(new int[] {0, 2});tntTargets.Add(new int[] {1, 2});tntTargets.Add(new int[] {2, 2});tntTargets.Add(new int[] {2, 1});
+        tntTargets.Add(new int[] {2, 0});tntTargets.Add(new int[] {2, -1});tntTargets.Add(new int[] {2, -2});tntTargets.Add(new int[] {1, -2});tntTargets.Add(new int[] {0, -2});
+        tntTargets.Add(new int[] {-1, -2});
     }
 
     // Update is called once per frame

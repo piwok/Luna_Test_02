@@ -259,8 +259,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82bdaf8c04e271648a06472e3aaafd1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pieces: []
-  piecesMatched: []
 --- !u!1 &1372888947
 GameObject:
   m_ObjectHideFlags: 0
@@ -293,20 +291,19 @@ MonoBehaviour:
   currentState: 0
   width: 9
   height: 9
-  backgroundTilePrefab: {fileID: 0}
-  pieceTypes:
-  - Blue piece
-  - Green piece
-  - Red piece
-  - Yellow piece
   pieces:
   - {fileID: 7810713835290938426, guid: cb09e6e9e321b8b4e9ac22cc5ce52016, type: 3}
   - {fileID: 7810713835290938426, guid: f4a4476d36d58d94097b4e225a0d930e, type: 3}
   - {fileID: 7810713835290938426, guid: ba671ba319bb65e448c7c5d363e8318e, type: 3}
   - {fileID: 7810713835290938426, guid: f717376fc859db846b68fd607e0a55e6, type: 3}
-  destroyEffect: {fileID: 2119390489706356576, guid: f2cccf2c4ee7b62489e6604ff1a857a4, type: 3}
+  - {fileID: 7810713835290938426, guid: 795c8f2ccf27d754fb066cff38bb1e7b, type: 3}
+  - {fileID: 7810713835290938426, guid: c2aa15c5dfa8b1d4a84d0bac4faa3dd9, type: 3}
+  - {fileID: 7810713835290938426, guid: e3d4a33389ef53a47888a921bfb8e2d5, type: 3}
+  - {fileID: 7810713835290938426, guid: 2300a1df2e8ad2f46a893c3d568691a9, type: 3}
   chosenPiece: {fileID: 0}
   secondPiece: {fileID: 0}
+  swipeResist: 1
+  pieceSpeed: 17
 --- !u!4 &1372888949
 Transform:
   m_ObjectHideFlags: 0
@@ -380,7 +377,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: -1
-  m_Sprite: {fileID: 21300000, guid: aa34eb83f0d6d6b4295806387346ab14, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 99445b765df411a47a8374b02a676a88, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

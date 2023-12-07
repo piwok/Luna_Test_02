@@ -160,6 +160,11 @@ public class Board : MonoBehaviour
             StartCoroutine(checkMoveCoroutine());
         }
         else {
+            Debug.Log("waaaa");
+            if (chosenPiece.GetComponent<Piece>().type == "SpecialTnt") {
+                chosenPiece.GetComponent<Piece>().destroyObject();
+                StartCoroutine(colapseAllColumns());
+            }
 
         }
     }

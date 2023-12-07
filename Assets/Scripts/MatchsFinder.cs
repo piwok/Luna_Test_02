@@ -159,7 +159,7 @@ public class MatchsFinder : MonoBehaviour
             exploringPiece = board.allPieces[i, j];
             if (exploringPiece != null & board.allPieces[i + 1, j] != null & board.allPieces[i + 2, j] != null) {
                 if (board.allPieces[i, j].GetComponent<Piece>().color == board.allPieces[i + 1, j].GetComponent<Piece>().color
-                & board.allPieces[i + 1, j].GetComponent<Piece>().color == board.allPieces[i + 2, j].GetComponent<Piece>().color) {
+                && board.allPieces[i + 1, j].GetComponent<Piece>().color == board.allPieces[i + 2, j].GetComponent<Piece>().color) {
                     allThreeSizeInitialSolutions.Add(board.allPieces[i, j]);
                     allThreeSizeInitialSolutions.Add(board.allPieces[i + 1, j]);
                     allThreeSizeInitialSolutions.Add(board.allPieces[i + 2, j]);
@@ -250,7 +250,7 @@ private List<GameObject> checkShapeMatch (GameObject exploringPiece, int column,
     int maxRow = shapesBoardLimits[exploringShape]["maxRow"];
     int matchSize = shapesBoardLimits[exploringShape]["matchSize"];
     GameObject probePiece;
-    if (exploringColumn >= minColumn & exploringColumn <= maxColumn & exploringRow >= minRow & exploringRow <= maxRow) {
+    if (exploringColumn >= minColumn && exploringColumn <= maxColumn && exploringRow >= minRow && exploringRow <= maxRow) {
         tempPieces.Add(exploringPiece);
         foreach (int[] shapePoint in shapes[exploringShape]) {
             probePiece = board.allPieces[exploringColumn + shapePoint[0], exploringRow + shapePoint[1]];

@@ -33,15 +33,8 @@ public class Piece : MonoBehaviour
         previousRow = row;
         wrongPosition = false;
         tntTargets = new List<int[]>();
-        tntTargets.Add(new int[] {-1, -1}); 
-        tntTargets.Add(new int[] {-1, 0});
-        tntTargets.Add(new int[] {-1, 1});
-        tntTargets.Add(new int[] {0, 1});
-        tntTargets.Add(new int[] {1, 1});
-        tntTargets.Add(new int [] {1, 0});
-        tntTargets.Add(new int[] {1, -1});
-        tntTargets.Add(new int[] {0, -1});
-        
+        tntTargets.Add(new int[] {-1, -1}); tntTargets.Add(new int[] {-1, 0}); tntTargets.Add(new int[] {-1, 1}); tntTargets.Add(new int[] {0, 1}); tntTargets.Add(new int[] {1, 1});
+        tntTargets.Add(new int [] {1, 0}); tntTargets.Add(new int[] {1, -1}); tntTargets.Add(new int[] {0, -1});
     }
 
     // Update is called once per frame
@@ -74,7 +67,7 @@ public class Piece : MonoBehaviour
     }
 
     public void destroyObject() 
-    {   
+    {   GameObject pieceToDestroy;
         if (gameObject.GetComponent<Piece>().type == "Regular") { 
             Instantiate(destroyEffect, gameObject.transform.position, Quaternion.identity);
             board.allPieces[gameObject.GetComponent<Piece>().column, gameObject.GetComponent<Piece>().row] = null;
@@ -82,6 +75,14 @@ public class Piece : MonoBehaviour
         }
         else if (gameObject.GetComponent<Piece>().type == "SpecialTnt") { 
             Instantiate(destroyEffect, gameObject.transform.position, Quaternion.identity);
+            foreach (int[] tntTarget in tntTargets) {
+                if (column + tntTarget[0] < board.width && column + tntTarget[0] >= 0 && row + tntTarget[1] < board.height && row + tntTarget[1] >= 0 &&
+                board.allPieces[column + tntTarget[0], row + tntTarget[1]] != null) {
+                    pieceToDestroy = board.allPieces[column + tntTarget[0], row + tntTarget[1]];
+                    board.allPieces[column + tntTarget[0], row + tntTarget[1]] = null;
+                    pieceToDestroy.GetComponent<Piece>().destroyObject();
+                }
+            }
             board.allPieces[gameObject.GetComponent<Piece>().column, gameObject.GetComponent<Piece>().row] = null;
             Destroy(gameObject);
         }

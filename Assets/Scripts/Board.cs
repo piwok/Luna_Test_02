@@ -223,11 +223,6 @@ public class Board : MonoBehaviour
             }
         }
         foreach (SpecialPieceToCreate newSpecialPiece in specialPiecesToCreate) {
-            Debug.Log(newSpecialPiece);
-            Debug.Log(newSpecialPiece.shape);
-            Debug.Log(newSpecialPiece.piecesIndex);
-            Debug.Log(newSpecialPiece.tile.column);
-            Debug.Log(newSpecialPiece.tile.row);
             GameObject newPiece = Instantiate(pieces[newSpecialPiece.piecesIndex], new Vector2(newSpecialPiece.tile.column, newSpecialPiece.tile.row),Quaternion.identity);
             allPieces[newSpecialPiece.tile.column, newSpecialPiece.tile.row] = newPiece; 
             newPiece.GetComponent<Piece>().column = newSpecialPiece.tile.column;

@@ -5,110 +5,110 @@ using UnityEngine;
 public enum piecesState {enter, wait, move, falling, destroy};
 
 public class Piece : MonoBehaviour
-{   [Header ("Board variables")]
+{
+    [Header ("Board variables")]
+    public Board board;
     public piecesState currentState = piecesState.enter;
     public int column;
     public int row;
-    public bool wrongPosition;
+    public Vector2 tempPosition;
     public int previousColumn;
     public int previousRow;
+    public bool wrongPosition;
     public string type;
-    private Board board;
-    private Vector2 firstTouchPosition;
-    private Vector2 lastTouchPosition;
-    private Vector2 tempPosition;
-    private int targetColumn;
-    private int targetRow;
-    private float swipeAngle = 0;
-    public float swipeResist = 1f;
+    public string color;
+    public bool isSpecialPiece = false;
+    private Vector2 touchDownPosition;
+    private Vector2 touchUpPosition;
     public bool isExplored = false;
-    void Start() {
-      targetColumn = (int) transform.position.x;
-      targetRow = (int) transform.position.y;
-      board = FindObjectOfType<Board>();  
-      previousColumn = column;
-      previousRow = row;
-      wrongPosition = false;
+    public GameObject destroyEffect;
+    public List<int[]> tntTargets;
+    
+    // Start is called before the first frame update
+    void Start()
+    {
+        board = FindObjectOfType<Board>();  
+        board = FindObjectOfType<Board>();  
+        previousColumn = column;
+        previousRow = row;
+        wrongPosition = false;
+        tntTargets = new List<int[]>();
+        //one square distance points
+        tntTargets.Add(new int[] {-1, -1}); tntTargets.Add(new int[] {-1, 0}); tntTargets.Add(new int[] {-1, 1}); tntTargets.Add(new int[] {0, 1}); tntTargets.Add(new int[] {1, 1});
+        tntTargets.Add(new int [] {1, 0}); tntTargets.Add(new int[] {1, -1}); tntTargets.Add(new int[] {0, -1});
+        //two square distancepoints
+        tntTargets.Add(new int[] {-2, -2});tntTargets.Add(new int[] {-2, -1});tntTargets.Add(new int[] {-2, 0});tntTargets.Add(new int[] {-2, 1});tntTargets.Add(new int[] {-2, 2});
+        tntTargets.Add(new int[] {-1, 2});tntTargets.Add(new int[] {0, 2});tntTargets.Add(new int[] {1, 2});tntTargets.Add(new int[] {2, 2});tntTargets.Add(new int[] {2, 1});
+        tntTargets.Add(new int[] {2, 0});tntTargets.Add(new int[] {2, -1});tntTargets.Add(new int[] {2, -2});tntTargets.Add(new int[] {1, -2});tntTargets.Add(new int[] {0, -2});
+        tntTargets.Add(new int[] {-1, -2});
     }
 
     // Update is called once per frame
-    void Update() {
-        targetColumn = column;
-        targetRow = row;
-        if (wrongPosition == false & (Mathf.Abs(targetColumn - transform.position.x) > 0.05f || Mathf.Abs(targetRow - transform.position.y) > 0.05f)) {
+    void Update()
+    {   if (wrongPosition == false & (Mathf.Abs(column - transform.position.x) > 0.05f || Mathf.Abs(row - transform.position.y) > 0.05f)) {
             wrongPosition = true;
         }
-        else if (wrongPosition == true & (Mathf.Abs(targetColumn - transform.position.x) > 0.05f || Mathf.Abs(targetRow - transform.position.y) > 0.05f)) {
-            if (Mathf.Abs(targetColumn - transform.position.x) > 0.05f) {
-                tempPosition = new Vector2(targetColumn, transform.position.y);
-                transform.position = Vector2.Lerp(transform.position, tempPosition, 22.0f*Time.deltaTime);
+        else if (wrongPosition == true & (Mathf.Abs(column - transform.position.x) > 0.05f || Mathf.Abs(row - transform.position.y) > 0.05f)) {
+            if (Mathf.Abs(column - transform.position.x) > 0.05f) {
+                tempPosition = new Vector2(column, transform.position.y);
+                transform.position = Vector2.Lerp(transform.position, tempPosition, board.pieceSpeed*Time.deltaTime);
                 if (board.allPieces[column, row] != this.gameObject) {
                     board.allPieces[column, row] = this.gameObject;
                 }
             }
-            if (Mathf.Abs(targetRow - transform.position.y) > 0.05f) {
-                tempPosition = new Vector2(transform.position.x, targetRow);
-                transform.position = Vector2.Lerp(transform.position, tempPosition, 22.0f*Time.deltaTime);
+            if (Mathf.Abs(row - transform.position.y) > 0.05f) {
+                tempPosition = new Vector2(transform.position.x, row);
+                transform.position = Vector2.Lerp(transform.position, tempPosition, board.pieceSpeed*Time.deltaTime);
                 if (board.allPieces[column, row] != this.gameObject) {
                     board.allPieces[column, row] = this.gameObject;
                 }
             }
         }
-        else if (wrongPosition == true & Mathf.Abs(targetColumn - transform.position.x) < 0.05f & Mathf.Abs(targetRow - transform.position.y) < 0.05f) {
-            tempPosition = new Vector2(targetColumn, targetRow);
+        else if (wrongPosition == true & Mathf.Abs(column - transform.position.x) < 0.05f & Mathf.Abs(row - transform.position.y) < 0.05f) {
+            tempPosition = new Vector2(column, row);
             transform.position = tempPosition;
-            
             wrongPosition = false;
-            
         }
+        
+    }
+
+    public void destroyObject() 
+    {   GameObject pieceToDestroy;
+        if (gameObject.GetComponent<Piece>().type == "Regular") { 
+            Instantiate(destroyEffect, gameObject.transform.position, Quaternion.identity);
+            board.allPieces[gameObject.GetComponent<Piece>().column, gameObject.GetComponent<Piece>().row] = null;
+            Destroy(gameObject);
+        }
+        else if (gameObject.GetComponent<Piece>().type == "SpecialTnt") { 
+            Instantiate(destroyEffect, gameObject.transform.position, Quaternion.identity);
+            foreach (int[] tntTarget in tntTargets) {
+                if (column + tntTarget[0] < board.width && column + tntTarget[0] >= 0 && row + tntTarget[1] < board.height && row + tntTarget[1] >= 0 &&
+                board.allPieces[column + tntTarget[0], row + tntTarget[1]] != null) {
+                    pieceToDestroy = board.allPieces[column + tntTarget[0], row + tntTarget[1]];
+                    board.allPieces[column + tntTarget[0], row + tntTarget[1]] = null;
+                    pieceToDestroy.GetComponent<Piece>().destroyObject();
+                }
+            }
+            board.allPieces[gameObject.GetComponent<Piece>().column, gameObject.GetComponent<Piece>().row] = null;
+            Destroy(gameObject);
+        }
+        
+    
+
     }
 
     private void OnMouseDown()
     {   if (board.currentState == boardStates.gameInputAllowed) {
-            firstTouchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            board.chosenPiece = this.gameObject;
+            touchDownPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            board.chosenPiece = gameObject;
         }   
     }
 
     private void OnMouseUp()
     {   if (board.currentState == boardStates.gameInputAllowed) {
-            lastTouchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            board.movePieces(calculateAngle());
+            touchUpPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            board.GetComponent<Board>().movePieces(touchDownPosition, touchUpPosition);
         }
     }
-
-    float calculateAngle() {
-        if (Mathf.Abs(lastTouchPosition.y - firstTouchPosition.y) > swipeResist || Mathf.Abs(lastTouchPosition.x - firstTouchPosition.x) > swipeResist) {
-            swipeAngle = Mathf.Atan2(lastTouchPosition.y - firstTouchPosition.y, lastTouchPosition.x - firstTouchPosition.x)*180/Mathf.PI;
-            return swipeAngle;
-        }
-        else {
-            return 0;
-        }
-    }
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
+

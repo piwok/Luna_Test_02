@@ -9,6 +9,7 @@ TagManager:
   - yellow piece
   - green piece
   - match finder
+  - tnt piece
   layers:
   - Default
   - TransparentFX

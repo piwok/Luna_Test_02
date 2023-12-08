@@ -2,10 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MatchsFinder : MonoBehaviour {
-
-    private List<int[]> pieceTypes;
-    public GameObject[] pieces;
+public class MatchsFinder : MonoBehaviour
+{   
     private Board board;
     private string[] shapeNames;
     private IDictionary<string, int[][]> shapes;
@@ -16,10 +14,7 @@ public class MatchsFinder : MonoBehaviour {
     private int[] tempPiece3;
     private int[] tempPiece4;
     private int[][] tempShape;
-    //variables for lookingForAllMatches method//
-    public List<GameObject> piecesMatched;
-    // --------------------------------------- //
-
+     // --------------------------------------- //
     // 5 pieces math in FiveLineShape0          5 pieces math in FiveLineShape1
     //    
     //      O X X X X                                       X 
@@ -50,8 +45,9 @@ public class MatchsFinder : MonoBehaviour {
     //      O X X                                           X
     //                                                      X                                    
     //                                                      O
-    void Start() {
-        board = FindObjectOfType<Board>();
+    // Start is called before the first frame update
+    void Start()
+    {   board = FindObjectOfType<Board>();
         shapes = new Dictionary<string, int[][]>();
         shapeNames = new string[15] {"fiveLineShape0", "fiveLineShape1", "fiveTShape0", "fiveTShape1", "fiveTShape2", "fiveTShape3",
         "fiveLShape0", "fiveLShape1", "fiveLShape2", "fiveLShape3", "fourLineShape0", "fourLineShape1", "fourSquareShape0", "threeLineShape0", "threeLineShape1"};
@@ -137,172 +133,147 @@ public class MatchsFinder : MonoBehaviour {
         shapes.Add("threeLineShape1", tempShape);
         boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", 8}, {"minRow", 0}, {"maxRow", 6}, {"matchSize", 3}};
         shapesBoardLimits.Add("threeLineShape1", new Dictionary<string, int>(boardLimits));
-    }
-    
-    public List<List<GameObject>> lookingForAllLegalMatches () {
-        List<List<GameObject>> allLegalSolutions = new List<List<GameObject>>();
-        List<GameObject> tempSolution = new List<GameObject>();
-        GameObject exploringPiece;
-        List<GameObject> tempPieces = new List<GameObject>();
-        //looking for matches of size 5//
-        for (int i = 0; i < board.width; i++) {
-            for (int j = 0; j < board.height; j++) {
-                exploringPiece = board.allPieces[i, j];
-                if (exploringPiece.GetComponent<Piece>().isExplored == true) {
-                    continue;
-                }
-                else {
-                    for (int k = 0; k <= 9; k++) {
-                        tempSolution = checkShapeMatch (exploringPiece, shapeNames[k], shapesBoardLimits[shapeNames[k]]["minColumn"], shapesBoardLimits[shapeNames[k]]["maxColumn"],
-                            shapesBoardLimits[shapeNames[k]]["minRow"], shapesBoardLimits[shapeNames[k]]["maxRow"], shapesBoardLimits[shapeNames[k]]["matchSize"]);
-                        if (tempSolution != null) {
-                            allLegalSolutions.Add(new List<GameObject>(tempSolution));
-                        }
-                    }   
-                }
-            }
-        }
-        //looking for matches of size 4//
-        for (int i = 0; i < board.width; i++) {
-            for (int j = 0; j < board.height; j++) {
-                exploringPiece = board.allPieces[i, j];
-                if (exploringPiece.GetComponent<Piece>().isExplored == true) {
-                    continue;
-                }
-                else {
-                    for (int k = 10; k <= 12; k++) {
-                        tempSolution = checkShapeMatch (exploringPiece, shapeNames[k], shapesBoardLimits[shapeNames[k]]["minColumn"], shapesBoardLimits[shapeNames[k]]["maxColumn"],
-                            shapesBoardLimits[shapeNames[k]]["minRow"], shapesBoardLimits[shapeNames[k]]["maxRow"], shapesBoardLimits[shapeNames[k]]["matchSize"]);
-                        if (tempSolution != null) {
-                            allLegalSolutions.Add(new List<GameObject>(tempSolution));
-                        }
-                    }   
-                }
-            }
-        }
-        //looking for matches of size 3//
-        for (int i = 0; i < board.width; i++) {
-            for (int j = 0; j < board.height; j++) {
-                exploringPiece = board.allPieces[i, j];
-                if (exploringPiece.GetComponent<Piece>().isExplored == true) {
-                    continue;
-                }
-                else {
-                    for (int k = 13; k <= 14; k++) {
-                        tempSolution = checkShapeMatch (exploringPiece, shapeNames[k], shapesBoardLimits[shapeNames[k]]["minColumn"], shapesBoardLimits[shapeNames[k]]["maxColumn"],
-                            shapesBoardLimits[shapeNames[k]]["minRow"], shapesBoardLimits[shapeNames[k]]["maxRow"], shapesBoardLimits[shapeNames[k]]["matchSize"]);
-                        if (tempSolution != null) {
-                            allLegalSolutions.Add(new List<GameObject>(tempSolution));
-                        }
-                    }   
-                }
-            }
-        }
-        return allLegalSolutions;
-    }
-
-
-
-    public List<List<GameObject>> lookingForAllMatches() {
-        List<GameObject> piecesToExplore = new List<GameObject>();
-        //List<GameObject> piecesMatched = new List<GameObject>();
-        List<List<GameObject>> allSolutions = new List<List<GameObject>>();
-        GameObject lookingPiece;
-        GameObject leftPiece;
-        GameObject rightPiece;
-        GameObject upPiece;
-        GameObject downPiece;
-        int exploredColumn;
-        int exploredRow;
-        for (int i = 0; i < board.width; i++) {
-            for (int j = 0; j < board.height; j++) {
-                if (board.allPieces[i, j] != null) {
-                    if (board.allPieces[i,j].GetComponent<Piece>().isExplored == true) {}
-                    else {
-                        piecesToExplore.Add(board.allPieces[i,j]);
-                        while (piecesToExplore.Count > 0) {
-                            lookingPiece = piecesToExplore[0];
-                            exploredColumn = lookingPiece.GetComponent<Piece>().column;
-                            exploredRow = lookingPiece.GetComponent<Piece>().row;
-                            piecesToExplore.RemoveAt(0);
-                            //left piece
-                            if (exploredColumn > 0) {
-                                if (board.allPieces[exploredColumn - 1, exploredRow] != null) {
-                                    leftPiece = board.allPieces[exploredColumn - 1, exploredRow];
-                                    if (leftPiece.GetComponent<Piece>().isExplored == false && lookingPiece.tag == leftPiece.tag) {
-                                        piecesToExplore.Add(leftPiece);
-                                        piecesMatched.Add(leftPiece);
-                                        leftPiece.GetComponent<Piece>().isExplored = true;}}}
-                            //right piece
-                            if (exploredColumn < board.width - 1) {
-                                if (board.allPieces[exploredColumn + 1, exploredRow] != null) {
-                                    rightPiece = board.allPieces[exploredColumn + 1, exploredRow];
-                                    if (rightPiece.GetComponent<Piece>().isExplored == false && lookingPiece.tag == rightPiece.tag) {
-                                        piecesToExplore.Add(rightPiece);
-                                        piecesMatched.Add(rightPiece);
-                                        rightPiece.GetComponent<Piece>().isExplored = true;}}}
-                            //up piece
-                            if (exploredRow < board.height - 1) {
-                                if (board.allPieces[exploredColumn, exploredRow + 1] != null) {
-                                    upPiece = board.allPieces[exploredColumn, exploredRow + 1];
-                                    if (upPiece.GetComponent<Piece>().isExplored == false && lookingPiece.tag == upPiece.tag) {
-                                        piecesToExplore.Add(upPiece);
-                                        piecesMatched.Add(upPiece);
-                                        upPiece.GetComponent<Piece>().isExplored = true;}}}
-                            //down_piece
-                            if (exploredRow > 0) {
-                                if (board.allPieces[exploredColumn, exploredRow - 1] != null) {
-                                    downPiece = board.allPieces[exploredColumn, exploredRow - 1];
-                                    if (downPiece.GetComponent<Piece>().isExplored == false && lookingPiece.tag == downPiece.tag) {
-                                        piecesToExplore.Add(downPiece);
-                                        piecesMatched.Add(downPiece);
-                                        downPiece.GetComponent<Piece>().isExplored = true;}}}
-                        }
-                        if (piecesMatched.Count >= 3) {
-                            
-                            allSolutions.Add(new List<GameObject>(piecesMatched));
-
-                            
-                        }
-                        piecesMatched.Clear();
-                    }
-                }
-            }
-        }
-        board.setAllPiecesUnexplored();
         
-        return allSolutions;
     }
 
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
 
-    private List<GameObject> checkShapeMatch (GameObject exploringPiece, string shape, int minColumn, int maxColumn, int minRow, int maxRow, int matchSize) {
-        List<GameObject> tempPieces = new List<GameObject>();
-        int exploringColumn = exploringPiece.GetComponent<Piece>().column;
-        int exploringRow = exploringPiece.GetComponent<Piece>().row;
-        GameObject probePiece;
-        if (exploringColumn >= minColumn & exploringColumn <= maxColumn & exploringRow >= minRow & exploringRow <= maxRow) {
-            tempPieces.Add(exploringPiece);
-            foreach (int[] shapePoint in shapes[shape]) {
-                // Debug.Log(shape);
-                // Debug.Log(exploringPiece);
-                // Debug.Log(exploringColumn);
-                // Debug.Log(exploringRow);
-                probePiece = board.allPieces[exploringColumn + shapePoint[0], exploringRow + shapePoint[1]];
-                if (exploringPiece.tag == probePiece.tag & probePiece.GetComponent<Piece>().isExplored == false) {
-                    tempPieces.Add(probePiece);
-                }
-                else {
-                    break;
+    public List<Solution> lookingForAllLegalMatches () {
+    List<Solution> allLegalSolutions = new List<Solution>();
+    List<GameObject> allThreeSizeInitialSolutions = new List<GameObject>();
+    Solution tempSolution;
+    GameObject exploringPiece;
+    string exploringShape;
+    int exploringColumn;
+    int exploringRow;
+    List<GameObject> horizontalThreeInitial = new List<GameObject>();
+    List<GameObject> verticalThreeInitial = new List<GameObject>();
+    List<GameObject> tempPieces = new List<GameObject>();
+    //looking for three size horizontal line 
+    for (int i = 0; i < board.width - 2; i++) {
+        for (int j = 0; j < board.height; j++) {
+            exploringPiece = board.allPieces[i, j];
+            if (exploringPiece != null & board.allPieces[i + 1, j] != null & board.allPieces[i + 2, j] != null) {
+                if (board.allPieces[i, j].GetComponent<Piece>().color == board.allPieces[i + 1, j].GetComponent<Piece>().color
+                && board.allPieces[i + 1, j].GetComponent<Piece>().color == board.allPieces[i + 2, j].GetComponent<Piece>().color) {
+                    allThreeSizeInitialSolutions.Add(board.allPieces[i, j]);
+                    allThreeSizeInitialSolutions.Add(board.allPieces[i + 1, j]);
+                    allThreeSizeInitialSolutions.Add(board.allPieces[i + 2, j]);
                 }
             }
-            if (tempPieces.Count == matchSize) {
-                foreach (GameObject piece in tempPieces) {
-                    piece.GetComponent<Piece>().isExplored = true;
-                }
-                return tempPieces;
+            else {
+                continue;
             }
         }
-        return null;
     }
+    //looking for three size vertical line
+    for (int i = 0; i < board.width; i++) {
+        for (int j = 0; j < board.height - 2; j++) {
+            exploringPiece = board.allPieces[i, j];
+            if (exploringPiece != null & board.allPieces[i, j + 1] != null & board.allPieces[i, j + 2] != null) {
+                if (board.allPieces[i, j].GetComponent<Piece>().color == board.allPieces[i, j + 1].GetComponent<Piece>().color
+                & board.allPieces[i, j + 1].GetComponent<Piece>().color == board.allPieces[i, j + 2].GetComponent<Piece>().color) {
+                    allThreeSizeInitialSolutions.Add(board.allPieces[i, j]);
+                    allThreeSizeInitialSolutions.Add(board.allPieces[i, j + 1]);
+                    allThreeSizeInitialSolutions.Add(board.allPieces[i, j + 2]);
+                }
+                else {
+                    continue;
+                }
+            }
+        }
+    }
+    //looking for 5 size shape matchs in the points of allThreeInitialSolutios
+    foreach(GameObject pieceToExplore in allThreeSizeInitialSolutions) {
+        exploringPiece = pieceToExplore;
+        exploringColumn = exploringPiece.GetComponent<Piece>().column;
+        exploringRow = exploringPiece.GetComponent<Piece>().row;
+        for (int i = 0; i < 12; i++) {
+            exploringShape = shapeNames[i];
+            tempPieces = checkShapeMatch(exploringPiece, exploringColumn, exploringRow, exploringShape);
+            if (tempPieces != null) {
+                tempSolution = new Solution(tempPieces, exploringShape,
+                exploringPiece.GetComponent<Piece>().type, exploringPiece.GetComponent<Piece>().color);
+                allLegalSolutions.Add(tempSolution);
+            }
+        }
+    }
+    //looking for 4 size squares shape matchs in all points
+    for (int i = 0; i < board.width; i++) {
+        for (int j = 0; j < board.height; j++) {
+            exploringPiece = board.allPieces[i, j];
+            if (exploringPiece != null) { 
+                exploringColumn = exploringPiece.GetComponent<Piece>().column;
+                exploringRow = exploringPiece.GetComponent<Piece>().row;
+                exploringShape = "fourSquareShape0";
+                tempPieces = checkShapeMatch(exploringPiece, exploringColumn, exploringRow, exploringShape);
+                if (tempPieces != null) {
+                    tempSolution = new Solution(tempPieces, exploringShape,
+                    exploringPiece.GetComponent<Piece>().type, exploringPiece.GetComponent<Piece>().color);
+                    allLegalSolutions.Add(tempSolution);
+                }
+            }
+            else {
+                continue;
+            } 
+        }
+    }
+    //looking for 3 size shape matchs in the points of allThreeInitialSolutios
+    foreach(GameObject pointToExplore in allThreeSizeInitialSolutions) {
+        exploringPiece = pointToExplore;
+        exploringColumn = exploringPiece.GetComponent<Piece>().column;
+        exploringRow = exploringPiece.GetComponent<Piece>().row;
+        for (int i = 13; i < 15; i++) {
+            exploringShape = shapeNames[i];
+            tempPieces = checkShapeMatch(exploringPiece, exploringColumn, exploringRow, exploringShape);
+            if (tempPieces != null) {
+                tempSolution = new Solution(tempPieces, exploringShape,
+                exploringPiece.GetComponent<Piece>().type, exploringPiece.GetComponent<Piece>().color);
+                allLegalSolutions.Add(tempSolution);
+            }
+        }
+    }
+    board.setAllPiecesUnexplored();
+    return allLegalSolutions;
+}
+private List<GameObject> checkShapeMatch (GameObject exploringPiece, int column, int row, string exploringShape) {
+    List<GameObject> tempPieces = new List<GameObject>();
+    int exploringColumn = column;
+    int exploringRow = row;
+    int minColumn = shapesBoardLimits[exploringShape]["minColumn"];
+    int maxColumn = shapesBoardLimits[exploringShape]["maxColumn"];
+    int minRow = shapesBoardLimits[exploringShape]["minRow"];
+    int maxRow = shapesBoardLimits[exploringShape]["maxRow"];
+    int matchSize = shapesBoardLimits[exploringShape]["matchSize"];
+    GameObject probePiece;
+    if (exploringColumn >= minColumn && exploringColumn <= maxColumn && exploringRow >= minRow && exploringRow <= maxRow) {
+        tempPieces.Add(exploringPiece);
+        foreach (int[] shapePoint in shapes[exploringShape]) {
+            probePiece = board.allPieces[exploringColumn + shapePoint[0], exploringRow + shapePoint[1]];
+            if (probePiece == null) {
+                continue;
+            }
+            if (exploringPiece.GetComponent<Piece>().color == probePiece.GetComponent<Piece>().color & probePiece.GetComponent<Piece>().isExplored == false) {
+                tempPieces.Add(probePiece);
+            }
+            else {
+                break;
+            }
+        }
+        if (tempPieces.Count == matchSize) {
+            foreach (GameObject piece in tempPieces) {
+                piece.GetComponent<Piece>().isExplored = true;
+            }
+            return tempPieces;
+        }
+    }
+    return null;
 }
 
+
+
+}

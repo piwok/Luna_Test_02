@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Art/Bel art/orange circle.png.meta
 guid: 1218d3acec227a145b6201187a78fef1
+========
+guid: b5093546ec4252d4a85da66a088a62a9
+>>>>>>>> dce597bdb014742e62f068b4770fa0d733aaf8ea:Assets/Art/Bel art/231206/TNT_black_new_232.png.meta
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -48,7 +52,11 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
+<<<<<<<< HEAD:Assets/Art/Bel art/orange circle.png.meta
   spritePixelsToUnits: 100
+========
+  spritePixelsToUnits: 232
+>>>>>>>> dce597bdb014742e62f068b4770fa0d733aaf8ea:Assets/Art/Bel art/231206/TNT_black_new_232.png.meta
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1

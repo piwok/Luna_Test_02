@@ -74,7 +74,7 @@ public class Piece : MonoBehaviour
 
     public void destroyObject() 
     {   GameObject pieceToDestroy;
-        if (gameObject.GetComponent<Piece>().type == "Regular") { 
+        if (gameObject.GetComponent<Piece>().type == "Regular" || gameObject.GetComponent<Piece>().type == "SpecialDove" ) { 
             Instantiate(destroyEffect, gameObject.transform.position, Quaternion.identity);
             board.allPieces[gameObject.GetComponent<Piece>().column, gameObject.GetComponent<Piece>().row] = null;
             Destroy(gameObject);
@@ -92,6 +92,57 @@ public class Piece : MonoBehaviour
             board.allPieces[gameObject.GetComponent<Piece>().column, gameObject.GetComponent<Piece>().row] = null;
             Destroy(gameObject);
         }
+        else if (gameObject.GetComponent<Piece>().type == "SpecialVerticalRocket") { 
+            Instantiate(destroyEffect, gameObject.transform.position, Quaternion.identity);
+            int destroyedColumn = gameObject.GetComponent<Piece>().column;
+            for (int i = 0; i < board.height; i++) {
+                if (board.allPieces[destroyedColumn, i] != null) {
+                    pieceToDestroy = board.allPieces[destroyedColumn, i];
+                    board.allPieces[destroyedColumn, i] = null;
+                    pieceToDestroy.GetComponent<Piece>().destroyObject();
+                }
+            }
+            board.allPieces[gameObject.GetComponent<Piece>().column, gameObject.GetComponent<Piece>().row] = null;
+            Destroy(gameObject);
+        }
+        else if (gameObject.GetComponent<Piece>().type == "SpecialHorizontalRocket") { 
+            Instantiate(destroyEffect, gameObject.transform.position, Quaternion.identity);
+            int destroyedRow = gameObject.GetComponent<Piece>().row;
+            for (int i = 0; i < board.width; i++) {
+                if (board.allPieces[i, destroyedRow] != null) {
+                    pieceToDestroy = board.allPieces[i, destroyedRow];
+                    board.allPieces[i, destroyedRow] = null;
+                    pieceToDestroy.GetComponent<Piece>().destroyObject();
+                }
+            }
+            
+            board.allPieces[gameObject.GetComponent<Piece>().column, gameObject.GetComponent<Piece>().row] = null;
+            Destroy(gameObject);
+        }
+        else if (gameObject.GetComponent<Piece>().type == "SpecialColorBomb") { 
+            Instantiate(destroyEffect, gameObject.transform.position, Quaternion.identity);
+            string[] colors = new string[4] {"Red", "Yellow", "Green", "Black"};
+            string colorToDestroy = colors[Random.Range(0, 4)];
+            Debug.Log(colorToDestroy);
+            List<GameObject> piecesToDestroy = new List<GameObject>();
+            for (int i = 0; i < board.width; i++) {
+                for (int j = 0; j < board.height; j++) {
+                    if (board.allPieces[i, j] != null && board.allPieces[i, j].GetComponent<Piece>().color == colorToDestroy) {
+                        piecesToDestroy.Add(board.allPieces[i, j]);
+                    }
+                }
+            }
+            for (int k = 0; k < piecesToDestroy.Count; k++) {
+                Instantiate(destroyEffect, piecesToDestroy[k].transform.position, Quaternion.identity);
+                if (board.allPieces[piecesToDestroy[k].GetComponent<Piece>().column, piecesToDestroy[k].GetComponent<Piece>().row] != null) {
+                    pieceToDestroy = board.allPieces[piecesToDestroy[k].GetComponent<Piece>().column, piecesToDestroy[k].GetComponent<Piece>().row];
+                    board.allPieces[piecesToDestroy[k].GetComponent<Piece>().column, piecesToDestroy[k].GetComponent<Piece>().row] = null;
+                    pieceToDestroy.GetComponent<Piece>().destroyObject();
+                }
+            }
+            board.allPieces[gameObject.GetComponent<Piece>().column, gameObject.GetComponent<Piece>().row] = null;
+            Destroy(gameObject);
+        }
         
     
 
@@ -101,13 +152,16 @@ public class Piece : MonoBehaviour
     {   if (board.currentState == boardStates.gameInputAllowed) {
             touchDownPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             board.chosenPiece = gameObject;
-        }   
+         
+        }
     }
 
     private void OnMouseUp()
     {   if (board.currentState == boardStates.gameInputAllowed) {
             touchUpPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            board.currentState = boardStates.gameInputNotAllowed;
             board.GetComponent<Board>().movePieces(touchDownPosition, touchUpPosition);
+            
         }
     }
 }

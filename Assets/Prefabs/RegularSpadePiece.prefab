@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: -8922355876500026625}
   m_Layer: 7
   m_Name: RegularSpadePiece
-  m_TagString: yellow piece
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -71,7 +71,7 @@ BoxCollider2D:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 1, y: 1}
-    newSize: {x: 2.32, y: 2.32}
+    newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
@@ -120,16 +120,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-<<<<<<< HEAD:Assets/Prefabs/Yellow piece.prefab
-  m_Sprite: {fileID: 21300000, guid: ad72d7b05cfe43641a71963c4dce947d, type: 3}
-=======
   m_Sprite: {fileID: 21300000, guid: 3fe17c0fe3e3c4743a34d4e8561a5e86, type: 3}
->>>>>>> 6977c193104a663d6bf0a7b455934ef788db458b:Assets/Prefabs/RegularSpadePiece.prefab
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 2.32, y: 2.32}
+  m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1

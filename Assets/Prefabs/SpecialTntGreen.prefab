@@ -120,7 +120,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: eb48378d019643f4799f2a0016b48844, type: 3}
+  m_Sprite: {fileID: 21300000, guid: aee4105c511e66549b00f71d5121636e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -155,4 +155,4 @@ MonoBehaviour:
   color: Green
   isSpecialPiece: 0
   isExplored: 0
-  destroyEffect: {fileID: 2119390489706356576, guid: f2cccf2c4ee7b62489e6604ff1a857a4, type: 3}
+  destroyEffect: {fileID: 2119390489706356576, guid: 96471537f246a1848be46ce8095f51b0, type: 3}

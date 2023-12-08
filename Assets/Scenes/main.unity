@@ -300,10 +300,23 @@ MonoBehaviour:
   - {fileID: 7810713835290938426, guid: c2aa15c5dfa8b1d4a84d0bac4faa3dd9, type: 3}
   - {fileID: 7810713835290938426, guid: e3d4a33389ef53a47888a921bfb8e2d5, type: 3}
   - {fileID: 7810713835290938426, guid: 2300a1df2e8ad2f46a893c3d568691a9, type: 3}
+  - {fileID: 7810713835290938426, guid: 449496c7463e61848b8d4e87d7e508b3, type: 3}
+  - {fileID: 7810713835290938426, guid: af00388f182811f4a8bbb2f7a44c8ddd, type: 3}
+  - {fileID: 7810713835290938426, guid: b26867c732709cd47ac65e3b068a98b4, type: 3}
+  - {fileID: 7810713835290938426, guid: 03b2f1e9ed49dba489f4e745bb4c20ae, type: 3}
+  - {fileID: 7810713835290938426, guid: 3c4162c6f34b40546a31f612968921fd, type: 3}
+  - {fileID: 7810713835290938426, guid: 26d1cef840ea55a4ea0b1b79a82bdf57, type: 3}
+  - {fileID: 7810713835290938426, guid: a7a436f6ab811fb4faf1308af3c4e43d, type: 3}
+  - {fileID: 7810713835290938426, guid: a7d5f01a3822e0e4b921f6639a8f878d, type: 3}
+  - {fileID: 7810713835290938426, guid: 600da2668656c534895f458fb4455619, type: 3}
+  - {fileID: 7810713835290938426, guid: 6cbd6652065504c49bcf0a8f752a0e53, type: 3}
+  - {fileID: 7810713835290938426, guid: 88e318e25751df149afecc91f19972dc, type: 3}
+  - {fileID: 7810713835290938426, guid: b6ee9a8b9c0d17f48a1d205f0dec69da, type: 3}
+  - {fileID: 7810713835290938426, guid: b94e488f95c82a94ea2a03461193407f, type: 3}
   chosenPiece: {fileID: 0}
   secondPiece: {fileID: 0}
   swipeResist: 1
-  pieceSpeed: 17
+  pieceSpeed: 2
 --- !u!4 &1372888949
 Transform:
   m_ObjectHideFlags: 0

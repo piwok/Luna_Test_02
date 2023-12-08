@@ -160,16 +160,17 @@ public class Board : MonoBehaviour
             StartCoroutine(checkMoveCoroutine());
         }
         else {
-            Debug.Log("waaaa");
-            if (chosenPiece.GetComponent<Piece>().type == "SpecialTnt") {
+            if (chosenPiece.GetComponent<Piece>().type == "SpecialTnt" || chosenPiece.GetComponent<Piece>().type == "SpecialVerticalRocket"
+            || chosenPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket" || chosenPiece.GetComponent<Piece>().type == "SpecialColorBomb") {
                 chosenPiece.GetComponent<Piece>().destroyObject();
                 StartCoroutine(colapseAllColumns());
             }
-
+            currentState = boardStates.gameInputAllowed;
         }
     }
 
     public IEnumerator checkMoveCoroutine() {
+        Debug.Log("waaaaaaaaaaaa");
         List<Solution> allSolutions = new List<Solution>(matchsFinder.lookingForAllLegalMatches());
         
         
@@ -182,6 +183,8 @@ public class Board : MonoBehaviour
             chosenPiece.GetComponent<Piece>().row = chosenPiece.GetComponent<Piece>().previousRow;
             chosenPiece.GetComponent<Piece>().wrongPosition = true;
             secondPiece.GetComponent<Piece>().wrongPosition = true;
+            yield return new WaitUntil(() => areAllPiecesInRightPlace() == true);
+            currentState = boardStates.gameInputAllowed;
             
         }
         else {
@@ -192,31 +195,51 @@ public class Board : MonoBehaviour
             StartCoroutine(destroyAllMatches(allSolutions));
             
         }
-        yield return new WaitUntil(() => areAllPiecesInRightPlace() == true);
+        
         chosenPiece = null;
         secondPiece = null;
+        
     }
 
     private IEnumerator destroyAllMatches (List<Solution> allSolutions) {
         List<SpecialPieceToCreate> specialPiecesToCreate = new List<SpecialPieceToCreate>();
-        int pieceIndex = 4;
+        int pieceIndex = 0;
         foreach (Solution solution in allSolutions) {
             if (solution.getSolutionPieces().Count > 3) {
-                
-                if (solution.getColor() == "Red") {
-                    pieceIndex = 6;
+                if (solution.getShape() == "fiveLineShape0" || solution.getShape() == "fiveLineShape1") {
+                    pieceIndex = 20;}
+                else if (solution.getShape() == "fiveTShape0" || solution.getShape() == "fiveTShape1" || solution.getShape() == "fiveTShape2" || solution.getShape() == "fiveTShape3") {
+                    if (solution.getColor() == "Red") {pieceIndex = 6;}
+                    else if (solution.getColor() == "Black") {pieceIndex = 7;}
+                    else if (solution.getColor() == "Green") {pieceIndex = 5;}
+                    else if (solution.getColor() == "Yellow") {pieceIndex = 4;}
                 }
-                else if (solution.getColor() == "Green") {
-                    pieceIndex = 5;
+                else if (solution.getShape() == "fiveLShape0" || solution.getShape() == "fiveLShape1" || solution.getShape() == "fiveLShape2" || solution.getShape() == "fiveLShape3") {
+                    if (solution.getColor() == "Red") {pieceIndex = 6;}
+                    else if (solution.getColor() == "Black") {pieceIndex = 7;}
+                    else if (solution.getColor() == "Green") {pieceIndex = 5;}
+                    else if (solution.getColor() == "Yellow") {pieceIndex = 4;}
                 }
-                else if (solution.getColor() == "Black") {
-                    pieceIndex = 7;
+                else if (solution.getShape() == "fourLineShape0") {
+                    if (solution.getColor() == "Red") {pieceIndex = 14;}
+                    else if (solution.getColor() == "Black") {pieceIndex = 15;}
+                    else if (solution.getColor() == "Green") {pieceIndex = 13;}
+                    else if (solution.getColor() == "Yellow") {pieceIndex = 12;}
                 }
-                else if (solution.getColor() == "Yellow") {
-                    pieceIndex = 4;
+                else if (solution.getShape() == "fourLineShape1") {
+                    if (solution.getColor() == "Red") {pieceIndex = 18;}
+                    else if (solution.getColor() == "Black") {pieceIndex = 19;}
+                    else if (solution.getColor() == "Green") {pieceIndex = 17;}
+                    else if (solution.getColor() == "Yellow") {pieceIndex = 16;}
+                }
+                else if (solution.getShape() == "fourSquareShape0") {
+                    if (solution.getColor() == "Red") {pieceIndex = 10;}
+                    else if (solution.getColor() == "Black") {pieceIndex = 11;}
+                    else if (solution.getColor() == "Green") {pieceIndex = 9;}
+                    else if (solution.getColor() == "Yellow") {pieceIndex = 8;}
                 }
                 specialPiecesToCreate.Add(new SpecialPieceToCreate(allTiles[solution.getSolutionPieces()[0].GetComponent<Piece>().column, solution.getSolutionPieces()[0].GetComponent<Piece>().row],
-                solution.getShape(), pieceIndex));
+                solution.getShape(), pieceIndex));   
             }
         }
         
@@ -272,6 +295,8 @@ public class Board : MonoBehaviour
             
             
         }
+        else {
+            currentState = boardStates.gameInputAllowed;}
     }
 
     private void refillBoard() {

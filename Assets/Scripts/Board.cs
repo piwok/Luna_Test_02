@@ -106,7 +106,7 @@ public class Board : MonoBehaviour
     public void movePieces(Vector2 touchDownPosition, Vector2 touchUpPosition) {
         if(Mathf.Abs(touchUpPosition.x - touchDownPosition.x) > swipeResist || Mathf.Abs(touchUpPosition.y - touchDownPosition.y) > swipeResist ) {
             float swipeAngle = calculateAngle(touchDownPosition, touchUpPosition);
-            if (swipeAngle > -45 & swipeAngle <= 45 & chosenPiece.GetComponent<Piece>().column < width - 1) {
+            if (swipeAngle > -45 & swipeAngle <= 45 && chosenPiece.GetComponent<Piece>().column < width - 1) {
                 //Right swipe
                 if (allPieces[chosenPiece.GetComponent<Piece>().column + 1, chosenPiece.GetComponent<Piece>().row] != null) {
                     secondPiece = allPieces[chosenPiece.GetComponent<Piece>().column +1, chosenPiece.GetComponent<Piece>().row];
@@ -118,7 +118,7 @@ public class Board : MonoBehaviour
                     secondPiece.GetComponent<Piece>().wrongPosition = true;
                 }
             }
-            else if (swipeAngle > 45 & swipeAngle <= 135 & chosenPiece.GetComponent<Piece>().row < height - 1) {
+            else if (swipeAngle > 45 & swipeAngle <= 135 && chosenPiece.GetComponent<Piece>().row < height - 1) {
                 //Up swipe
                 if (allPieces[chosenPiece.GetComponent<Piece>().column, chosenPiece.GetComponent<Piece>().row + 1] != null) {
                     secondPiece = allPieces[chosenPiece.GetComponent<Piece>().column, chosenPiece.GetComponent<Piece>().row + 1];
@@ -130,7 +130,7 @@ public class Board : MonoBehaviour
                     secondPiece.GetComponent<Piece>().wrongPosition = true;
                 }
             }
-            else if (swipeAngle > 135 || swipeAngle <= -135 & chosenPiece.GetComponent<Piece>().column > 0) {
+            else if ((swipeAngle > 135 || swipeAngle <= -135) && chosenPiece.GetComponent<Piece>().column > 0) {
                 //Left swipe
                 if (allPieces[chosenPiece.GetComponent<Piece>().column - 1, chosenPiece.GetComponent<Piece>().row] != null) {
                     secondPiece = allPieces[chosenPiece.GetComponent<Piece>().column - 1, chosenPiece.GetComponent<Piece>().row];
@@ -142,7 +142,7 @@ public class Board : MonoBehaviour
                     secondPiece.GetComponent<Piece>().wrongPosition = true;
                 }
             }
-            else if (swipeAngle >= -135 & swipeAngle < -45 & chosenPiece.GetComponent<Piece>().row > 0) {
+            else if (swipeAngle >= -135 & swipeAngle < -45 && chosenPiece.GetComponent<Piece>().row > 0) {
                 //Down swipe
                 if (allPieces[chosenPiece.GetComponent<Piece>().column, chosenPiece.GetComponent<Piece>().row - 1] != null) {
                     secondPiece = allPieces[chosenPiece.GetComponent<Piece>().column, chosenPiece.GetComponent<Piece>().row - 1];
@@ -154,10 +154,17 @@ public class Board : MonoBehaviour
                     secondPiece.GetComponent<Piece>().wrongPosition = true;
                 }
             }
-        
-        //currentState = boardStates.movingPieces;
-        
-            StartCoroutine(checkMoveCoroutine());
+            if (secondPiece != null) {
+                if (chosenPiece.GetComponent<Piece>().type == "Regular" && secondPiece.GetComponent<Piece>().type == "Regular") {
+                    StartCoroutine(checkMoveCoroutine());
+                }
+                else {
+                currentState = boardStates.gameInputAllowed;
+                }
+            }
+            else {
+                currentState = boardStates.gameInputAllowed;
+            }
         }
         else {
             if (chosenPiece.GetComponent<Piece>().type == "SpecialTnt" || chosenPiece.GetComponent<Piece>().type == "SpecialVerticalRocket"
@@ -165,12 +172,14 @@ public class Board : MonoBehaviour
                 chosenPiece.GetComponent<Piece>().destroyObject();
                 StartCoroutine(colapseAllColumns());
             }
-            currentState = boardStates.gameInputAllowed;
+            else if (chosenPiece.GetComponent<Piece>().type == "Regular") {
+                currentState = boardStates.gameInputAllowed;
+            }
         }
     }
 
     public IEnumerator checkMoveCoroutine() {
-        Debug.Log("waaaaaaaaaaaa");
+        
         List<Solution> allSolutions = new List<Solution>(matchsFinder.lookingForAllLegalMatches());
         
         

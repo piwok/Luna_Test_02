@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Solution
 {
-    private List<GameObject> solutionPieces;
+    public List<GameObject> solutionPieces;
     private string shape;
     private string type;
     private string color;

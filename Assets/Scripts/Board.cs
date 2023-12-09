@@ -154,18 +154,23 @@ public class Board : MonoBehaviour
                     secondPiece.GetComponent<Piece>().wrongPosition = true;
                 }
             }
+            //Cases with two pieces chosen and second piece, no click situation
             if (secondPiece != null) {
                 if (chosenPiece.GetComponent<Piece>().type == "Regular" && secondPiece.GetComponent<Piece>().type == "Regular") {
-                    StartCoroutine(checkMoveCoroutine());
+                    StartCoroutine(checkMoveCoroutine(chosenPiece, secondPiece));
                 }
-                else {
-                currentState = boardStates.gameInputAllowed;
+                else if (chosenPiece.GetComponent<Piece>().type == "Regular" && (secondPiece.GetComponent<Piece>().type == "SpecialTnt" ||
+                secondPiece.GetComponent<Piece>().type == "SpecialVerticalRocket" ||
+                secondPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket" ||
+                secondPiece.GetComponent<Piece>().type == "SpecialDove" || secondPiece.GetComponent<Piece>().type == "SpecialColorBomb")) {
+                    StartCoroutine(checkMoveCoroutine(chosenPiece, secondPiece));    
                 }
             }
             else {
                 currentState = boardStates.gameInputAllowed;
             }
         }
+        //Cases  with only one piece, click situacion
         else {
             if (chosenPiece.GetComponent<Piece>().type == "SpecialTnt" || chosenPiece.GetComponent<Piece>().type == "SpecialVerticalRocket"
             || chosenPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket" || chosenPiece.GetComponent<Piece>().type == "SpecialColorBomb") {
@@ -178,33 +183,33 @@ public class Board : MonoBehaviour
         }
     }
 
-    public IEnumerator checkMoveCoroutine() {
+    public IEnumerator checkMoveCoroutine(GameObject chosenPiece, GameObject secondPiece) {
         
         List<Solution> allSolutions = new List<Solution>(matchsFinder.lookingForAllLegalMatches());
-        
-        
+        Debug.Log(allSolutions.Count);
         yield return new WaitUntil(() => areAllPiecesInRightPlace() == true);
-        
-        if (allSolutions.Count == 0) {
-            secondPiece.GetComponent<Piece>().column = chosenPiece.GetComponent<Piece>().column;
-            secondPiece.GetComponent<Piece>().row = chosenPiece.GetComponent<Piece>().row;
-            chosenPiece.GetComponent<Piece>().column = chosenPiece.GetComponent<Piece>().previousColumn;
-            chosenPiece.GetComponent<Piece>().row = chosenPiece.GetComponent<Piece>().previousRow;
-            chosenPiece.GetComponent<Piece>().wrongPosition = true;
-            secondPiece.GetComponent<Piece>().wrongPosition = true;
-            yield return new WaitUntil(() => areAllPiecesInRightPlace() == true);
-            currentState = boardStates.gameInputAllowed;
-            
+        if(chosenPiece.GetComponent<Piece>().type == "Regular" && secondPiece.GetComponent<Piece>().type == "Regular") {
+            if (allSolutions.Count == 0) {
+                secondPiece.GetComponent<Piece>().column = chosenPiece.GetComponent<Piece>().column;
+                secondPiece.GetComponent<Piece>().row = chosenPiece.GetComponent<Piece>().row;
+                secondPiece.GetComponent<Piece>().wrongPosition = true;
+                chosenPiece.GetComponent<Piece>().column = chosenPiece.GetComponent<Piece>().previousColumn;
+                chosenPiece.GetComponent<Piece>().row = chosenPiece.GetComponent<Piece>().previousRow;
+                chosenPiece.GetComponent<Piece>().wrongPosition = true;
+                
+                yield return new WaitUntil(() => areAllPiecesInRightPlace() == true);
+                currentState = boardStates.gameInputAllowed;
+            }
+            else {
+                secondPiece.GetComponent<Piece>().previousColumn = secondPiece.GetComponent<Piece>().column;
+                secondPiece.GetComponent<Piece>().previousRow = secondPiece.GetComponent<Piece>().row;
+                chosenPiece.GetComponent<Piece>().previousColumn = chosenPiece.GetComponent<Piece>().column;
+                chosenPiece.GetComponent<Piece>().previousRow = chosenPiece.GetComponent<Piece>().row;
+                secondPiece.GetComponent<Piece>().isSpecialPiece = true;
+                chosenPiece.GetComponent<Piece>().isSpecialPiece = true;
+                StartCoroutine(destroyAllMatches(allSolutions));
+            }
         }
-        else {
-            secondPiece.GetComponent<Piece>().previousColumn = secondPiece.GetComponent<Piece>().column;
-            secondPiece.GetComponent<Piece>().previousRow = secondPiece.GetComponent<Piece>().row;
-            chosenPiece.GetComponent<Piece>().previousColumn = chosenPiece.GetComponent<Piece>().column;
-            chosenPiece.GetComponent<Piece>().previousRow = chosenPiece.GetComponent<Piece>().row;
-            StartCoroutine(destroyAllMatches(allSolutions));
-            
-        }
-        
         chosenPiece = null;
         secondPiece = null;
         
@@ -213,8 +218,18 @@ public class Board : MonoBehaviour
     private IEnumerator destroyAllMatches (List<Solution> allSolutions) {
         List<SpecialPieceToCreate> specialPiecesToCreate = new List<SpecialPieceToCreate>();
         int pieceIndex = 0;
+        int creationColumn = 0;
+        int creationRow = 0;
         foreach (Solution solution in allSolutions) {
             if (solution.getSolutionPieces().Count > 3) {
+                creationColumn = solution.getSolutionPieces()[0].GetComponent<Piece>().column;
+                creationRow = solution.getSolutionPieces()[0].GetComponent<Piece>().row;
+                foreach (GameObject solutionPiece in solution.solutionPieces) {
+                    if (solutionPiece.GetComponent<Piece>().isSpecialPiece == true) {
+                        creationColumn = solutionPiece.GetComponent<Piece>().column;
+                        creationRow = solutionPiece.GetComponent<Piece>().row;
+                    }
+                }
                 if (solution.getShape() == "fiveLineShape0" || solution.getShape() == "fiveLineShape1") {
                     pieceIndex = 20;}
                 else if (solution.getShape() == "fiveTShape0" || solution.getShape() == "fiveTShape1" || solution.getShape() == "fiveTShape2" || solution.getShape() == "fiveTShape3") {
@@ -247,7 +262,7 @@ public class Board : MonoBehaviour
                     else if (solution.getColor() == "Green") {pieceIndex = 9;}
                     else if (solution.getColor() == "Yellow") {pieceIndex = 8;}
                 }
-                specialPiecesToCreate.Add(new SpecialPieceToCreate(allTiles[solution.getSolutionPieces()[0].GetComponent<Piece>().column, solution.getSolutionPieces()[0].GetComponent<Piece>().row],
+                specialPiecesToCreate.Add(new SpecialPieceToCreate(allTiles[creationColumn, creationRow], 
                 solution.getShape(), pieceIndex));   
             }
         }
@@ -258,6 +273,8 @@ public class Board : MonoBehaviour
                     solution.getSolutionPieces()[i].GetComponent<Piece>().destroyObject();
                 }
             }
+            yield return new WaitUntil(() => areAllPiecesInRightPlace() == true);
+            yield return new WaitForSeconds(0.25f);
         }
         foreach (SpecialPieceToCreate newSpecialPiece in specialPiecesToCreate) {
             GameObject newPiece = Instantiate(pieces[newSpecialPiece.piecesIndex], new Vector2(newSpecialPiece.tile.column, newSpecialPiece.tile.row),Quaternion.identity);
@@ -268,7 +285,7 @@ public class Board : MonoBehaviour
             newPiece.GetComponent<Piece>().previousRow = newSpecialPiece.tile.row;
         }
         yield return new WaitUntil(() => areAllPiecesInRightPlace() == true);
-        yield return new WaitForSeconds(0.3f);
+        
         StartCoroutine(colapseAllColumns());
     }
 

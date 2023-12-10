@@ -116,80 +116,51 @@ public class Piece : MonoBehaviour
         
     }
 
-    public void destroyObject() 
-    {   GameObject pieceToDestroy;
-        if (gameObject.GetComponent<Piece>().type == "Regular" || gameObject.GetComponent<Piece>().type == "SpecialDove" ) { 
-            Instantiate(destroyEffect, gameObject.transform.position, Quaternion.identity);
-            board.allPieces[gameObject.GetComponent<Piece>().column, gameObject.GetComponent<Piece>().row] = null;
-            Destroy(gameObject);
-        }
-        else if (gameObject.GetComponent<Piece>().type == "SpecialTnt") { 
-            Instantiate(destroyEffect, gameObject.transform.position, Quaternion.identity);
+    public Solution getPiecesToDestroy() 
+    {   
+        List<GameObject> newSolution = new List<GameObject>();
+        if (type == "SpecialTnt") { 
             foreach (int[] tntTarget in allTntTargets) {
                 if (column + tntTarget[0] < board.width && column + tntTarget[0] >= 0 && row + tntTarget[1] < board.height && row + tntTarget[1] >= 0 &&
                 board.allPieces[column + tntTarget[0], row + tntTarget[1]] != null) {
-                    pieceToDestroy = board.allPieces[column + tntTarget[0], row + tntTarget[1]];
-                    board.allPieces[column + tntTarget[0], row + tntTarget[1]] = null;
-                    pieceToDestroy.GetComponent<Piece>().destroyObject();
+                    newSolution.Add(board.allPieces[column + tntTarget[0], row + tntTarget[1]]);
                 }
             }
-            board.allPieces[gameObject.GetComponent<Piece>().column, gameObject.GetComponent<Piece>().row] = null;
-            Destroy(gameObject);
+            newSolution.Add(gameObject);
+            return new Solution(newSolution, null, null, null);
         }
-        else if (gameObject.GetComponent<Piece>().type == "SpecialVerticalRocket") { 
-            Instantiate(destroyEffect, gameObject.transform.position, Quaternion.identity);
-            int destroyedColumn = gameObject.GetComponent<Piece>().column;
+        else if (type == "SpecialVerticalRocket") { 
             for (int i = 0; i < board.height; i++) {
-                if (board.allPieces[destroyedColumn, i] != null) {
-                    pieceToDestroy = board.allPieces[destroyedColumn, i];
-                    board.allPieces[destroyedColumn, i] = null;
-                    pieceToDestroy.GetComponent<Piece>().destroyObject();
+                if (board.allPieces[column, i] != null) {
+                    newSolution.Add(board.allPieces[column, i]);
                 }
             }
-            board.allPieces[gameObject.GetComponent<Piece>().column, gameObject.GetComponent<Piece>().row] = null;
-            Destroy(gameObject);
+            return new Solution(newSolution, null, null, null);
         }
-        else if (gameObject.GetComponent<Piece>().type == "SpecialHorizontalRocket") { 
-            Instantiate(destroyEffect, gameObject.transform.position, Quaternion.identity);
-            int destroyedRow = gameObject.GetComponent<Piece>().row;
+        else if (type == "SpecialHorizontalRocket") { 
             for (int i = 0; i < board.width; i++) {
-                if (board.allPieces[i, destroyedRow] != null) {
-                    pieceToDestroy = board.allPieces[i, destroyedRow];
-                    board.allPieces[i, destroyedRow] = null;
-                    pieceToDestroy.GetComponent<Piece>().destroyObject();
+                if (board.allPieces[i, row] != null) {
+                    newSolution.Add(board.allPieces[i, row]);
                 }
             }
-            
-            board.allPieces[gameObject.GetComponent<Piece>().column, gameObject.GetComponent<Piece>().row] = null;
-            Destroy(gameObject);
+            return new Solution(newSolution, null, null, null);
         }
-        else if (gameObject.GetComponent<Piece>().type == "SpecialColorBomb") { 
-            Instantiate(destroyEffect, gameObject.transform.position, Quaternion.identity);
+        else if (type == "SpecialColorBomb") { 
+            
             string[] colors = new string[4] {"Red", "Yellow", "Green", "Black"};
             string colorToDestroy = colors[Random.Range(0, 4)];
-            Debug.Log(colorToDestroy);
-            List<GameObject> piecesToDestroy = new List<GameObject>();
             for (int i = 0; i < board.width; i++) {
                 for (int j = 0; j < board.height; j++) {
                     if (board.allPieces[i, j] != null && board.allPieces[i, j].GetComponent<Piece>().color == colorToDestroy) {
-                        piecesToDestroy.Add(board.allPieces[i, j]);
+                        newSolution.Add(board.allPieces[i, j]);
                     }
                 }
             }
-            for (int k = 0; k < piecesToDestroy.Count; k++) {
-                Instantiate(destroyEffect, piecesToDestroy[k].transform.position, Quaternion.identity);
-                if (board.allPieces[piecesToDestroy[k].GetComponent<Piece>().column, piecesToDestroy[k].GetComponent<Piece>().row] != null) {
-                    pieceToDestroy = board.allPieces[piecesToDestroy[k].GetComponent<Piece>().column, piecesToDestroy[k].GetComponent<Piece>().row];
-                    board.allPieces[piecesToDestroy[k].GetComponent<Piece>().column, piecesToDestroy[k].GetComponent<Piece>().row] = null;
-                    pieceToDestroy.GetComponent<Piece>().destroyObject();
-                }
-            }
-            board.allPieces[gameObject.GetComponent<Piece>().column, gameObject.GetComponent<Piece>().row] = null;
-            Destroy(gameObject);
+            
+            
+            return new Solution(newSolution, null, null, null);
         }
-        
-    
-
+        return null;
     }
 
     private void OnMouseDown()

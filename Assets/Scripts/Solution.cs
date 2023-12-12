@@ -8,7 +8,7 @@ public class Solution
     private string shape;
     private string type;
     private string color;
-    private string destructionSpeedType;
+    public int numStepsTodestruccion;
     private int size;
     public Solution(List<GameObject> asolutionPieces, string ashape, string atype, string acolor, string adestructionSpeedType) {
         solutionPieces = asolutionPieces;
@@ -31,6 +31,9 @@ public class Solution
     }
     public void setColor (string value) {
         color = value;
+    }
+    public void setNumStepsToDestruccion (int value) {
+        numStepsTodestruccion = value;
     }
     public List<GameObject> getSolutionPieces () {
         return solutionPieces;

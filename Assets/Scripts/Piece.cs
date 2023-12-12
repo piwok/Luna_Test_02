@@ -20,6 +20,11 @@ public class Piece : MonoBehaviour
     public bool isSpecialPiece = false;
     public bool isExplored = false;
     public bool isMatchToDestroy = false;
+    public bool StartDestructionFlag = false;
+    public float startingTimeToDestroy = 0;
+    public float destructionTimeStep = 0.2f;
+    public int destructionSteps = 0;
+    public float timeLeftToDestruction;
     private Vector2 touchDownPosition;
     private Vector2 touchUpPosition;
     public GameObject destroyEffect;
@@ -120,6 +125,26 @@ public class Piece : MonoBehaviour
         //////////////////////////////////////////////////////////////////////////////////////////
         //Code to destroy the piece
         if (isMatchToDestroy == true) {
+            if (type == "Regular") {
+                if (StartDestructionFlag == false) {
+                    timeLeftToDestruction = destructionSteps * destructionTimeStep;
+                    StartDestructionFlag = true;
+                }
+                else {
+                    timeLeftToDestruction -= Time.deltaTime;
+                    }
+                if (timeLeftToDestruction < 0) {
+                    Instantiate(destroyEffect, tranform.position, Quaternion.identity);
+                    board.allLegalSolutions[column, row] = null;
+                    destroyEffect(gameObject);
+                }
+                } 
+
+
+            }
+            else if (type == "SpecialTnt") {
+
+            }
             
         }
         

@@ -102,6 +102,17 @@ public class Board : MonoBehaviour
         }
         return true;
     }
+
+    private bool areAllPiecesDestroyed() 
+    {   for (int i = 0; i < width; i++) {
+            for (int j = 0; j <height; j++) {
+                if (allPieces[i, j] != null && allPieces[i, j].GetComponent<Piece>().isMatchToDestroy == true ) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
     
     public void movePieces(Vector2 touchDownPosition, Vector2 touchUpPosition) {
         if(Mathf.Abs(touchUpPosition.x - touchDownPosition.x) > swipeResist || Mathf.Abs(touchUpPosition.y - touchDownPosition.y) > swipeResist ) {
@@ -247,6 +258,7 @@ public class Board : MonoBehaviour
                         creationRow = solutionPiece.GetComponent<Piece>().row;
                     }
                 }
+                //write backwards is more efficient
                 if (solution.getShape() == "fiveLineShape0" || solution.getShape() == "fiveLineShape1") {
                     pieceIndex = 20;}
                     if (solution.getShape() == "fiveTShape0" || solution.getShape() == "fiveTShape1" || solution.getShape() == "fiveTShape2" || solution.getShape() == "fiveTShape3") {

@@ -292,7 +292,30 @@ public class Board : MonoBehaviour
         {   
             newSolutionsToAdd.Clear();
             foreach (Solution solution in allSolutions) {
-                
+                //this code drives the destruction of a solution of regular pieces match
+                if (solution.destructionSpeedType == "Regular") {
+
+                }
+                //this code drives the destruction of a solution of a Tnt destruction
+                else if (solution.destructionSpeedType == "SpecialTnt") {
+                    
+                }
+                //this code drives the destruction of a solution of a dove destruction
+                else if (solution.destructionSpeedType == "SpecialDove") {
+                    
+                }
+                //this code drives the destruction of a solution of a horizontal rocket destruction
+                else if (solution.destructionSpeedType == "SpecialHorizontalRocket") {
+                    
+                }
+                //this code drives the destruction of a solution of a vertical rocket destruction
+                else if (solution.destructionSpeedType == "SpecialVerticalRocket") {
+                    
+                }
+                //this code drives the destruction of a solution of color bomb destruction
+                else if (solution.destructionSpeedType == "SpecialColorBomb") {
+
+                }
                 
                 foreach (GameObject solutionPiece in solution.getSolutionPieces()) {
                     
@@ -303,6 +326,7 @@ public class Board : MonoBehaviour
                             Instantiate(solutionPiece.GetComponent<Piece>().destroyEffect, solutionPiece.transform.position, Quaternion.identity);
                             allPieces[solutionPiece.GetComponent<Piece>().column, solutionPiece.GetComponent<Piece>().row] = null;
                             Destroy(solutionPiece);
+                            yield return new WaitForSeconds(0.05f);
 
                         }
                         else if (solutionPiece.GetComponent<Piece>().type == "SpecialTnt") {
@@ -340,7 +364,7 @@ public class Board : MonoBehaviour
 
                         }
                     }
-                yield return new WaitForSeconds(0.05f);
+                
                 }
             }
             allSolutions.Clear();
@@ -399,7 +423,7 @@ public class Board : MonoBehaviour
         allSolutions = matchsFinder.lookingForAllLegalMatches();
         if (allSolutions.Count > 0) {       
             StartCoroutine(destroyAllMatches(allSolutions));
-            yield return new WaitForSeconds(0.25f);
+            yield return new WaitForSeconds(0.40f);
             
             
         }

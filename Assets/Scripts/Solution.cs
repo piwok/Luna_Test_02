@@ -8,12 +8,14 @@ public class Solution
     private string shape;
     private string type;
     private string color;
+    private string destructionSpeedType;
     private int size;
-    public Solution(List<GameObject> asolutionPieces, string ashape, string atype, string acolor) {
+    public Solution(List<GameObject> asolutionPieces, string ashape, string atype, string acolor, string adestructionSpeedType) {
         solutionPieces = asolutionPieces;
         shape = ashape;
         type = atype;
         color = acolor;
+        destructionSpeedType = adestructionSpeedType;
         size = asolutionPieces.Count;
 
     }

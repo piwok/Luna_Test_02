@@ -18,9 +18,10 @@ public class Piece : MonoBehaviour
     public string type;
     public string color;
     public bool isSpecialPiece = false;
+    public bool isExplored = false;
+    public bool isMatchToDestroy = false;
     private Vector2 touchDownPosition;
     private Vector2 touchUpPosition;
-    public bool isExplored = false;
     public GameObject destroyEffect;
     public List<int[]> allTntTargets;
     public List<int[]> halfRightSideTntTargets;
@@ -89,7 +90,9 @@ public class Piece : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {   if (wrongPosition == false & (Mathf.Abs(column - transform.position.x) > 0.05f || Mathf.Abs(row - transform.position.y) > 0.05f)) {
+    {   ///////////////////////////////////////////////////////////////////////////////////////
+        //Code to move the piece to a the new position
+        if (wrongPosition == false & (Mathf.Abs(column - transform.position.x) > 0.05f || Mathf.Abs(row - transform.position.y) > 0.05f)) {
             wrongPosition = true;
         }
         else if (wrongPosition == true & (Mathf.Abs(column - transform.position.x) > 0.05f || Mathf.Abs(row - transform.position.y) > 0.05f)) {
@@ -113,6 +116,12 @@ public class Piece : MonoBehaviour
             transform.position = tempPosition;
             wrongPosition = false;
         }
+
+        //////////////////////////////////////////////////////////////////////////////////////////
+        //Code to destroy the piece
+        if (isMatchToDestroy == true) {
+            
+        }
         
     }
 
@@ -127,7 +136,7 @@ public class Piece : MonoBehaviour
                 }
             }
             newSolution.Add(gameObject);
-            return new Solution(newSolution, null, null, null);
+            return new Solution(newSolution, null, null, null, "SpecialTnt");
         }
         else if (type == "SpecialVerticalRocket") { 
             for (int i = 0; i < board.height; i++) {

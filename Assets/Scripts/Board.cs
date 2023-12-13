@@ -170,7 +170,7 @@ public class Board : MonoBehaviour
                 if (chosenPiece.GetComponent<Piece>().type == "Regular" && secondPiece.GetComponent<Piece>().type == "Regular") {
                     StartCoroutine(checkMoveCoroutine(chosenPiece, secondPiece));
                 }
-                else if (chosenPiece.GetComponent<Piece>().type == "Regular" && secondPiece.GetComponent<Piece>().type != "Regula") {
+                else if (chosenPiece.GetComponent<Piece>().type == "Regular" && secondPiece.GetComponent<Piece>().type != "Regular") {
                     StartCoroutine(checkMoveCoroutine(chosenPiece, secondPiece));    
                 }
             }
@@ -189,8 +189,8 @@ public class Board : MonoBehaviour
                 newSolution = new Solution(tempPieces, null, null, null);
                 tempSolution.Add(newSolution);
                 
-                Debug.Log("1");
-                Debug.Log(chosenPiece.GetComponent<Piece>().type);
+                
+                
                 //tempSolution.Add(chosenPiece.GetComponent<Piece>().getPiecesToDestroy());
                 StartCoroutine(destroyAllMatches(tempSolution));
             }
@@ -227,19 +227,19 @@ public class Board : MonoBehaviour
                 StartCoroutine(destroyAllMatches(allSolutions));
             }
         }
-        if((chosenPiece.GetComponent<Piece>().type == "Regular" && secondPiece.GetComponent<Piece>().type != "Regular") ||
+        else if((chosenPiece.GetComponent<Piece>().type == "Regular" && secondPiece.GetComponent<Piece>().type != "Regular") ||
         (secondPiece.GetComponent<Piece>().type == "Regular" && chosenPiece.GetComponent<Piece>().type != "Regular")) {
 
         }
 
 
 
-
+        // this code here maybe is a bug, rewrite (MUST)
         if (chosenPiece != null) {chosenPiece.GetComponent<Piece>().isSpecialPiece = false;}
         if (secondPiece != null) {secondPiece.GetComponent<Piece>().isSpecialPiece = false;}
         chosenPiece = null;
         secondPiece = null;
-        
+        //////////////////////////////////////////////////////////////////////////////
     }
 
     private IEnumerator destroyAllMatches (List<Solution> allSolutions) {
@@ -286,10 +286,10 @@ public class Board : MonoBehaviour
                     else if (solution.getColor() == "Black") {pieceIndex = 19;}
                 }
                 else if (solution.getShape() == "fourSquareShape0") {
-                    if (solution.getColor() == "Yellow") {pieceIndex = 8;}
-                    else if (solution.getColor() == "Green") {pieceIndex = 9;}
-                    else if (solution.getColor() == "Red") {pieceIndex = 10;}
-                    else if (solution.getColor() == "Black") {pieceIndex = 11;}
+                    if (solution.getColor() == "Yellow") {pieceIndex = 4;}
+                    else if (solution.getColor() == "Green") {pieceIndex = 5;}
+                    else if (solution.getColor() == "Red") {pieceIndex = 6;}
+                    else if (solution.getColor() == "Black") {pieceIndex = 7;}
                 }
                 if (pieceIndex > 3) {
                     specialPiecesToCreate.Add(new SpecialPieceToCreate(allTiles[creationColumn, creationRow], solution.getShape(), pieceIndex));
@@ -305,27 +305,54 @@ public class Board : MonoBehaviour
             newSolutionsToAdd.Clear();
             foreach (Solution solution in allSolutions) {
                 //this code drives the destruction of a solution of regular pieces match
-                if (solution.destructionSpeedType == "Regular") {
-
+                if (solution.type == "Regular" || solution.type == "SpecialDove") {
+                    int counter = 1;
+                    foreach(GameObject solutionPiece in solution.solutionPieces) {
+                        solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
+                        solutionPiece.GetComponent<Piece>().destructionSteps = counter;
+                        counter++;
+                    }
                 }
                 //this code drives the destruction of a solution of a Tnt destruction
-                else if (solution.destructionSpeedType == "SpecialTnt") {
+                else if (solution.type == "SpecialTnt") {
+                    foreach(GameObject solutionPiece in solution.solutionPieces) {
+                        solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
+                        solutionPiece.GetComponent<Piece>().destructionSteps = 2;
+                    }
                     
                 }
                 //this code drives the destruction of a solution of a dove destruction
-                else if (solution.destructionSpeedType == "SpecialDove") {
+                // else if (solution.type == "SpecialDove") {
                     
-                }
+                // }
                 //this code drives the destruction of a solution of a horizontal rocket destruction
-                else if (solution.destructionSpeedType == "SpecialHorizontalRocket") {
+                else if (solution.type == "SpecialHorizontalRocket") {
+                    float counter = 1;
+                    foreach(GameObject solutionPiece in solution.solutionPieces) {
+                        solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
+                        solutionPiece.GetComponent<Piece>().destructionSteps = counter;
+                        counter++;
+                    }
                     
                 }
                 //this code drives the destruction of a solution of a vertical rocket destruction
-                else if (solution.destructionSpeedType == "SpecialVerticalRocket") {
+                else if (solution.type == "SpecialVerticalRocket") {
+                    float counter = 1;
+                    foreach(GameObject solutionPiece in solution.solutionPieces) {
+                        solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
+                        solutionPiece.GetComponent<Piece>().destructionSteps = counter;
+                        counter++;
+                    }
                     
                 }
                 //this code drives the destruction of a solution of color bomb destruction
-                else if (solution.destructionSpeedType == "SpecialColorBomb") {
+                else if (solution.type == "SpecialColorBomb") {
+                    float counter = 1;
+                    foreach(GameObject solutionPiece in solution.solutionPieces) {
+                        solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
+                        solutionPiece.GetComponent<Piece>().destructionSteps = counter;
+                        counter++;
+                    }
 
                 }
                 
@@ -333,48 +360,48 @@ public class Board : MonoBehaviour
                     
                     
                     if (solutionPiece != null) {
-                        if (solutionPiece.GetComponent<Piece>().type == "Regular" || solutionPiece.GetComponent<Piece>().type == "SpecialDove") {
+                        // if (solutionPiece.GetComponent<Piece>().type == "Regular" || solutionPiece.GetComponent<Piece>().type == "SpecialDove") {
                             
-                            Instantiate(solutionPiece.GetComponent<Piece>().destroyEffect, solutionPiece.transform.position, Quaternion.identity);
-                            allPieces[solutionPiece.GetComponent<Piece>().column, solutionPiece.GetComponent<Piece>().row] = null;
-                            Destroy(solutionPiece);
-                            yield return new WaitForSeconds(0.05f);
+                        //     Instantiate(solutionPiece.GetComponent<Piece>().destroyEffect, solutionPiece.transform.position, Quaternion.identity);
+                        //     allPieces[solutionPiece.GetComponent<Piece>().column, solutionPiece.GetComponent<Piece>().row] = null;
+                        //     Destroy(solutionPiece);
+                        //     yield return new WaitForSeconds(0.05f);
 
-                        }
-                        else if (solutionPiece.GetComponent<Piece>().type == "SpecialTnt") {
+                        // }
+                        // if (solutionPiece.GetComponent<Piece>().type == "SpecialTnt") {
                             
-                            Instantiate(solutionPiece.GetComponent<Piece>().destroyEffect, solutionPiece.transform.position, Quaternion.identity);
-                            newSolutionsToAdd.Add(solutionPiece.GetComponent<Piece>().getPiecesToDestroy());
-                            allPieces[solutionPiece.GetComponent<Piece>().column, solutionPiece.GetComponent<Piece>().row] = null;
-                            Destroy(solutionPiece);
+                        //     Instantiate(solutionPiece.GetComponent<Piece>().destroyEffect, solutionPiece.transform.position, Quaternion.identity);
+                        //     newSolutionsToAdd.Add(solutionPiece.GetComponent<Piece>().getPiecesToDestroy());
+                        //     allPieces[solutionPiece.GetComponent<Piece>().column, solutionPiece.GetComponent<Piece>().row] = null;
+                        //     Destroy(solutionPiece);
 
-                        }
-                        else if (solutionPiece.GetComponent<Piece>().type == "SpecialVerticalRocket") {
+                        // }
+                        // if (solutionPiece.GetComponent<Piece>().type == "SpecialVerticalRocket") {
                             
-                            Instantiate(solutionPiece.GetComponent<Piece>().destroyEffect, solutionPiece.transform.position, Quaternion.identity);
-                            newSolutionsToAdd.Add(solutionPiece.GetComponent<Piece>().getPiecesToDestroy());
-                            allPieces[solutionPiece.GetComponent<Piece>().column, solutionPiece.GetComponent<Piece>().row] = null;
-                            Destroy(solutionPiece);
+                        //     Instantiate(solutionPiece.GetComponent<Piece>().destroyEffect, solutionPiece.transform.position, Quaternion.identity);
+                        //     newSolutionsToAdd.Add(solutionPiece.GetComponent<Piece>().getPiecesToDestroy());
+                        //     allPieces[solutionPiece.GetComponent<Piece>().column, solutionPiece.GetComponent<Piece>().row] = null;
+                        //     Destroy(solutionPiece);
 
-                        }
-                        else if (solutionPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
+                        // }
+                        // else if (solutionPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
                             
-                            Instantiate(solutionPiece.GetComponent<Piece>().destroyEffect, solutionPiece.transform.position, Quaternion.identity);
-                            newSolutionsToAdd.Add(solutionPiece.GetComponent<Piece>().getPiecesToDestroy());
-                            allPieces[solutionPiece.GetComponent<Piece>().column, solutionPiece.GetComponent<Piece>().row] = null;
+                        //     Instantiate(solutionPiece.GetComponent<Piece>().destroyEffect, solutionPiece.transform.position, Quaternion.identity);
+                        //     newSolutionsToAdd.Add(solutionPiece.GetComponent<Piece>().getPiecesToDestroy());
+                        //     allPieces[solutionPiece.GetComponent<Piece>().column, solutionPiece.GetComponent<Piece>().row] = null;
 
-                            Destroy(solutionPiece);
+                        //     Destroy(solutionPiece);
 
-                        }
-                        else if (solutionPiece.GetComponent<Piece>().type == "SpecialColorBomb") {
-                            Debug.Log("consegui llegar hasta aqui");
-                            Instantiate(solutionPiece.GetComponent<Piece>().destroyEffect, solutionPiece.transform.position, Quaternion.identity);
-                            newSolutionsToAdd.Add(solutionPiece.GetComponent<Piece>().getPiecesToDestroy());
-                            allPieces[solutionPiece.GetComponent<Piece>().column, solutionPiece.GetComponent<Piece>().row] = null;
-                            Debug.Log("podemos conseguirlo");
-                            Destroy(solutionPiece);
+                        // }
+                        // else if (solutionPiece.GetComponent<Piece>().type == "SpecialColorBomb") {
+                            
+                        //     Instantiate(solutionPiece.GetComponent<Piece>().destroyEffect, solutionPiece.transform.position, Quaternion.identity);
+                        //     newSolutionsToAdd.Add(solutionPiece.GetComponent<Piece>().getPiecesToDestroy());
+                        //     allPieces[solutionPiece.GetComponent<Piece>().column, solutionPiece.GetComponent<Piece>().row] = null;
+                            
+                        //     Destroy(solutionPiece);
 
-                        }
+                        // }
                     }
                 
                 }
@@ -391,7 +418,7 @@ public class Board : MonoBehaviour
 
         //////////////////////////////////////////////////////////////////////////////
         //Creating special pieces
-
+        yield return new WaitUntil(() => areAllPiecesDestroyed() == true);
         if (specialPiecesToCreate.Count > 0) {
             foreach (SpecialPieceToCreate newSpecialPiece in specialPiecesToCreate) {
                 GameObject newPiece = Instantiate(pieces[newSpecialPiece.piecesIndex], new Vector2(newSpecialPiece.tile.column, newSpecialPiece.tile.row),Quaternion.identity);
@@ -400,9 +427,12 @@ public class Board : MonoBehaviour
                 newPiece.GetComponent<Piece>().row = newSpecialPiece.tile.row;
                 newPiece.GetComponent<Piece>().previousColumn = newSpecialPiece.tile.column;
                 newPiece.GetComponent<Piece>().previousRow = newSpecialPiece.tile.row;
+                newPiece.transform.parent = this.transform;
             }
         }
+        
         yield return new WaitUntil(() => areAllPiecesInRightPlace() == true);
+        
         
         StartCoroutine(colapseAllColumns());
     }
@@ -425,17 +455,19 @@ public class Board : MonoBehaviour
             }
         }
         yield return new WaitUntil(() => areAllPiecesInRightPlace() == true);
+        
         StartCoroutine(fillBoardCoroutine());       
     }
 
     private IEnumerator fillBoardCoroutine() {
         refillBoard();
         yield return new WaitUntil(() => areAllPiecesInRightPlace() == true);
+        yield return new WaitUntil(() => areAllPiecesDestroyed() == true);
         List<Solution> allSolutions = new List<Solution>();
         allSolutions = matchsFinder.lookingForAllLegalMatches();
         if (allSolutions.Count > 0) {       
             StartCoroutine(destroyAllMatches(allSolutions));
-            yield return new WaitForSeconds(0.40f);
+            
             
             
         }

@@ -6,16 +6,15 @@ public class Solution
 {
     public List<GameObject> solutionPieces;
     private string shape;
-    private string type;
+    public string type;
     private string color;
     public int numStepsTodestruccion;
     private int size;
-    public Solution(List<GameObject> asolutionPieces, string ashape, string atype, string acolor, string adestructionSpeedType) {
+    public Solution(List<GameObject> asolutionPieces, string ashape, string atype, string acolor) {
         solutionPieces = asolutionPieces;
         shape = ashape;
         type = atype;
         color = acolor;
-        destructionSpeedType = adestructionSpeedType;
         size = asolutionPieces.Count;
 
     }

@@ -17,13 +17,13 @@ public class Piece : MonoBehaviour
     public bool wrongPosition;
     public string type;
     public string color;
-    public bool isSpecialPiece = false;
-    public bool isExplored = false;
-    public bool isMatchToDestroy = false;
-    public bool StartDestructionFlag = false;
-    public float startingTimeToDestroy = 0;
-    public float destructionTimeStep = 20f;
-    public float destructionSteps = 0;
+    public bool isSpecialPiece;
+    public bool isExplored;
+    public bool isMatchToDestroy;
+    public bool StartDestructionFlag;
+    public float startingTimeToDestroy;
+    public float destructionTimeStep;
+    public float destructionSteps;
     public float timeLeftToDestruction;
     private Vector2 touchDownPosition;
     private Vector2 touchUpPosition;
@@ -34,7 +34,13 @@ public class Piece : MonoBehaviour
     
     // Start is called before the first frame update
     void Start()
-    {
+    {   isSpecialPiece = false;
+        isExplored = false;
+        isMatchToDestroy = false;
+        StartDestructionFlag = false;
+        startingTimeToDestroy = 0;
+        destructionTimeStep = 0.125f;
+        destructionSteps = 0;
         board = FindObjectOfType<Board>();
         previousColumn = column;
         previousRow = row;
@@ -95,7 +101,8 @@ public class Piece : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {   ///////////////////////////////////////////////////////////////////////////////////////
+    {   
+        ///////////////////////////////////////////////////////////////////////////////////////
         //Code to move the piece to a the new position
         if (wrongPosition == false & (Mathf.Abs(column - transform.position.x) > 0.05f || Mathf.Abs(row - transform.position.y) > 0.05f)) {
             wrongPosition = true;
@@ -128,27 +135,33 @@ public class Piece : MonoBehaviour
             if (type == "Regular") {
                 if (StartDestructionFlag == false) {
                     timeLeftToDestruction = destructionSteps * destructionTimeStep;
-                    Debug.Log(timeLeftToDestruction);
                     StartDestructionFlag = true;
                 }
                 else {
                     timeLeftToDestruction -= Time.deltaTime;
-                    // Debug.Log(timeLeftToDestruction);
-                    // Debug.Log(column);
-                    // Debug.Log(row);
                     }
                 if (timeLeftToDestruction < 0) {
                     Instantiate(destroyEffect, transform.position, Quaternion.identity);
                     board.allPieces[column, row] = null;
-                    // Debug.Log(timeLeftToDestruction);
                     Destroy(gameObject);
                 }
             } 
-
+            else if (type == "SpecialTnt") {
+                Debug.Log("no deberia estar aqui");
+                if (StartDestructionFlag == false) {
+                    timeLeftToDestruction = destructionSteps * destructionTimeStep;
+                    StartDestructionFlag = true;
+                }
+                else {
+                    timeLeftToDestruction -= Time.deltaTime;
+                    }
+                if (timeLeftToDestruction < 0) {
+                    Instantiate(destroyEffect, transform.position, Quaternion.identity);
+                    board.allPieces[column, row] = null;
+                    Destroy(gameObject);
+                }
 
             }
-            else if (type == "SpecialTnt") {
-
         }
     }
         
@@ -164,7 +177,7 @@ public class Piece : MonoBehaviour
                     newSolution.Add(board.allPieces[column + tntTarget[0], row + tntTarget[1]]);
                 }
             }
-            newSolution.Add(gameObject);
+            
             return new Solution(newSolution, null, "SpecialTnt", null);
         }
         else if (type == "SpecialVerticalRocket") { 

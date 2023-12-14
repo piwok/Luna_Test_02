@@ -23,7 +23,7 @@ public class Piece : MonoBehaviour
     public bool StartDestructionFlag;
     public float startingTimeToDestroy;
     public float destructionTimeStep;
-    public float destructionSteps;
+    public int destructionSteps;
     public float timeLeftToDestruction;
     private Vector2 touchDownPosition;
     private Vector2 touchUpPosition;
@@ -40,7 +40,7 @@ public class Piece : MonoBehaviour
         StartDestructionFlag = false;
         startingTimeToDestroy = 0;
         destructionTimeStep = 0.125f;
-        destructionSteps = 0;
+        destructionSteps = -1;
         board = FindObjectOfType<Board>();
         previousColumn = column;
         previousRow = row;
@@ -173,12 +173,12 @@ public class Piece : MonoBehaviour
         if (type == "SpecialTnt") { 
             foreach (int[] tntTarget in allTntTargets) {
                 if (column + tntTarget[0] < board.width && column + tntTarget[0] >= 0 && row + tntTarget[1] < board.height && row + tntTarget[1] >= 0 &&
-                board.allPieces[column + tntTarget[0], row + tntTarget[1]] != null) {
+                board.allPieces[column + tntTarget[0], row + tntTarget[1]] != null && board.allPieces[column + tntTarget[0], row + tntTarget[1]].GetComponent<Piece>().isMatchToDestroy == false) {
                     newSolution.Add(board.allPieces[column + tntTarget[0], row + tntTarget[1]]);
                 }
             }
             
-            return new Solution(newSolution, null, "SpecialTnt", null);
+            return new Solution(newSolution, null, null, null);
         }
         else if (type == "SpecialVerticalRocket") { 
             for (int i = 0; i < board.height; i++) {
@@ -189,7 +189,7 @@ public class Piece : MonoBehaviour
                     newSolution.Add(board.allPieces[column, row - i]);
                 }
             }
-            return new Solution(newSolution, null, "SpecialTnt", null);
+            return new Solution(newSolution, null, null, null);
         }
         else if (type == "SpecialHorizontalRocket") { 
             for (int i = 0; i < board.width; i++) {
@@ -200,7 +200,7 @@ public class Piece : MonoBehaviour
                     newSolution.Add(board.allPieces[column - i, row]);
                 }
             }
-            return new Solution(newSolution, null, "SpecialTnt", null);
+            return new Solution(newSolution, null, null, null);
         }
         else if (type == "SpecialColorBomb") { 
             
@@ -215,7 +215,7 @@ public class Piece : MonoBehaviour
             }
             
             
-            return new Solution(newSolution, null, "SpecialTnt", null);
+            return new Solution(newSolution, null, null, null);
         }
         return null;
     }

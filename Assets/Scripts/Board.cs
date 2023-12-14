@@ -305,19 +305,25 @@ public class Board : MonoBehaviour
         {   
             newSolutionsToAdd.Clear();
             foreach (Solution solution in allSolutions) {
-                int counter = 1;
+                int counter = 3;
                 foreach (GameObject solutionPiece in solution.solutionPieces) {
                     if (solutionPiece.GetComponent<Piece>().type == "Regular" || solutionPiece.GetComponent<Piece>().type == "SpecialDove") {
                         solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
-                        solutionPiece.GetComponent<Piece>().destructionSteps = counter;
-                        counter++;
+                        if (solutionPiece.GetComponent<Piece>().destructionSteps == -1) {
+                            solutionPiece.GetComponent<Piece>().destructionSteps = counter;
+                            counter++;
+                        }
                     }
 
                 
                     else if (solutionPiece.GetComponent<Piece>().type == "SpecialTnt") {
-                        newSolutionsToAdd.Add(solutionPiece.GetComponent<Piece>().getPiecesToDestroy());
+                        Solution newTntSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy();
+                        foreach (GameObject regularPieceTntDestroy in newTntSolution.solutionPieces) {
+                            regularPieceTntDestroy.GetComponent<Piece>().destructionSteps = 3; //short fixed time for pieces destroyed by bomb explosion
+                        } 
+                        newSolutionsToAdd.Add(newTntSolution);
                         solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
-                        solutionPiece.GetComponent<Piece>().destructionSteps = 2; //short fixed time for the bomb
+                        solutionPiece.GetComponent<Piece>().destructionSteps = 3; //short fixed time for the bomb
                     
                     }
                 }

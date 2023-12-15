@@ -1,9 +1,5 @@
 fileFormatVersion: 2
-<<<<<<<< HEAD:Assets/Art/Bel art/231208/Diamond_card_blue_232.png.meta
-guid: 53b9e2d9e03787648b0970f16f89d97a
-========
-guid: 4d3680f179b57dc43a6f0dc85bf22e5a
->>>>>>>> dce597bdb014742e62f068b4770fa0d733aaf8ea:Assets/Art/Bel art/231206/TNT_red_new_232.png.meta
+guid: 94038769ba2d2cb45b40e9ff82dbb393
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -52,11 +48,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-<<<<<<<< HEAD:Assets/Art/Bel art/231208/Diamond_card_blue_232.png.meta
-  spritePixelsToUnits: 100
-========
   spritePixelsToUnits: 232
->>>>>>>> dce597bdb014742e62f068b4770fa0d733aaf8ea:Assets/Art/Bel art/231206/TNT_red_new_232.png.meta
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1

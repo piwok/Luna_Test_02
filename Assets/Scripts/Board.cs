@@ -102,11 +102,22 @@ public class Board : MonoBehaviour
         }
         return true;
     }
+
+    private bool areAllPiecesDestroyed() 
+    {   for (int i = 0; i < width; i++) {
+            for (int j = 0; j <height; j++) {
+                if (allPieces[i, j] != null && allPieces[i, j].GetComponent<Piece>().isMatchToDestroy == true ) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
     
     public void movePieces(Vector2 touchDownPosition, Vector2 touchUpPosition) {
         if(Mathf.Abs(touchUpPosition.x - touchDownPosition.x) > swipeResist || Mathf.Abs(touchUpPosition.y - touchDownPosition.y) > swipeResist ) {
             float swipeAngle = calculateAngle(touchDownPosition, touchUpPosition);
-            if (swipeAngle > -45 & swipeAngle <= 45 & chosenPiece.GetComponent<Piece>().column < width - 1) {
+            if (swipeAngle > -45 & swipeAngle <= 45 && chosenPiece.GetComponent<Piece>().column < width - 1) {
                 //Right swipe
                 if (allPieces[chosenPiece.GetComponent<Piece>().column + 1, chosenPiece.GetComponent<Piece>().row] != null) {
                     secondPiece = allPieces[chosenPiece.GetComponent<Piece>().column +1, chosenPiece.GetComponent<Piece>().row];
@@ -118,7 +129,7 @@ public class Board : MonoBehaviour
                     secondPiece.GetComponent<Piece>().wrongPosition = true;
                 }
             }
-            else if (swipeAngle > 45 & swipeAngle <= 135 & chosenPiece.GetComponent<Piece>().row < height - 1) {
+            else if (swipeAngle > 45 & swipeAngle <= 135 && chosenPiece.GetComponent<Piece>().row < height - 1) {
                 //Up swipe
                 if (allPieces[chosenPiece.GetComponent<Piece>().column, chosenPiece.GetComponent<Piece>().row + 1] != null) {
                     secondPiece = allPieces[chosenPiece.GetComponent<Piece>().column, chosenPiece.GetComponent<Piece>().row + 1];
@@ -130,7 +141,7 @@ public class Board : MonoBehaviour
                     secondPiece.GetComponent<Piece>().wrongPosition = true;
                 }
             }
-            else if (swipeAngle > 135 || swipeAngle <= -135 & chosenPiece.GetComponent<Piece>().column > 0) {
+            else if ((swipeAngle > 135 || swipeAngle <= -135) && chosenPiece.GetComponent<Piece>().column > 0) {
                 //Left swipe
                 if (allPieces[chosenPiece.GetComponent<Piece>().column - 1, chosenPiece.GetComponent<Piece>().row] != null) {
                     secondPiece = allPieces[chosenPiece.GetComponent<Piece>().column - 1, chosenPiece.GetComponent<Piece>().row];
@@ -142,7 +153,7 @@ public class Board : MonoBehaviour
                     secondPiece.GetComponent<Piece>().wrongPosition = true;
                 }
             }
-            else if (swipeAngle >= -135 & swipeAngle < -45 & chosenPiece.GetComponent<Piece>().row > 0) {
+            else if (swipeAngle >= -135 & swipeAngle < -45 && chosenPiece.GetComponent<Piece>().row > 0) {
                 //Down swipe
                 if (allPieces[chosenPiece.GetComponent<Piece>().column, chosenPiece.GetComponent<Piece>().row - 1] != null) {
                     secondPiece = allPieces[chosenPiece.GetComponent<Piece>().column, chosenPiece.GetComponent<Piece>().row - 1];
@@ -154,114 +165,255 @@ public class Board : MonoBehaviour
                     secondPiece.GetComponent<Piece>().wrongPosition = true;
                 }
             }
-        
-        //currentState = boardStates.movingPieces;
-        
-            StartCoroutine(checkMoveCoroutine());
-        }
-        else {
-            if (chosenPiece.GetComponent<Piece>().type == "SpecialTnt" || chosenPiece.GetComponent<Piece>().type == "SpecialVerticalRocket"
-            || chosenPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket" || chosenPiece.GetComponent<Piece>().type == "SpecialColorBomb") {
-                chosenPiece.GetComponent<Piece>().destroyObject();
-                StartCoroutine(colapseAllColumns());
+            //Cases with two pieces chosen and second piece, no click situation
+            //TO DO
+            if (secondPiece != null) {
+                if (chosenPiece.GetComponent<Piece>().type == "Regular" && secondPiece.GetComponent<Piece>().type == "Regular") {
+                    StartCoroutine(checkMoveCoroutine(chosenPiece, secondPiece));
+                }
+                else if (chosenPiece.GetComponent<Piece>().type == "Regular" && secondPiece.GetComponent<Piece>().type != "Regular") {
+                    StartCoroutine(checkMoveCoroutine(chosenPiece, secondPiece));    
+                }
             }
-            currentState = boardStates.gameInputAllowed;
+            else {
+                currentState = boardStates.gameInputAllowed;
+            }
+            //////////////////////////////////////////////////////////////////
+        }
+        //Cases  with only one piece, click situacion
+        else {
+            if (chosenPiece.GetComponent<Piece>().type != "Regular") {
+                List<Solution> tempSolution = new List<Solution>();
+                List<GameObject> tempPieces = new List<GameObject>();
+                Solution newSolution;
+                tempPieces.Add(chosenPiece);
+                newSolution = new Solution(tempPieces, null, chosenPiece.GetComponent<Piece>().type, null);
+                tempSolution.Add(newSolution);
+                //tempSolution.Add(chosenPiece.GetComponent<Piece>().getPiecesToDestroy());
+                StartCoroutine(destroyAllMatches(tempSolution));
+            }
+            else {
+                currentState = boardStates.gameInputAllowed;
+            }
         }
     }
 
-    public IEnumerator checkMoveCoroutine() {
-        Debug.Log("waaaaaaaaaaaa");
+    public IEnumerator checkMoveCoroutine(GameObject chosenPiece, GameObject secondPiece) {
+        
         List<Solution> allSolutions = new List<Solution>(matchsFinder.lookingForAllLegalMatches());
         
-        
         yield return new WaitUntil(() => areAllPiecesInRightPlace() == true);
-        
-        if (allSolutions.Count == 0) {
-            secondPiece.GetComponent<Piece>().column = chosenPiece.GetComponent<Piece>().column;
-            secondPiece.GetComponent<Piece>().row = chosenPiece.GetComponent<Piece>().row;
-            chosenPiece.GetComponent<Piece>().column = chosenPiece.GetComponent<Piece>().previousColumn;
-            chosenPiece.GetComponent<Piece>().row = chosenPiece.GetComponent<Piece>().previousRow;
-            chosenPiece.GetComponent<Piece>().wrongPosition = true;
-            secondPiece.GetComponent<Piece>().wrongPosition = true;
-            yield return new WaitUntil(() => areAllPiecesInRightPlace() == true);
-            currentState = boardStates.gameInputAllowed;
-            
+        if(chosenPiece.GetComponent<Piece>().type == "Regular" && secondPiece.GetComponent<Piece>().type == "Regular") {
+            if (allSolutions.Count == 0) {
+                secondPiece.GetComponent<Piece>().column = chosenPiece.GetComponent<Piece>().column;
+                secondPiece.GetComponent<Piece>().row = chosenPiece.GetComponent<Piece>().row;
+                secondPiece.GetComponent<Piece>().wrongPosition = true;
+                chosenPiece.GetComponent<Piece>().column = chosenPiece.GetComponent<Piece>().previousColumn;
+                chosenPiece.GetComponent<Piece>().row = chosenPiece.GetComponent<Piece>().previousRow;
+                chosenPiece.GetComponent<Piece>().wrongPosition = true;
+                
+                yield return new WaitUntil(() => areAllPiecesInRightPlace() == true);
+                currentState = boardStates.gameInputAllowed;
+            }
+            else {
+                secondPiece.GetComponent<Piece>().previousColumn = secondPiece.GetComponent<Piece>().column;
+                secondPiece.GetComponent<Piece>().previousRow = secondPiece.GetComponent<Piece>().row;
+                chosenPiece.GetComponent<Piece>().previousColumn = chosenPiece.GetComponent<Piece>().column;
+                chosenPiece.GetComponent<Piece>().previousRow = chosenPiece.GetComponent<Piece>().row;
+                secondPiece.GetComponent<Piece>().isSpecialPiece = true;
+                chosenPiece.GetComponent<Piece>().isSpecialPiece = true;
+                StartCoroutine(destroyAllMatches(allSolutions));
+            }
         }
-        else {
-            secondPiece.GetComponent<Piece>().previousColumn = secondPiece.GetComponent<Piece>().column;
-            secondPiece.GetComponent<Piece>().previousRow = secondPiece.GetComponent<Piece>().row;
-            chosenPiece.GetComponent<Piece>().previousColumn = chosenPiece.GetComponent<Piece>().column;
-            chosenPiece.GetComponent<Piece>().previousRow = chosenPiece.GetComponent<Piece>().row;
-            StartCoroutine(destroyAllMatches(allSolutions));
-            
+        else if((chosenPiece.GetComponent<Piece>().type == "Regular" && secondPiece.GetComponent<Piece>().type != "Regular") ||
+        (secondPiece.GetComponent<Piece>().type == "Regular" && chosenPiece.GetComponent<Piece>().type != "Regular")) {
+
         }
-        
+
+
+
+        // this code here maybe is a bug, rewrite (MUST)
+        if (chosenPiece != null) {chosenPiece.GetComponent<Piece>().isSpecialPiece = false;}
+        if (secondPiece != null) {secondPiece.GetComponent<Piece>().isSpecialPiece = false;}
         chosenPiece = null;
         secondPiece = null;
-        
+        //////////////////////////////////////////////////////////////////////////////
     }
 
     private IEnumerator destroyAllMatches (List<Solution> allSolutions) {
         List<SpecialPieceToCreate> specialPiecesToCreate = new List<SpecialPieceToCreate>();
         int pieceIndex = 0;
+        int creationColumn = 0;
+        int creationRow = 0;
+        //start getting the special pieces to create from normal matchs
         foreach (Solution solution in allSolutions) {
             if (solution.getSolutionPieces().Count > 3) {
+                creationColumn = solution.getSolutionPieces()[0].GetComponent<Piece>().column;
+                creationRow = solution.getSolutionPieces()[0].GetComponent<Piece>().row;
+                foreach (GameObject solutionPiece in solution.solutionPieces) {
+                    if (solutionPiece.GetComponent<Piece>().isSpecialPiece == true) {
+                        creationColumn = solutionPiece.GetComponent<Piece>().column;
+                        creationRow = solutionPiece.GetComponent<Piece>().row;
+                    }
+                }
+                //write backwards is more efficient (MUST)
                 if (solution.getShape() == "fiveLineShape0" || solution.getShape() == "fiveLineShape1") {
                     pieceIndex = 20;}
-                else if (solution.getShape() == "fiveTShape0" || solution.getShape() == "fiveTShape1" || solution.getShape() == "fiveTShape2" || solution.getShape() == "fiveTShape3") {
-                    if (solution.getColor() == "Red") {pieceIndex = 6;}
-                    else if (solution.getColor() == "Black") {pieceIndex = 7;}
-                    else if (solution.getColor() == "Green") {pieceIndex = 5;}
-                    else if (solution.getColor() == "Yellow") {pieceIndex = 4;}
+                    if (solution.getShape() == "fiveTShape0" || solution.getShape() == "fiveTShape1" || solution.getShape() == "fiveTShape2" || solution.getShape() == "fiveTShape3") {
+                        if (solution.getColor() == "Yellow") {pieceIndex = 4;}
+                        else if (solution.getColor() == "Green") {pieceIndex = 5;}
+                        else if (solution.getColor() == "Red") {pieceIndex = 6;}
+                        else if (solution.getColor() == "Black") {pieceIndex = 7;}
                 }
                 else if (solution.getShape() == "fiveLShape0" || solution.getShape() == "fiveLShape1" || solution.getShape() == "fiveLShape2" || solution.getShape() == "fiveLShape3") {
-                    if (solution.getColor() == "Red") {pieceIndex = 6;}
-                    else if (solution.getColor() == "Black") {pieceIndex = 7;}
+                    if (solution.getColor() == "Yellow") {pieceIndex = 4;}
                     else if (solution.getColor() == "Green") {pieceIndex = 5;}
-                    else if (solution.getColor() == "Yellow") {pieceIndex = 4;}
+                    else if (solution.getColor() == "Red") {pieceIndex = 6;}
+                    else if (solution.getColor() == "Black") {pieceIndex = 7;}
                 }
                 else if (solution.getShape() == "fourLineShape0") {
-                    if (solution.getColor() == "Red") {pieceIndex = 14;}
-                    else if (solution.getColor() == "Black") {pieceIndex = 15;}
+                    if (solution.getColor() == "Yellow") {pieceIndex = 12;}
                     else if (solution.getColor() == "Green") {pieceIndex = 13;}
-                    else if (solution.getColor() == "Yellow") {pieceIndex = 12;}
+                    else if (solution.getColor() == "Red") {pieceIndex = 14;}
+                    else if (solution.getColor() == "Black") {pieceIndex = 15;}
                 }
                 else if (solution.getShape() == "fourLineShape1") {
-                    if (solution.getColor() == "Red") {pieceIndex = 18;}
-                    else if (solution.getColor() == "Black") {pieceIndex = 19;}
+                    if (solution.getColor() == "Yellow") {pieceIndex = 16;}
                     else if (solution.getColor() == "Green") {pieceIndex = 17;}
-                    else if (solution.getColor() == "Yellow") {pieceIndex = 16;}
+                    else if (solution.getColor() == "Red") {pieceIndex = 18;}
+                    else if (solution.getColor() == "Black") {pieceIndex = 19;}
                 }
                 else if (solution.getShape() == "fourSquareShape0") {
-                    if (solution.getColor() == "Red") {pieceIndex = 10;}
-                    else if (solution.getColor() == "Black") {pieceIndex = 11;}
-                    else if (solution.getColor() == "Green") {pieceIndex = 9;}
-                    else if (solution.getColor() == "Yellow") {pieceIndex = 8;}
+                    
+                    if (solution.getColor() == "Yellow") {pieceIndex = 4;}
+                    else if (solution.getColor() == "Green") {pieceIndex = 5;}
+                    else if (solution.getColor() == "Red") {pieceIndex = 6;}
+                    else if (solution.getColor() == "Black") {pieceIndex = 7;}
+                    
                 }
-                specialPiecesToCreate.Add(new SpecialPieceToCreate(allTiles[solution.getSolutionPieces()[0].GetComponent<Piece>().column, solution.getSolutionPieces()[0].GetComponent<Piece>().row],
-                solution.getShape(), pieceIndex));   
+                if (pieceIndex > 3) {
+                    specialPiecesToCreate.Add(new SpecialPieceToCreate(allTiles[creationColumn, creationRow], solution.getShape(), pieceIndex));
+                    
+                }   
+            }
+        }
+        //////////////////////////////////////////////
+        //Start drestroying pieces and create new solutions when it is necesary
+        List<Solution> newSolutionsToAdd = new List<Solution>();
+        int counter = 3;
+        while (allSolutions.Count > 0) 
+        {   
+            newSolutionsToAdd.Clear();
+            foreach (Solution solution in allSolutions) {
+                
+                foreach (GameObject solutionPiece in solution.solutionPieces) {
+                    if (solutionPiece.GetComponent<Piece>().type == "Regular" || solutionPiece.GetComponent<Piece>().type == "SpecialDove") {
+                        solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
+                        if (solutionPiece.GetComponent<Piece>().destructionSteps == -1) {
+                            solutionPiece.GetComponent<Piece>().destructionSteps = counter;
+                            counter = counter + 2;
+                        }
+                    }
+                    else if (solutionPiece.GetComponent<Piece>().type == "SpecialTnt") {
+                        Solution newTntSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy();
+                        foreach (GameObject regularPieceTntDestroy in newTntSolution.solutionPieces) {
+                            regularPieceTntDestroy.GetComponent<Piece>().destructionSteps = counter + 10; //short fixed time for pieces destroyed by bomb explosion
+                        }
+                        counter = counter + 10;
+                        newSolutionsToAdd.Add(newTntSolution);
+                        solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
+                        solutionPiece.GetComponent<Piece>().destructionSteps = counter; //short fixed time for the bomb
+                    
+                    }
+                    else if (solutionPiece.GetComponent<Piece>().type == "SpecialVerticalRocket") {
+                        int upCounter = counter;
+                        int downCounter = counter;
+                        Solution newVerticalRocketSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy();
+                        foreach (GameObject regularPieceVerticalRocketDestroy in newVerticalRocketSolution.solutionPieces) {
+                            if (regularPieceVerticalRocketDestroy.GetComponent<Piece>().destructionSteps == -1) {
+                                if (regularPieceVerticalRocketDestroy.GetComponent<Piece>().row > solutionPiece.GetComponent<Piece>().row) {
+                                    regularPieceVerticalRocketDestroy.GetComponent<Piece>().destructionSteps = upCounter;
+                                    upCounter = upCounter + 3;
+                                    counter = counter + 3;    
+                                }
+                                if (regularPieceVerticalRocketDestroy.GetComponent<Piece>().row < solutionPiece.GetComponent<Piece>().row) {
+                                    regularPieceVerticalRocketDestroy.GetComponent<Piece>().destructionSteps = downCounter;
+                                    downCounter = downCounter + 3;
+                                    counter = counter + 3; 
+                                }
+                            }
+                        } 
+                        newSolutionsToAdd.Add(newVerticalRocketSolution);
+                        solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
+                        solutionPiece.GetComponent<Piece>().destructionSteps = 3; //short fixed explosion off with the other inicial explosions
+                    
+                    }
+                    else if (solutionPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
+                        int rightCounter = counter;
+                        int leftCounter = counter;
+                        Solution newHorizontalRocketSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy();
+                        foreach (GameObject regularPieceHorizontalRocketDestroy in newHorizontalRocketSolution.solutionPieces) {
+                            if (regularPieceHorizontalRocketDestroy.GetComponent<Piece>().destructionSteps == -1) {
+                                if (regularPieceHorizontalRocketDestroy.GetComponent<Piece>().column > solutionPiece.GetComponent<Piece>().column) {
+                                    regularPieceHorizontalRocketDestroy.GetComponent<Piece>().destructionSteps = rightCounter;
+                                    rightCounter = rightCounter + 3;    
+                                }
+                                if (regularPieceHorizontalRocketDestroy.GetComponent<Piece>().column < solutionPiece.GetComponent<Piece>().column) {
+                                    regularPieceHorizontalRocketDestroy.GetComponent<Piece>().destructionSteps = leftCounter;
+                                    leftCounter = leftCounter + 3;    
+                                }
+                            }
+                        } 
+                        newSolutionsToAdd.Add(newHorizontalRocketSolution);
+                        solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
+                        solutionPiece.GetComponent<Piece>().destructionSteps = 3; //short fixed explosion off with the other inicial explosions
+                    
+                    }
+                    else if (solutionPiece.GetComponent<Piece>().type == "SpecialColorBomb") {
+                        Solution newColorBombSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy();
+                        foreach (GameObject regularPieceColorBombDestroy in newColorBombSolution.solutionPieces) {
+                            if (regularPieceColorBombDestroy.GetComponent<Piece>().destructionSteps == -1) {
+                                regularPieceColorBombDestroy.GetComponent<Piece>().destructionSteps = Random.Range(counter, 5 * counter);
+                                
+                            }
+                        newSolutionsToAdd.Add(newColorBombSolution);
+                        solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
+                        solutionPiece.GetComponent<Piece>().destructionSteps = 3; //short fixed explosion off with the other inicial explosions
+                    
+                        }
+                    }
+                }
+            }
+            allSolutions.Clear();
+            if (newSolutionsToAdd != null) {
+                allSolutions = new List<Solution>(newSolutionsToAdd);
+                
             }
         }
         
-        foreach (Solution solution in allSolutions) {
-            for (int i = 0; i < solution.getSolutionPieces().Count; i++) {
-                if (solution.getSolutionPieces()[i] != null) {
-                    solution.getSolutionPieces()[i].GetComponent<Piece>().destroyObject();
-                }
+        
+
+        //////////////////////////////////////////////////////////////////////////////
+        //Creating special pieces
+        yield return new WaitUntil(() => areAllPiecesDestroyed() == true);
+        if (specialPiecesToCreate.Count > 0) {
+            foreach (SpecialPieceToCreate newSpecialPiece in specialPiecesToCreate) {
+                GameObject newPiece = Instantiate(pieces[newSpecialPiece.piecesIndex], new Vector2(newSpecialPiece.tile.column, newSpecialPiece.tile.row),Quaternion.identity);
+                
+                allPieces[newSpecialPiece.tile.column, newSpecialPiece.tile.row] = newPiece;
+                
+                newPiece.GetComponent<Piece>().column = newSpecialPiece.tile.column;
+                newPiece.GetComponent<Piece>().row = newSpecialPiece.tile.row;
+                newPiece.GetComponent<Piece>().previousColumn = newSpecialPiece.tile.column;
+                newPiece.GetComponent<Piece>().previousRow = newSpecialPiece.tile.row;
+                newPiece.transform.parent = this.transform;
             }
         }
-        foreach (SpecialPieceToCreate newSpecialPiece in specialPiecesToCreate) {
-            GameObject newPiece = Instantiate(pieces[newSpecialPiece.piecesIndex], new Vector2(newSpecialPiece.tile.column, newSpecialPiece.tile.row),Quaternion.identity);
-            allPieces[newSpecialPiece.tile.column, newSpecialPiece.tile.row] = newPiece; 
-            newPiece.GetComponent<Piece>().column = newSpecialPiece.tile.column;
-            newPiece.GetComponent<Piece>().row = newSpecialPiece.tile.row;
-            newPiece.GetComponent<Piece>().previousColumn = newSpecialPiece.tile.column;
-            newPiece.GetComponent<Piece>().previousRow = newSpecialPiece.tile.row;
-        }
+        yield return new WaitForSeconds(0.025f);
         yield return new WaitUntil(() => areAllPiecesInRightPlace() == true);
-        yield return new WaitForSeconds(0.3f);
         StartCoroutine(colapseAllColumns());
     }
+    
 
     private IEnumerator colapseAllColumns() {
         int blankSpacesCount;
@@ -281,17 +433,19 @@ public class Board : MonoBehaviour
             }
         }
         yield return new WaitUntil(() => areAllPiecesInRightPlace() == true);
+        
         StartCoroutine(fillBoardCoroutine());       
     }
 
     private IEnumerator fillBoardCoroutine() {
         refillBoard();
         yield return new WaitUntil(() => areAllPiecesInRightPlace() == true);
+        yield return new WaitUntil(() => areAllPiecesDestroyed() == true);
         List<Solution> allSolutions = new List<Solution>();
         allSolutions = matchsFinder.lookingForAllLegalMatches();
         if (allSolutions.Count > 0) {       
             StartCoroutine(destroyAllMatches(allSolutions));
-            yield return new WaitForSeconds(0.25f);
+            
             
             
         }
@@ -320,3 +474,4 @@ public class Board : MonoBehaviour
         
     
 }
+

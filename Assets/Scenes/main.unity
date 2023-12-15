@@ -296,10 +296,10 @@ MonoBehaviour:
   - {fileID: 7810713835290938426, guid: f4a4476d36d58d94097b4e225a0d930e, type: 3}
   - {fileID: 7810713835290938426, guid: ba671ba319bb65e448c7c5d363e8318e, type: 3}
   - {fileID: 7810713835290938426, guid: bdc5d4d747007bc40aa9a9b45c54a54d, type: 3}
-  - {fileID: 7810713835290938426, guid: 795c8f2ccf27d754fb066cff38bb1e7b, type: 3}
-  - {fileID: 7810713835290938426, guid: c2aa15c5dfa8b1d4a84d0bac4faa3dd9, type: 3}
-  - {fileID: 7810713835290938426, guid: e3d4a33389ef53a47888a921bfb8e2d5, type: 3}
-  - {fileID: 7810713835290938426, guid: 2300a1df2e8ad2f46a893c3d568691a9, type: 3}
+  - {fileID: 7810713835290938426, guid: f059903638b3ea645a9e7f4cebca983a, type: 3}
+  - {fileID: 7810713835290938426, guid: 87587e07747d62442bffa868eae349e3, type: 3}
+  - {fileID: 7810713835290938426, guid: 1e5f0b3c9f9315842958df94d5b94fcf, type: 3}
+  - {fileID: 7810713835290938426, guid: 03b6cf2fe70463245b968a72f3014c50, type: 3}
   - {fileID: 7810713835290938426, guid: 449496c7463e61848b8d4e87d7e508b3, type: 3}
   - {fileID: 7810713835290938426, guid: af00388f182811f4a8bbb2f7a44c8ddd, type: 3}
   - {fileID: 7810713835290938426, guid: b26867c732709cd47ac65e3b068a98b4, type: 3}
@@ -316,7 +316,7 @@ MonoBehaviour:
   chosenPiece: {fileID: 0}
   secondPiece: {fileID: 0}
   swipeResist: 1
-  pieceSpeed: 2
+  pieceSpeed: 17
 --- !u!4 &1372888949
 Transform:
   m_ObjectHideFlags: 0

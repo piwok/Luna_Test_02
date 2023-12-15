@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class Solution
 {
-    private List<GameObject> solutionPieces;
+    public List<GameObject> solutionPieces;
     private string shape;
-    private string type;
+    public string type;
     private string color;
+    public int numStepsTodestruccion;
     private int size;
     public Solution(List<GameObject> asolutionPieces, string ashape, string atype, string acolor) {
         solutionPieces = asolutionPieces;
@@ -29,6 +30,9 @@ public class Solution
     }
     public void setColor (string value) {
         color = value;
+    }
+    public void setNumStepsToDestruccion (int value) {
+        numStepsTodestruccion = value;
     }
     public List<GameObject> getSolutionPieces () {
         return solutionPieces;

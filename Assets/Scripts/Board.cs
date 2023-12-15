@@ -300,28 +300,29 @@ public class Board : MonoBehaviour
         //////////////////////////////////////////////
         //Start drestroying pieces and create new solutions when it is necesary
         List<Solution> newSolutionsToAdd = new List<Solution>();
-        
+        int counter = 3;
         while (allSolutions.Count > 0) 
         {   
             newSolutionsToAdd.Clear();
             foreach (Solution solution in allSolutions) {
-                int counter = 3;
+                
                 foreach (GameObject solutionPiece in solution.solutionPieces) {
                     if (solutionPiece.GetComponent<Piece>().type == "Regular" || solutionPiece.GetComponent<Piece>().type == "SpecialDove") {
                         solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
                         if (solutionPiece.GetComponent<Piece>().destructionSteps == -1) {
                             solutionPiece.GetComponent<Piece>().destructionSteps = counter;
-                            counter++;
+                            counter = counter + 2;
                         }
                     }
                     else if (solutionPiece.GetComponent<Piece>().type == "SpecialTnt") {
                         Solution newTntSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy();
                         foreach (GameObject regularPieceTntDestroy in newTntSolution.solutionPieces) {
-                            regularPieceTntDestroy.GetComponent<Piece>().destructionSteps = 3; //short fixed time for pieces destroyed by bomb explosion
-                        } 
+                            regularPieceTntDestroy.GetComponent<Piece>().destructionSteps = counter + 10; //short fixed time for pieces destroyed by bomb explosion
+                        }
+                        counter = counter + 10;
                         newSolutionsToAdd.Add(newTntSolution);
                         solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
-                        solutionPiece.GetComponent<Piece>().destructionSteps = 3; //short fixed time for the bomb
+                        solutionPiece.GetComponent<Piece>().destructionSteps = counter; //short fixed time for the bomb
                     
                     }
                     else if (solutionPiece.GetComponent<Piece>().type == "SpecialVerticalRocket") {
@@ -332,11 +333,13 @@ public class Board : MonoBehaviour
                             if (regularPieceVerticalRocketDestroy.GetComponent<Piece>().destructionSteps == -1) {
                                 if (regularPieceVerticalRocketDestroy.GetComponent<Piece>().row > solutionPiece.GetComponent<Piece>().row) {
                                     regularPieceVerticalRocketDestroy.GetComponent<Piece>().destructionSteps = upCounter;
-                                    upCounter++;    
+                                    upCounter = upCounter + 3;
+                                    counter = counter + 3;    
                                 }
                                 if (regularPieceVerticalRocketDestroy.GetComponent<Piece>().row < solutionPiece.GetComponent<Piece>().row) {
                                     regularPieceVerticalRocketDestroy.GetComponent<Piece>().destructionSteps = downCounter;
-                                    downCounter++;    
+                                    downCounter = downCounter + 3;
+                                    counter = counter + 3; 
                                 }
                             }
                         } 
@@ -353,11 +356,11 @@ public class Board : MonoBehaviour
                             if (regularPieceHorizontalRocketDestroy.GetComponent<Piece>().destructionSteps == -1) {
                                 if (regularPieceHorizontalRocketDestroy.GetComponent<Piece>().column > solutionPiece.GetComponent<Piece>().column) {
                                     regularPieceHorizontalRocketDestroy.GetComponent<Piece>().destructionSteps = rightCounter;
-                                    rightCounter++;    
+                                    rightCounter = rightCounter + 3;    
                                 }
                                 if (regularPieceHorizontalRocketDestroy.GetComponent<Piece>().column < solutionPiece.GetComponent<Piece>().column) {
                                     regularPieceHorizontalRocketDestroy.GetComponent<Piece>().destructionSteps = leftCounter;
-                                    leftCounter++;    
+                                    leftCounter = leftCounter + 3;    
                                 }
                             }
                         } 
@@ -370,7 +373,7 @@ public class Board : MonoBehaviour
                         Solution newColorBombSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy();
                         foreach (GameObject regularPieceColorBombDestroy in newColorBombSolution.solutionPieces) {
                             if (regularPieceColorBombDestroy.GetComponent<Piece>().destructionSteps == -1) {
-                                regularPieceColorBombDestroy.GetComponent<Piece>().destructionSteps = Random.Range(counter, 2 * counter);
+                                regularPieceColorBombDestroy.GetComponent<Piece>().destructionSteps = Random.Range(counter, 5 * counter);
                                 
                             }
                         newSolutionsToAdd.Add(newColorBombSolution);
@@ -406,7 +409,7 @@ public class Board : MonoBehaviour
                 newPiece.transform.parent = this.transform;
             }
         }
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.025f);
         yield return new WaitUntil(() => areAllPiecesInRightPlace() == true);
         StartCoroutine(colapseAllColumns());
     }

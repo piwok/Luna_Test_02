@@ -39,7 +39,7 @@ public class Piece : MonoBehaviour
         isMatchToDestroy = false;
         StartDestructionFlag = false;
         startingTimeToDestroy = 0;
-        destructionTimeStep = 0.075f;
+        destructionTimeStep = 0.05f;
         destructionSteps = -1;
         board = FindObjectOfType<Board>();
         previousColumn = column;
@@ -226,11 +226,11 @@ public class Piece : MonoBehaviour
                 if (row + i < board.height && board.allPieces[column, row + i] != null && board.allPieces[column, row + i].GetComponent<Piece>().isMatchToDestroy == false) {
                     newSolution.Add(board.allPieces[column, row + i]);
                 }
-                if (row - i >= 0 && board.allPieces[column, row - i] != null) {
+                if (row - i >= 0 && board.allPieces[column, row - i] != null && board.allPieces[column, row - i].GetComponent<Piece>().isMatchToDestroy == false) {
                     newSolution.Add(board.allPieces[column, row - i]);
                 }
             }
-            return new Solution(newSolution, null, null, null);
+            return new Solution(newSolution, null, null, null); 
         }
         //BUG in column = 0 or column = 8 it crashes
         else if (type == "SpecialHorizontalRocket") { 
@@ -238,7 +238,7 @@ public class Piece : MonoBehaviour
                 if (column + i < board.width && board.allPieces[column + i, row] != null && board.allPieces[column + i, row].GetComponent<Piece>().isMatchToDestroy == false) {
                     newSolution.Add(board.allPieces[column + i, row]);
                 }
-                if (column - i >= 0 && board.allPieces[column - i, row] != null && board.allPieces[column + i, row].GetComponent<Piece>().isMatchToDestroy == false) {
+                if (column - i >= 0 && board.allPieces[column - i, row] != null && board.allPieces[column - i, row].GetComponent<Piece>().isMatchToDestroy == false) {
                     newSolution.Add(board.allPieces[column - i, row]);
                 }
             }

@@ -314,8 +314,6 @@ public class Board : MonoBehaviour
                             counter++;
                         }
                     }
-
-                
                     else if (solutionPiece.GetComponent<Piece>().type == "SpecialTnt") {
                         Solution newTntSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy();
                         foreach (GameObject regularPieceTntDestroy in newTntSolution.solutionPieces) {
@@ -325,6 +323,61 @@ public class Board : MonoBehaviour
                         solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
                         solutionPiece.GetComponent<Piece>().destructionSteps = 3; //short fixed time for the bomb
                     
+                    }
+                    else if (solutionPiece.GetComponent<Piece>().type == "SpecialVerticalRocket") {
+                        int upCounter = counter;
+                        int downCounter = counter;
+                        Solution newVerticalRocketSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy();
+                        foreach (GameObject regularPieceVerticalRocketDestroy in newVerticalRocketSolution.solutionPieces) {
+                            if (regularPieceVerticalRocketDestroy.GetComponent<Piece>().destructionSteps == -1) {
+                                if (regularPieceVerticalRocketDestroy.GetComponent<Piece>().row > solutionPiece.GetComponent<Piece>().row) {
+                                    regularPieceVerticalRocketDestroy.GetComponent<Piece>().destructionSteps = upCounter;
+                                    upCounter++;    
+                                }
+                                if (regularPieceVerticalRocketDestroy.GetComponent<Piece>().row < solutionPiece.GetComponent<Piece>().row) {
+                                    regularPieceVerticalRocketDestroy.GetComponent<Piece>().destructionSteps = downCounter;
+                                    downCounter++;    
+                                }
+                            }
+                        } 
+                        newSolutionsToAdd.Add(newVerticalRocketSolution);
+                        solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
+                        solutionPiece.GetComponent<Piece>().destructionSteps = 3; //short fixed explosion off with the other inicial explosions
+                    
+                    }
+                    else if (solutionPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
+                        int rightCounter = counter;
+                        int leftCounter = counter;
+                        Solution newHorizontalRocketSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy();
+                        foreach (GameObject regularPieceHorizontalRocketDestroy in newHorizontalRocketSolution.solutionPieces) {
+                            if (regularPieceHorizontalRocketDestroy.GetComponent<Piece>().destructionSteps == -1) {
+                                if (regularPieceHorizontalRocketDestroy.GetComponent<Piece>().column > solutionPiece.GetComponent<Piece>().column) {
+                                    regularPieceHorizontalRocketDestroy.GetComponent<Piece>().destructionSteps = rightCounter;
+                                    rightCounter++;    
+                                }
+                                if (regularPieceHorizontalRocketDestroy.GetComponent<Piece>().column < solutionPiece.GetComponent<Piece>().column) {
+                                    regularPieceHorizontalRocketDestroy.GetComponent<Piece>().destructionSteps = leftCounter;
+                                    leftCounter++;    
+                                }
+                            }
+                        } 
+                        newSolutionsToAdd.Add(newHorizontalRocketSolution);
+                        solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
+                        solutionPiece.GetComponent<Piece>().destructionSteps = 3; //short fixed explosion off with the other inicial explosions
+                    
+                    }
+                    else if (solutionPiece.GetComponent<Piece>().type == "SpecialColorBomb") {
+                        Solution newColorBombSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy();
+                        foreach (GameObject regularPieceColorBombDestroy in newColorBombSolution.solutionPieces) {
+                            if (regularPieceColorBombDestroy.GetComponent<Piece>().destructionSteps == -1) {
+                                regularPieceColorBombDestroy.GetComponent<Piece>().destructionSteps = Random.Range(counter, 2 * counter);
+                                
+                            }
+                        newSolutionsToAdd.Add(newColorBombSolution);
+                        solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
+                        solutionPiece.GetComponent<Piece>().destructionSteps = 3; //short fixed explosion off with the other inicial explosions
+                    
+                        }
                     }
                 }
             }
@@ -342,10 +395,6 @@ public class Board : MonoBehaviour
         yield return new WaitUntil(() => areAllPiecesDestroyed() == true);
         if (specialPiecesToCreate.Count > 0) {
             foreach (SpecialPieceToCreate newSpecialPiece in specialPiecesToCreate) {
-                Debug.Log("Ahora esoty aqui querioendo comprender");
-                Debug.Log(newSpecialPiece.tile);
-                Debug.Log(newSpecialPiece.shape);
-                Debug.Log(newSpecialPiece.piecesIndex);
                 GameObject newPiece = Instantiate(pieces[newSpecialPiece.piecesIndex], new Vector2(newSpecialPiece.tile.column, newSpecialPiece.tile.row),Quaternion.identity);
                 
                 allPieces[newSpecialPiece.tile.column, newSpecialPiece.tile.row] = newPiece;
@@ -355,17 +404,10 @@ public class Board : MonoBehaviour
                 newPiece.GetComponent<Piece>().previousColumn = newSpecialPiece.tile.column;
                 newPiece.GetComponent<Piece>().previousRow = newSpecialPiece.tile.row;
                 newPiece.transform.parent = this.transform;
-                Debug.Log(newPiece.GetComponent<Piece>().column);
-                Debug.Log(newPiece.GetComponent<Piece>().row);
-                Debug.Log(newPiece.GetComponent<Piece>().type);
-                Debug.Log(allPieces[newSpecialPiece.tile.column, newSpecialPiece.tile.row].GetComponent<Piece>().type);
-                Debug.Log(allPieces[newSpecialPiece.tile.column, newSpecialPiece.tile.row] == newPiece);
             }
         }
-        
+        yield return new WaitForSeconds(0.1f);
         yield return new WaitUntil(() => areAllPiecesInRightPlace() == true);
-        
-        
         StartCoroutine(colapseAllColumns());
     }
     

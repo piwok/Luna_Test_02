@@ -39,7 +39,7 @@ public class Piece : MonoBehaviour
         isMatchToDestroy = false;
         StartDestructionFlag = false;
         startingTimeToDestroy = 0;
-        destructionTimeStep = 0.125f;
+        destructionTimeStep = 0.075f;
         destructionSteps = -1;
         board = FindObjectOfType<Board>();
         previousColumn = column;
@@ -147,7 +147,6 @@ public class Piece : MonoBehaviour
                 }
             } 
             else if (type == "SpecialTnt") {
-                Debug.Log("no deberia estar aqui");
                 if (StartDestructionFlag == false) {
                     timeLeftToDestruction = destructionSteps * destructionTimeStep;
                     StartDestructionFlag = true;
@@ -160,7 +159,48 @@ public class Piece : MonoBehaviour
                     board.allPieces[column, row] = null;
                     Destroy(gameObject);
                 }
-
+            }
+            else if (type == "SpecialVerticalRocket") {
+                if (StartDestructionFlag == false) {
+                    timeLeftToDestruction = destructionSteps * destructionTimeStep;
+                    StartDestructionFlag = true;
+                }
+                else {
+                    timeLeftToDestruction -= Time.deltaTime;
+                    }
+                if (timeLeftToDestruction < 0) {
+                    Instantiate(destroyEffect, transform.position, Quaternion.identity);
+                    board.allPieces[column, row] = null;
+                    Destroy(gameObject);
+                }
+            }
+            else if (type == "SpecialHorizontalRocket") {
+                if (StartDestructionFlag == false) {
+                    timeLeftToDestruction = destructionSteps * destructionTimeStep;
+                    StartDestructionFlag = true;
+                }
+                else {
+                    timeLeftToDestruction -= Time.deltaTime;
+                    }
+                if (timeLeftToDestruction < 0) {
+                    Instantiate(destroyEffect, transform.position, Quaternion.identity);
+                    board.allPieces[column, row] = null;
+                    Destroy(gameObject);
+                }
+            }
+            else if (type == "SpecialColorBomb") {
+                if (StartDestructionFlag == false) {
+                    timeLeftToDestruction = destructionSteps * destructionTimeStep;
+                    StartDestructionFlag = true;
+                }
+                else {
+                    timeLeftToDestruction -= Time.deltaTime;
+                    }
+                if (timeLeftToDestruction < 0) {
+                    Instantiate(destroyEffect, transform.position, Quaternion.identity);
+                    board.allPieces[column, row] = null;
+                    Destroy(gameObject);
+                }
             }
         }
     }
@@ -180,9 +220,10 @@ public class Piece : MonoBehaviour
             
             return new Solution(newSolution, null, null, null);
         }
+        //BUG in row = 0 or row = 8 it crashes
         else if (type == "SpecialVerticalRocket") { 
-            for (int i = 0; i < board.height; i++) {
-                if (row + i < board.height && board.allPieces[column, row + i] != null) {
+            for (int i = 1; i < board.height; i++) {
+                if (row + i < board.height && board.allPieces[column, row + i] != null && board.allPieces[column, row + i].GetComponent<Piece>().isMatchToDestroy == false) {
                     newSolution.Add(board.allPieces[column, row + i]);
                 }
                 if (row - i >= 0 && board.allPieces[column, row - i] != null) {
@@ -191,12 +232,13 @@ public class Piece : MonoBehaviour
             }
             return new Solution(newSolution, null, null, null);
         }
+        //BUG in column = 0 or column = 8 it crashes
         else if (type == "SpecialHorizontalRocket") { 
-            for (int i = 0; i < board.width; i++) {
-                if (column + i < board.width && board.allPieces[column + i, row] != null) {
+            for (int i = 1; i < board.width; i++) {
+                if (column + i < board.width && board.allPieces[column + i, row] != null && board.allPieces[column + i, row].GetComponent<Piece>().isMatchToDestroy == false) {
                     newSolution.Add(board.allPieces[column + i, row]);
                 }
-                if (column - i >= 0 && board.allPieces[column - i, row] != null) {
+                if (column - i >= 0 && board.allPieces[column - i, row] != null && board.allPieces[column + i, row].GetComponent<Piece>().isMatchToDestroy == false) {
                     newSolution.Add(board.allPieces[column - i, row]);
                 }
             }
@@ -208,7 +250,7 @@ public class Piece : MonoBehaviour
             string colorToDestroy = colors[Random.Range(0, 4)];
             for (int i = 0; i < board.width; i++) {
                 for (int j = 0; j < board.height; j++) {
-                    if (board.allPieces[i, j] != null && board.allPieces[i, j].GetComponent<Piece>().color == colorToDestroy) {
+                    if (board.allPieces[i, j] != null && board.allPieces[i, j].GetComponent<Piece>().color == colorToDestroy && board.allPieces[i, j].GetComponent<Piece>().isMatchToDestroy == false ) {
                         newSolution.Add(board.allPieces[i, j]);
                     }
                 }

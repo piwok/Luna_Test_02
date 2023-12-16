@@ -45,59 +45,6 @@ public class Piece : MonoBehaviour
         previousColumn = column;
         previousRow = row;
         wrongPosition = false;
-        allTntTargets = new List<int[]>();
-        halfRightSideTntTargets = new List<int[]>();
-        halfLeftSideTntTargets = new List<int[]>();
-        //this is need to be done with for loops (MUST)
-        //one square distance all points
-        allTntTargets.Add(new int[] {-1, -1}); allTntTargets.Add(new int[] {-1, 0}); allTntTargets.Add(new int[] {-1, 1}); allTntTargets.Add(new int[] {0, 1}); allTntTargets.Add(new int[] {1, 1});
-        allTntTargets.Add(new int [] {1, 0}); allTntTargets.Add(new int[] {1, -1}); allTntTargets.Add(new int[] {0, -1});
-        //two square distance all points
-        allTntTargets.Add(new int[] {-2, -2});allTntTargets.Add(new int[] {-2, -1});allTntTargets.Add(new int[] {-2, 0});allTntTargets.Add(new int[] {-2, 1});allTntTargets.Add(new int[] {-2, 2});
-        allTntTargets.Add(new int[] {-1, 2});allTntTargets.Add(new int[] {0, 2});allTntTargets.Add(new int[] {1, 2});allTntTargets.Add(new int[] {2, 2});allTntTargets.Add(new int[] {2, 1});
-        allTntTargets.Add(new int[] {2, 0});allTntTargets.Add(new int[] {2, -1});allTntTargets.Add(new int[] {2, -2});allTntTargets.Add(new int[] {1, -2});allTntTargets.Add(new int[] {0, -2});
-        allTntTargets.Add(new int[] {-1, -2});
-        //one square distance half right side points
-        halfRightSideTntTargets.Add(new int[] {0, 1}); halfRightSideTntTargets.Add(new int[] {1, 1}); halfRightSideTntTargets.Add(new int [] {1, 0});
-        halfRightSideTntTargets.Add(new int[] {1, -1}); halfRightSideTntTargets.Add(new int[] {0, -1});
-        //one square distance half left side points
-        halfLeftSideTntTargets.Add(new int[] {-1, -1}); halfLeftSideTntTargets.Add(new int[] {-1, 0}); halfLeftSideTntTargets.Add(new int[] {-1, 1}); 
-        halfLeftSideTntTargets.Add(new int[] {0, 1}); halfLeftSideTntTargets.Add(new int[] {0, -1});
-        //two square distance half right side points
-        halfRightSideTntTargets.Add(new int[] {0, 2}); halfRightSideTntTargets.Add(new int[] {1, 2}); halfRightSideTntTargets.Add(new int[] {2, 2});
-        halfRightSideTntTargets.Add(new int[] {2, 1}); halfRightSideTntTargets.Add(new int[] {2, 0}); halfRightSideTntTargets.Add(new int[] {2, -1});
-        halfRightSideTntTargets.Add(new int[] {2, -2}); halfRightSideTntTargets.Add(new int[] {1, -2}); halfRightSideTntTargets.Add(new int[] {0, -2});
-        //two square distance half left side points
-        halfLeftSideTntTargets.Add(new int[] {-2, -2});halfLeftSideTntTargets.Add(new int[] {-2, -1});halfLeftSideTntTargets.Add(new int[] {-2, 0});
-        halfLeftSideTntTargets.Add(new int[] {-2, 1});halfLeftSideTntTargets.Add(new int[] {-2, 2});halfLeftSideTntTargets.Add(new int[] {-1, 2});
-        halfLeftSideTntTargets.Add(new int[] {0, 2}); halfLeftSideTntTargets.Add(new int[] {0, -2});halfLeftSideTntTargets.Add(new int[] {-1, -2});
-        //three square distance half right side points
-        halfRightSideTntTargets.Add(new int[] {0, 3}); halfRightSideTntTargets.Add(new int[] {1, 3}); halfRightSideTntTargets.Add(new int[] {2, 3});
-        halfRightSideTntTargets.Add(new int[] {3, 3}); halfRightSideTntTargets.Add(new int[] {3, 2}); halfRightSideTntTargets.Add(new int[] {3, 1});
-        halfRightSideTntTargets.Add(new int[] {3, 0}); halfRightSideTntTargets.Add(new int[] {3, -1}); halfRightSideTntTargets.Add(new int[] {3, -2});
-        halfRightSideTntTargets.Add(new int[] {3, -3}); halfRightSideTntTargets.Add(new int[] {2, -3}); halfRightSideTntTargets.Add(new int[] {1, -3});
-        halfRightSideTntTargets.Add(new int[] {0, -3});
-        //three square distance half left side points
-        halfLeftSideTntTargets.Add(new int[] {0, 3}); halfLeftSideTntTargets.Add(new int[] {-1, 3}); halfLeftSideTntTargets.Add(new int[] {-2, 3});
-        halfLeftSideTntTargets.Add(new int[] {-3, 3}); halfLeftSideTntTargets.Add(new int[] {-3, 2}); halfLeftSideTntTargets.Add(new int[] {-3, 1});
-        halfLeftSideTntTargets.Add(new int[] {-3, 0}); halfLeftSideTntTargets.Add(new int[] {-3, -1}); halfLeftSideTntTargets.Add(new int[] {-3, -2});
-        halfLeftSideTntTargets.Add(new int[] {-3, -3}); halfLeftSideTntTargets.Add(new int[] {-2, -3}); halfLeftSideTntTargets.Add(new int[] {-1, -3});
-        halfLeftSideTntTargets.Add(new int[] {0, -3});
-        //four square distance half right side points
-        halfRightSideTntTargets.Add(new int[] {0, 4}); halfRightSideTntTargets.Add(new int[] {1, 4}); halfRightSideTntTargets.Add(new int[] {2, 4});
-        halfRightSideTntTargets.Add(new int[] {3, 4}); halfRightSideTntTargets.Add(new int[] {4, 4}); halfRightSideTntTargets.Add(new int[] {4, 3});
-        halfRightSideTntTargets.Add(new int[] {4, 2}); halfRightSideTntTargets.Add(new int[] {4, 1}); halfRightSideTntTargets.Add(new int[] {4, 0});
-        halfRightSideTntTargets.Add(new int[] {4, -1}); halfRightSideTntTargets.Add(new int[] {4, -2}); halfRightSideTntTargets.Add(new int[] {4, -3});
-        halfRightSideTntTargets.Add(new int[] {4, -4}); halfRightSideTntTargets.Add(new int[] {3, -4}); halfRightSideTntTargets.Add(new int[] {2, -4});
-        halfRightSideTntTargets.Add(new int[] {1, -4}); halfRightSideTntTargets.Add(new int[] {0, -4});
-        // four square distance half left side points
-        halfLeftSideTntTargets.Add(new int[] {0, 4}); halfLeftSideTntTargets.Add(new int[] {-1, 4}); halfLeftSideTntTargets.Add(new int[] {-2, 4});
-        halfLeftSideTntTargets.Add(new int[] {-3, 4}); halfLeftSideTntTargets.Add(new int[] {-4, 4}); halfLeftSideTntTargets.Add(new int[] {-4, 3});
-        halfLeftSideTntTargets.Add(new int[] {-4, 2}); halfLeftSideTntTargets.Add(new int[] {-4, 1}); halfLeftSideTntTargets.Add(new int[] {-4, 0});
-        halfLeftSideTntTargets.Add(new int[] {-4, -1}); halfLeftSideTntTargets.Add(new int[] {-4, -2}); halfLeftSideTntTargets.Add(new int[] {-4, -3});
-        halfLeftSideTntTargets.Add(new int[] {-4, -4});halfLeftSideTntTargets.Add(new int[] {-3, -4}); halfLeftSideTntTargets.Add(new int[] {-2, -4});
-        halfLeftSideTntTargets.Add(new int[] {-1, -4}); halfLeftSideTntTargets.Add(new int[] {0, -4});
-
     }
 
     // Update is called once per frame
@@ -205,20 +152,60 @@ public class Piece : MonoBehaviour
             }
         }
     }
-        
+       
     
 
     public Solution getPiecesToDestroy() 
     {   
         List<GameObject> newSolution = new List<GameObject>();
-        if (type == "SpecialTnt") { 
-            foreach (int[] tntTarget in allTntTargets) {
-                if (column + tntTarget[0] < board.width && column + tntTarget[0] >= 0 && row + tntTarget[1] < board.height && row + tntTarget[1] >= 0 &&
-                board.allPieces[column + tntTarget[0], row + tntTarget[1]] != null && board.allPieces[column + tntTarget[0], row + tntTarget[1]].GetComponent<Piece>().isMatchToDestroy == false) {
-                    newSolution.Add(board.allPieces[column + tntTarget[0], row + tntTarget[1]]);
+        if (type == "SpecialTnt") {
+            int minLeftColumn;
+            int minLeftRow;
+            int maxRightColumn;
+            int maxRightRow;
+            if (column - 3 < 0) {
+                minLeftColumn = 0;
+            } else {
+                minLeftColumn = column - 2;
+            }
+            if (row - 3 < 0) {
+                minLeftRow = 0;
+            } else {
+                minLeftRow = row - 2;
+            }
+            if (column + 2 > board.width - 1) {
+                maxRightColumn = board.width - 1;
+            } else {
+                maxRightColumn = column + 3;
+            }
+            if (row + 2 > board.height - 1) {
+                maxRightRow = board.height - 1;
+            } else {
+                maxRightRow = row + 3;
+            }
+            // Debug.Log(minLeftRow);
+            // Debug.Log(minLeftRow);
+            // Debug.Log(maxRightColumn);
+            // Debug.Log(maxRightRow);
+            
+            for (int i = minLeftColumn; i < maxRightColumn; i++) {
+                Debug.Log(i);
+                for (int j = minLeftRow; j < maxRightRow; j++) {
+                    Debug.Log(j);
+                    if (board.allPieces[i, j] != gameObject && board.allPieces[i, j] != null && 
+                    board.allPieces[i, j].GetComponent<Piece>().isMatchToDestroy == false) { //dont include itself in the explosion
+                    newSolution.Add(board. allPieces[i, j]);
+
+                    }
                 }
             }
-            
+            // foreach (int[] tntTarget in allTntTargets) {
+            //     if (column + tntTarget[0] < board.width && column + tntTarget[0] >= 0 && row + tntTarget[1] < board.height && row + tntTarget[1] >= 0 &&
+            //     board.allPieces[column + tntTarget[0], row + tntTarget[1]] != null && board.allPieces[column + tntTarget[0], row + tntTarget[1]].GetComponent<Piece>().isMatchToDestroy == false) {
+            //         newSolution.Add(board.allPieces[column + tntTarget[0], row + tntTarget[1]]);
+            //     }
+            // }
+            Debug.Log(newSolution.Count);
             return new Solution(newSolution, null, null, null);
         }
         else if (type == "SpecialVerticalRocket") { 
@@ -260,43 +247,7 @@ public class Piece : MonoBehaviour
         }
         return null;
     }
-
-    private void OnMouseDown()
-    {   if (board.currentState == boardStates.gameInputAllowed) {
-            touchDownPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            board.chosenPiece = gameObject;
-         
-        }
-    }
-
-    private void OnMouseUp()
-    {   if (board.currentState == boardStates.gameInputAllowed) {
-            touchUpPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            board.currentState = boardStates.gameInputNotAllowed;
-            board.GetComponent<Board>().movePieces(touchDownPosition, touchUpPosition);
-            
-        }
-    }
-    public List<Solution> GetPiecesToDestroySpecialPower (string type) {
-        List<Solution> piecesToDestroy = new List<Solution>();
-        if (type == "SpecialTnt") {
-
-        }
-        else if (type == "SpecialVerticalRocket") {
-
-        }
-        else if (type == "SpecialHorizontalRocket") {
-
-        }
-        else if (type == "SpecialDove") {
-
-        }
-        else if (type == "SpecialColorBomb") {
-
-        }
-        return piecesToDestroy;
-
-    }
+    //TO DO
     public List<Solution> GetPiecesToDestroySpecialDoublePower (string type1, string type2) {
         List<Solution> piecesToDestroy = new List<Solution>();
         // big tnt explosion 4 pieces of radius
@@ -356,5 +307,23 @@ public class Piece : MonoBehaviour
     return piecesToDestroy;
 
     }
+
+    private void OnMouseDown()
+    {   if (board.currentState == boardStates.gameInputAllowed) {
+            touchDownPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            board.chosenPiece = gameObject;
+         
+        }
+    }
+
+    private void OnMouseUp()
+    {   if (board.currentState == boardStates.gameInputAllowed) {
+            touchUpPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            board.currentState = boardStates.gameInputNotAllowed;
+            board.GetComponent<Board>().movePieces(touchDownPosition, touchUpPosition);
+            
+        }
+    }
+        
 }
 

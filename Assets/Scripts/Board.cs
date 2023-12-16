@@ -170,11 +170,12 @@ public class Board : MonoBehaviour
             if (secondPiece != null) {
                 if (chosenPiece.GetComponent<Piece>().type == "Regular" && secondPiece.GetComponent<Piece>().type == "Regular") {
                     StartCoroutine(checkMoveCoroutine(chosenPiece, secondPiece));
-                    Debug.Log("o por este otro lado");
                 }
                 else if ((chosenPiece.GetComponent<Piece>().type == "Regular" && secondPiece.GetComponent<Piece>().type != "Regular") ||
                 (chosenPiece.GetComponent<Piece>().type != "Regular" && secondPiece.GetComponent<Piece>().type == "Regular")) {
-                    Debug.Log("por aqui debria pasar");
+                    StartCoroutine(checkMoveCoroutine(chosenPiece, secondPiece));    
+                }
+                else if (chosenPiece.GetComponent<Piece>().type != "Regular" && secondPiece.GetComponent<Piece>().type != "Regular") {
                     StartCoroutine(checkMoveCoroutine(chosenPiece, secondPiece));    
                 }
             }
@@ -199,6 +200,7 @@ public class Board : MonoBehaviour
             }
         }
     }
+    
 
     public IEnumerator checkMoveCoroutine(GameObject chosenPiece, GameObject secondPiece) {
         
@@ -226,8 +228,10 @@ public class Board : MonoBehaviour
                 secondPiece.GetComponent<Piece>().isSpecialPiece = true;
                 chosenPiece.GetComponent<Piece>().isSpecialPiece = true;
                 StartCoroutine(destroyAllMatches(allSolutions));
+                
             }
         }
+        
         else if((chosenPiece.GetComponent<Piece>().type != "Regular" && secondPiece.GetComponent<Piece>().type == "Regular") ||
         (chosenPiece.GetComponent<Piece>().type == "Regular" && secondPiece.GetComponent<Piece>().type != "Regular")) {
             
@@ -254,10 +258,10 @@ public class Board : MonoBehaviour
             StartCoroutine(destroyAllMatches(allSolutions));
 
         }
-        // else if(chosenPiece.GetComponent<Piece>().type != "Regular" && secondPiece.GetComponent<Piece>().type != "Regular") {
+        else if(chosenPiece.GetComponent<Piece>().type != "Regular" && secondPiece.GetComponent<Piece>().type != "Regular") {
                 
 
-        // }
+        }
 
 
 

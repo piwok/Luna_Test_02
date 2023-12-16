@@ -51,6 +51,6 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "Test_01.sln",
+    "dotnet.defaultSolution": "Luna_Test_02.sln",
     "git.ignoreLimitWarning": true
 }

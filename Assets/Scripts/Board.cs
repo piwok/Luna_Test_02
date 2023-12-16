@@ -170,8 +170,11 @@ public class Board : MonoBehaviour
             if (secondPiece != null) {
                 if (chosenPiece.GetComponent<Piece>().type == "Regular" && secondPiece.GetComponent<Piece>().type == "Regular") {
                     StartCoroutine(checkMoveCoroutine(chosenPiece, secondPiece));
+                    Debug.Log("o por este otro lado");
                 }
-                else if (chosenPiece.GetComponent<Piece>().type == "Regular" && secondPiece.GetComponent<Piece>().type != "Regular") {
+                else if ((chosenPiece.GetComponent<Piece>().type == "Regular" && secondPiece.GetComponent<Piece>().type != "Regular") ||
+                (chosenPiece.GetComponent<Piece>().type != "Regular" && secondPiece.GetComponent<Piece>().type == "Regular")) {
+                    Debug.Log("por aqui debria pasar");
                     StartCoroutine(checkMoveCoroutine(chosenPiece, secondPiece));    
                 }
             }
@@ -201,6 +204,7 @@ public class Board : MonoBehaviour
         
         List<Solution> allSolutions = new List<Solution>(matchsFinder.lookingForAllLegalMatches());
         
+        
         yield return new WaitUntil(() => areAllPiecesInRightPlace() == true);
         if(chosenPiece.GetComponent<Piece>().type == "Regular" && secondPiece.GetComponent<Piece>().type == "Regular") {
             if (allSolutions.Count == 0) {
@@ -224,10 +228,36 @@ public class Board : MonoBehaviour
                 StartCoroutine(destroyAllMatches(allSolutions));
             }
         }
-        else if((chosenPiece.GetComponent<Piece>().type == "Regular" && secondPiece.GetComponent<Piece>().type != "Regular") ||
-        (secondPiece.GetComponent<Piece>().type == "Regular" && chosenPiece.GetComponent<Piece>().type != "Regular")) {
+        else if((chosenPiece.GetComponent<Piece>().type != "Regular" && secondPiece.GetComponent<Piece>().type == "Regular") ||
+        (chosenPiece.GetComponent<Piece>().type == "Regular" && secondPiece.GetComponent<Piece>().type != "Regular")) {
+            
+            Solution newSolution;
+            secondPiece.GetComponent<Piece>().previousColumn = secondPiece.GetComponent<Piece>().column;
+            secondPiece.GetComponent<Piece>().previousRow = secondPiece.GetComponent<Piece>().row;
+            chosenPiece.GetComponent<Piece>().previousColumn = chosenPiece.GetComponent<Piece>().column;
+            
+            
+            chosenPiece.GetComponent<Piece>().previousRow = chosenPiece.GetComponent<Piece>().row;
+            if (chosenPiece.GetComponent<Piece>().type == "Regular") {
+                chosenPiece.GetComponent<Piece>().isSpecialPiece = true;
+                List<GameObject> newSolutionPieces = new List<GameObject>();
+                newSolutionPieces.Add(secondPiece);
+                newSolution = new Solution(newSolutionPieces, null, null, null);
+            }
+            else {
+                secondPiece.GetComponent<Piece>().isSpecialPiece = true;
+                List<GameObject> newSolutionPieces = new List<GameObject>();
+                newSolutionPieces.Add(chosenPiece);
+                newSolution = new Solution(newSolutionPieces, null, null, null);
+            }
+            allSolutions.Add(newSolution);
+            StartCoroutine(destroyAllMatches(allSolutions));
 
         }
+        // else if(chosenPiece.GetComponent<Piece>().type != "Regular" && secondPiece.GetComponent<Piece>().type != "Regular") {
+                
+
+        // }
 
 
 
@@ -297,9 +327,15 @@ public class Board : MonoBehaviour
         //////////////////////////////////////////////
         //Start drestroying pieces and create new solutions when it is necesary
         List<Solution> newSolutionsToAdd = new List<Solution>();
-        
+        //There is problems with the sincronizacion of the explosions, i need to rewrite to get a offset of time between generations of explosions
+        int counter = - 1;
         while (allSolutions.Count > 0) 
-        {   int counter = 1;
+        {   if (counter != -1) {
+            counter += 15;
+        }
+            else {
+                counter = 1;
+            }
             newSolutionsToAdd.Clear();
             foreach (Solution solution in allSolutions) {
                 counter = 1;

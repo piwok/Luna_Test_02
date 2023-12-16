@@ -189,7 +189,6 @@ public class Board : MonoBehaviour
                 tempPieces.Add(chosenPiece);
                 newSolution = new Solution(tempPieces, null, chosenPiece.GetComponent<Piece>().type, null);
                 tempSolution.Add(newSolution);
-                //tempSolution.Add(chosenPiece.GetComponent<Piece>().getPiecesToDestroy());
                 StartCoroutine(destroyAllMatches(tempSolution));
             }
             else {
@@ -256,26 +255,13 @@ public class Board : MonoBehaviour
                         creationRow = solutionPiece.GetComponent<Piece>().row;
                     }
                 }
-                //write backwards is more efficient (MUST)
-                if (solution.getShape() == "fiveLineShape0" || solution.getShape() == "fiveLineShape1") {
-                    pieceIndex = 20;}
-                    if (solution.getShape() == "fiveTShape0" || solution.getShape() == "fiveTShape1" || solution.getShape() == "fiveTShape2" || solution.getShape() == "fiveTShape3") {
-                        if (solution.getColor() == "Yellow") {pieceIndex = 4;}
-                        else if (solution.getColor() == "Green") {pieceIndex = 5;}
-                        else if (solution.getColor() == "Red") {pieceIndex = 6;}
-                        else if (solution.getColor() == "Black") {pieceIndex = 7;}
-                }
-                else if (solution.getShape() == "fiveLShape0" || solution.getShape() == "fiveLShape1" || solution.getShape() == "fiveLShape2" || solution.getShape() == "fiveLShape3") {
+                if (solution.getShape() == "fourSquareShape0") {
+                    
                     if (solution.getColor() == "Yellow") {pieceIndex = 4;}
                     else if (solution.getColor() == "Green") {pieceIndex = 5;}
                     else if (solution.getColor() == "Red") {pieceIndex = 6;}
                     else if (solution.getColor() == "Black") {pieceIndex = 7;}
-                }
-                else if (solution.getShape() == "fourLineShape0") {
-                    if (solution.getColor() == "Yellow") {pieceIndex = 12;}
-                    else if (solution.getColor() == "Green") {pieceIndex = 13;}
-                    else if (solution.getColor() == "Red") {pieceIndex = 14;}
-                    else if (solution.getColor() == "Black") {pieceIndex = 15;}
+                    
                 }
                 else if (solution.getShape() == "fourLineShape1") {
                     if (solution.getColor() == "Yellow") {pieceIndex = 16;}
@@ -283,46 +269,59 @@ public class Board : MonoBehaviour
                     else if (solution.getColor() == "Red") {pieceIndex = 18;}
                     else if (solution.getColor() == "Black") {pieceIndex = 19;}
                 }
-                else if (solution.getShape() == "fourSquareShape0") {
-                    
+                else if (solution.getShape() == "fourLineShape0") {
+                    if (solution.getColor() == "Yellow") {pieceIndex = 12;}
+                    else if (solution.getColor() == "Green") {pieceIndex = 13;}
+                    else if (solution.getColor() == "Red") {pieceIndex = 14;}
+                    else if (solution.getColor() == "Black") {pieceIndex = 15;}
+                }
+                else if (solution.getShape() == "fiveLineShape0" || solution.getShape() == "fiveLineShape1") {
+                    pieceIndex = 20;}
+                else if (solution.getShape() == "fiveLShape0" || solution.getShape() == "fiveLShape1" || solution.getShape() == "fiveLShape2" || solution.getShape() == "fiveLShape3") {
                     if (solution.getColor() == "Yellow") {pieceIndex = 4;}
                     else if (solution.getColor() == "Green") {pieceIndex = 5;}
                     else if (solution.getColor() == "Red") {pieceIndex = 6;}
                     else if (solution.getColor() == "Black") {pieceIndex = 7;}
-                    
+                }
+                else if (solution.getShape() == "fiveTShape0" || solution.getShape() == "fiveTShape1" || solution.getShape() == "fiveTShape2" || solution.getShape() == "fiveTShape3") {
+                        if (solution.getColor() == "Yellow") {pieceIndex = 4;}
+                        else if (solution.getColor() == "Green") {pieceIndex = 5;}
+                        else if (solution.getColor() == "Red") {pieceIndex = 6;}
+                        else if (solution.getColor() == "Black") {pieceIndex = 7;}
                 }
                 if (pieceIndex > 3) {
                     specialPiecesToCreate.Add(new SpecialPieceToCreate(allTiles[creationColumn, creationRow], solution.getShape(), pieceIndex));
-                    
                 }   
             }
         }
         //////////////////////////////////////////////
         //Start drestroying pieces and create new solutions when it is necesary
         List<Solution> newSolutionsToAdd = new List<Solution>();
-        int counter = 3;
+        
         while (allSolutions.Count > 0) 
-        {   
+        {   int counter = 1;
             newSolutionsToAdd.Clear();
             foreach (Solution solution in allSolutions) {
+                counter = 1;
                 
                 foreach (GameObject solutionPiece in solution.solutionPieces) {
                     if (solutionPiece.GetComponent<Piece>().type == "Regular" || solutionPiece.GetComponent<Piece>().type == "SpecialDove") {
                         solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
                         if (solutionPiece.GetComponent<Piece>().destructionSteps == -1) {
                             solutionPiece.GetComponent<Piece>().destructionSteps = counter;
-                            counter = counter + 2;
+                            counter += 1;
                         }
                     }
                     else if (solutionPiece.GetComponent<Piece>().type == "SpecialTnt") {
                         Solution newTntSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy();
                         foreach (GameObject regularPieceTntDestroy in newTntSolution.solutionPieces) {
-                            regularPieceTntDestroy.GetComponent<Piece>().destructionSteps = counter + 10; //short fixed time for pieces destroyed by bomb explosion
+                            regularPieceTntDestroy.GetComponent<Piece>().destructionSteps = counter;
                         }
-                        counter = counter + 10;
+                        
                         newSolutionsToAdd.Add(newTntSolution);
                         solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
-                        solutionPiece.GetComponent<Piece>().destructionSteps = counter; //short fixed time for the bomb
+                        solutionPiece.GetComponent<Piece>().destructionSteps = counter;
+                        counter += 1;
                     
                     }
                     else if (solutionPiece.GetComponent<Piece>().type == "SpecialVerticalRocket") {
@@ -333,19 +332,17 @@ public class Board : MonoBehaviour
                             if (regularPieceVerticalRocketDestroy.GetComponent<Piece>().destructionSteps == -1) {
                                 if (regularPieceVerticalRocketDestroy.GetComponent<Piece>().row > solutionPiece.GetComponent<Piece>().row) {
                                     regularPieceVerticalRocketDestroy.GetComponent<Piece>().destructionSteps = upCounter;
-                                    upCounter = upCounter + 3;
-                                    counter = counter + 3;    
+                                    upCounter += 1;    
                                 }
                                 if (regularPieceVerticalRocketDestroy.GetComponent<Piece>().row < solutionPiece.GetComponent<Piece>().row) {
                                     regularPieceVerticalRocketDestroy.GetComponent<Piece>().destructionSteps = downCounter;
-                                    downCounter = downCounter + 3;
-                                    counter = counter + 3; 
+                                    downCounter += 1; 
                                 }
                             }
                         } 
                         newSolutionsToAdd.Add(newVerticalRocketSolution);
                         solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
-                        solutionPiece.GetComponent<Piece>().destructionSteps = 3; //short fixed explosion off with the other inicial explosions
+                        solutionPiece.GetComponent<Piece>().destructionSteps = counter;
                     
                     }
                     else if (solutionPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
@@ -356,29 +353,29 @@ public class Board : MonoBehaviour
                             if (regularPieceHorizontalRocketDestroy.GetComponent<Piece>().destructionSteps == -1) {
                                 if (regularPieceHorizontalRocketDestroy.GetComponent<Piece>().column > solutionPiece.GetComponent<Piece>().column) {
                                     regularPieceHorizontalRocketDestroy.GetComponent<Piece>().destructionSteps = rightCounter;
-                                    rightCounter = rightCounter + 3;    
+                                    rightCounter += 1;  
                                 }
                                 if (regularPieceHorizontalRocketDestroy.GetComponent<Piece>().column < solutionPiece.GetComponent<Piece>().column) {
                                     regularPieceHorizontalRocketDestroy.GetComponent<Piece>().destructionSteps = leftCounter;
-                                    leftCounter = leftCounter + 3;    
+                                    leftCounter += 1;  
                                 }
                             }
                         } 
                         newSolutionsToAdd.Add(newHorizontalRocketSolution);
                         solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
-                        solutionPiece.GetComponent<Piece>().destructionSteps = 3; //short fixed explosion off with the other inicial explosions
+                        solutionPiece.GetComponent<Piece>().destructionSteps = counter; 
                     
                     }
                     else if (solutionPiece.GetComponent<Piece>().type == "SpecialColorBomb") {
                         Solution newColorBombSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy();
                         foreach (GameObject regularPieceColorBombDestroy in newColorBombSolution.solutionPieces) {
                             if (regularPieceColorBombDestroy.GetComponent<Piece>().destructionSteps == -1) {
-                                regularPieceColorBombDestroy.GetComponent<Piece>().destructionSteps = Random.Range(counter, 5 * counter);
+                                regularPieceColorBombDestroy.GetComponent<Piece>().destructionSteps = Random.Range(1, 6);
                                 
                             }
                         newSolutionsToAdd.Add(newColorBombSolution);
                         solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
-                        solutionPiece.GetComponent<Piece>().destructionSteps = 3; //short fixed explosion off with the other inicial explosions
+                        solutionPiece.GetComponent<Piece>().destructionSteps = counter; 
                     
                         }
                     }

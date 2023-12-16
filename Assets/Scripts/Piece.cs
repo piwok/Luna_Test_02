@@ -39,7 +39,7 @@ public class Piece : MonoBehaviour
         isMatchToDestroy = false;
         StartDestructionFlag = false;
         startingTimeToDestroy = 0;
-        destructionTimeStep = 0.05f;
+        destructionTimeStep = 0.15f;
         destructionSteps = -1;
         board = FindObjectOfType<Board>();
         previousColumn = column;
@@ -48,6 +48,7 @@ public class Piece : MonoBehaviour
         allTntTargets = new List<int[]>();
         halfRightSideTntTargets = new List<int[]>();
         halfLeftSideTntTargets = new List<int[]>();
+        //this is need to be done with for loops (MUST)
         //one square distance all points
         allTntTargets.Add(new int[] {-1, -1}); allTntTargets.Add(new int[] {-1, 0}); allTntTargets.Add(new int[] {-1, 1}); allTntTargets.Add(new int[] {0, 1}); allTntTargets.Add(new int[] {1, 1});
         allTntTargets.Add(new int [] {1, 0}); allTntTargets.Add(new int[] {1, -1}); allTntTargets.Add(new int[] {0, -1});
@@ -220,7 +221,6 @@ public class Piece : MonoBehaviour
             
             return new Solution(newSolution, null, null, null);
         }
-        //BUG in row = 0 or row = 8 it crashes
         else if (type == "SpecialVerticalRocket") { 
             for (int i = 1; i < board.height; i++) {
                 if (row + i < board.height && board.allPieces[column, row + i] != null && board.allPieces[column, row + i].GetComponent<Piece>().isMatchToDestroy == false) {
@@ -232,7 +232,6 @@ public class Piece : MonoBehaviour
             }
             return new Solution(newSolution, null, null, null); 
         }
-        //BUG in column = 0 or column = 8 it crashes
         else if (type == "SpecialHorizontalRocket") { 
             for (int i = 1; i < board.width; i++) {
                 if (column + i < board.width && board.allPieces[column + i, row] != null && board.allPieces[column + i, row].GetComponent<Piece>().isMatchToDestroy == false) {

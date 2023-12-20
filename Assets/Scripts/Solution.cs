@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Solution
-{
+public class Solution {
     public List<GameObject> solutionPieces;
     private string shape;
     public string type;
@@ -19,35 +18,35 @@ public class Solution
 
     }
     //Setters and getters
-    public void setSolutionPieces (List<GameObject> value) {
+    public void setSolutionPieces(List<GameObject> value) {
         solutionPieces = value;
     }
-    public void setShape (string value) {
+    public void setShape(string value) {
         shape = value;
     }
-    public void setType (string value) {
+    public void setType(string value) {
         type = value;
     }
-    public void setColor (string value) {
+    public void setColor(string value) {
         color = value;
     }
-    public void setNumStepsToDestruccion (int value) {
+    public void setNumStepsToDestruccion(int value) {
         numStepsTodestruccion = value;
     }
-    public List<GameObject> getSolutionPieces () {
+    public List<GameObject> getSolutionPieces() {
         return solutionPieces;
     }
-    public string getShape () {
+    public string getShape() {
         return shape;
     }
-    public string getType () {
+    public string getType() {
         return type;
     }
-    public string getColor () {
+    public string getColor() {
         return color;
     }
-    public int getSize () {
+    public int getSize() {
         return size;
     }
-    
+
 }

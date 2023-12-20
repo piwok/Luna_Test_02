@@ -2,10 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum boardStates {gameInputAllowed, movingPieces, gameInputNotAllowed};
+public enum boardStates { gameInputAllowed, movingPieces, gameInputNotAllowed };
 
-public class Board : MonoBehaviour
-{
+public class Board : MonoBehaviour {
     public boardStates currentState;
     public int width;
     public int height;
@@ -18,10 +17,9 @@ public class Board : MonoBehaviour
     Vector2 positionForNewPiece;
     public float swipeResist = 1f;
     public float pieceSpeed = 17f;
-    
+
     // Start is called before the first frame update
-    void Start()
-    {
+    void Start() {
         allPieces = new GameObject[width, height];
         allTiles = new Tile[width, height];
         matchsFinder = FindObjectOfType<MatchsFinder>();
@@ -45,7 +43,7 @@ public class Board : MonoBehaviour
         }
         //loop changing colors of pieces in a match until there is not matchs
         matchsToEliminate = matchsFinder.lookingForAllLegalMatches();
-        while(matchsToEliminate.Count > 0) {
+        while (matchsToEliminate.Count > 0) {
             foreach (Solution solution in matchsToEliminate) {
                 foreach (GameObject pieceToChange in solution.getSolutionPieces()) {
                     int pieceIndex = Random.Range(0, 4);
@@ -63,39 +61,36 @@ public class Board : MonoBehaviour
         setAllPiecesUnexplored();
     }
 
-    public void setAllPiecesUnexplored () 
-    {
+    public void setAllPiecesUnexplored() {
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
                 if (allPieces[i, j] != null) {
-                allPieces[i, j].GetComponent<Piece>().isExplored = false;
+                    allPieces[i, j].GetComponent<Piece>().isExplored = false;
                 }
             }
         }
     }
-        
+
 
 
     // Update is called once per frame
-    void Update()
-    {
-        
+    void Update() {
+
     }
 
     private float calculateAngle(Vector2 touchDownPosition, Vector2 touchUpPosition) {
         if (Mathf.Abs(touchUpPosition.y - touchDownPosition.y) > swipeResist || Mathf.Abs(touchUpPosition.x - touchDownPosition.x) > swipeResist) {
-            float swipeAngle = Mathf.Atan2(touchUpPosition.y - touchDownPosition.y, touchUpPosition.x - touchDownPosition.x)*180/Mathf.PI;
+            float swipeAngle = Mathf.Atan2(touchUpPosition.y - touchDownPosition.y, touchUpPosition.x - touchDownPosition.x) * 180 / Mathf.PI;
             return swipeAngle;
-        }
-        else {
+        } else {
             return 0;
         }
     }
 
-    private bool areAllPiecesInRightPlace() 
-    {   for (int i = 0; i < width; i++) {
-            for (int j = 0; j <height; j++) {
-                if (allPieces[i, j] != null && allPieces[i, j].GetComponent<Piece>().wrongPosition == true ) {
+    private bool areAllPiecesInRightPlace() {
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                if (allPieces[i, j] != null && allPieces[i, j].GetComponent<Piece>().wrongPosition == true) {
                     return false;
                 }
             }
@@ -103,24 +98,24 @@ public class Board : MonoBehaviour
         return true;
     }
 
-    private bool areAllPiecesDestroyed() 
-    {   for (int i = 0; i < width; i++) {
-            for (int j = 0; j <height; j++) {
-                if (allPieces[i, j] != null && allPieces[i, j].GetComponent<Piece>().isMatchToDestroy == true ) {
+    private bool areAllPiecesDestroyed() {
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                if (allPieces[i, j] != null && allPieces[i, j].GetComponent<Piece>().isMatchToDestroy == true) {
                     return false;
                 }
             }
         }
         return true;
     }
-    
+
     public void movePieces(Vector2 touchDownPosition, Vector2 touchUpPosition) {
-        if(Mathf.Abs(touchUpPosition.x - touchDownPosition.x) > swipeResist || Mathf.Abs(touchUpPosition.y - touchDownPosition.y) > swipeResist ) {
+        if (Mathf.Abs(touchUpPosition.x - touchDownPosition.x) > swipeResist || Mathf.Abs(touchUpPosition.y - touchDownPosition.y) > swipeResist) {
             float swipeAngle = calculateAngle(touchDownPosition, touchUpPosition);
             if (swipeAngle > -45 & swipeAngle <= 45 && chosenPiece.GetComponent<Piece>().column < width - 1) {
                 //Right swipe
                 if (allPieces[chosenPiece.GetComponent<Piece>().column + 1, chosenPiece.GetComponent<Piece>().row] != null) {
-                    secondPiece = allPieces[chosenPiece.GetComponent<Piece>().column +1, chosenPiece.GetComponent<Piece>().row];
+                    secondPiece = allPieces[chosenPiece.GetComponent<Piece>().column + 1, chosenPiece.GetComponent<Piece>().row];
                     chosenPiece.GetComponent<Piece>().column += 1;
                     secondPiece.GetComponent<Piece>().column -= 1;
                     allPieces[chosenPiece.GetComponent<Piece>().column, chosenPiece.GetComponent<Piece>().row] = chosenPiece;
@@ -128,8 +123,7 @@ public class Board : MonoBehaviour
                     chosenPiece.GetComponent<Piece>().wrongPosition = true;
                     secondPiece.GetComponent<Piece>().wrongPosition = true;
                 }
-            }
-            else if (swipeAngle > 45 & swipeAngle <= 135 && chosenPiece.GetComponent<Piece>().row < height - 1) {
+            } else if (swipeAngle > 45 & swipeAngle <= 135 && chosenPiece.GetComponent<Piece>().row < height - 1) {
                 //Up swipe
                 if (allPieces[chosenPiece.GetComponent<Piece>().column, chosenPiece.GetComponent<Piece>().row + 1] != null) {
                     secondPiece = allPieces[chosenPiece.GetComponent<Piece>().column, chosenPiece.GetComponent<Piece>().row + 1];
@@ -140,8 +134,7 @@ public class Board : MonoBehaviour
                     chosenPiece.GetComponent<Piece>().wrongPosition = true;
                     secondPiece.GetComponent<Piece>().wrongPosition = true;
                 }
-            }
-            else if ((swipeAngle > 135 || swipeAngle <= -135) && chosenPiece.GetComponent<Piece>().column > 0) {
+            } else if ((swipeAngle > 135 || swipeAngle <= -135) && chosenPiece.GetComponent<Piece>().column > 0) {
                 //Left swipe
                 if (allPieces[chosenPiece.GetComponent<Piece>().column - 1, chosenPiece.GetComponent<Piece>().row] != null) {
                     secondPiece = allPieces[chosenPiece.GetComponent<Piece>().column - 1, chosenPiece.GetComponent<Piece>().row];
@@ -152,8 +145,7 @@ public class Board : MonoBehaviour
                     chosenPiece.GetComponent<Piece>().wrongPosition = true;
                     secondPiece.GetComponent<Piece>().wrongPosition = true;
                 }
-            }
-            else if (swipeAngle >= -135 & swipeAngle < -45 && chosenPiece.GetComponent<Piece>().row > 0) {
+            } else if (swipeAngle >= -135 & swipeAngle < -45 && chosenPiece.GetComponent<Piece>().row > 0) {
                 //Down swipe
                 if (allPieces[chosenPiece.GetComponent<Piece>().column, chosenPiece.GetComponent<Piece>().row - 1] != null) {
                     secondPiece = allPieces[chosenPiece.GetComponent<Piece>().column, chosenPiece.GetComponent<Piece>().row - 1];
@@ -170,12 +162,10 @@ public class Board : MonoBehaviour
             if (secondPiece != null) {
                 if (chosenPiece.GetComponent<Piece>().type == "Regular" && secondPiece.GetComponent<Piece>().type == "Regular") {
                     StartCoroutine(checkMoveCoroutine(chosenPiece, secondPiece));
+                } else if (chosenPiece.GetComponent<Piece>().type == "Regular" && secondPiece.GetComponent<Piece>().type != "Regular") {
+                    StartCoroutine(checkMoveCoroutine(chosenPiece, secondPiece));
                 }
-                else if (chosenPiece.GetComponent<Piece>().type == "Regular" && secondPiece.GetComponent<Piece>().type != "Regular") {
-                    StartCoroutine(checkMoveCoroutine(chosenPiece, secondPiece));    
-                }
-            }
-            else {
+            } else {
                 currentState = boardStates.gameInputAllowed;
             }
             //////////////////////////////////////////////////////////////////
@@ -191,19 +181,18 @@ public class Board : MonoBehaviour
                 tempSolution.Add(newSolution);
                 //tempSolution.Add(chosenPiece.GetComponent<Piece>().getPiecesToDestroy());
                 StartCoroutine(destroyAllMatches(tempSolution));
-            }
-            else {
+            } else {
                 currentState = boardStates.gameInputAllowed;
             }
         }
     }
 
     public IEnumerator checkMoveCoroutine(GameObject chosenPiece, GameObject secondPiece) {
-        
+
         List<Solution> allSolutions = new List<Solution>(matchsFinder.lookingForAllLegalMatches());
-        
+
         yield return new WaitUntil(() => areAllPiecesInRightPlace() == true);
-        if(chosenPiece.GetComponent<Piece>().type == "Regular" && secondPiece.GetComponent<Piece>().type == "Regular") {
+        if (chosenPiece.GetComponent<Piece>().type == "Regular" && secondPiece.GetComponent<Piece>().type == "Regular") {
             if (allSolutions.Count == 0) {
                 secondPiece.GetComponent<Piece>().column = chosenPiece.GetComponent<Piece>().column;
                 secondPiece.GetComponent<Piece>().row = chosenPiece.GetComponent<Piece>().row;
@@ -211,11 +200,10 @@ public class Board : MonoBehaviour
                 chosenPiece.GetComponent<Piece>().column = chosenPiece.GetComponent<Piece>().previousColumn;
                 chosenPiece.GetComponent<Piece>().row = chosenPiece.GetComponent<Piece>().previousRow;
                 chosenPiece.GetComponent<Piece>().wrongPosition = true;
-                
+
                 yield return new WaitUntil(() => areAllPiecesInRightPlace() == true);
                 currentState = boardStates.gameInputAllowed;
-            }
-            else {
+            } else {
                 secondPiece.GetComponent<Piece>().previousColumn = secondPiece.GetComponent<Piece>().column;
                 secondPiece.GetComponent<Piece>().previousRow = secondPiece.GetComponent<Piece>().row;
                 chosenPiece.GetComponent<Piece>().previousColumn = chosenPiece.GetComponent<Piece>().column;
@@ -224,23 +212,22 @@ public class Board : MonoBehaviour
                 chosenPiece.GetComponent<Piece>().isSpecialPiece = true;
                 StartCoroutine(destroyAllMatches(allSolutions));
             }
-        }
-        else if((chosenPiece.GetComponent<Piece>().type == "Regular" && secondPiece.GetComponent<Piece>().type != "Regular") ||
-        (secondPiece.GetComponent<Piece>().type == "Regular" && chosenPiece.GetComponent<Piece>().type != "Regular")) {
+        } else if ((chosenPiece.GetComponent<Piece>().type == "Regular" && secondPiece.GetComponent<Piece>().type != "Regular") ||
+          (secondPiece.GetComponent<Piece>().type == "Regular" && chosenPiece.GetComponent<Piece>().type != "Regular")) {
 
         }
 
 
 
         // this code here maybe is a bug, rewrite (MUST)
-        if (chosenPiece != null) {chosenPiece.GetComponent<Piece>().isSpecialPiece = false;}
-        if (secondPiece != null) {secondPiece.GetComponent<Piece>().isSpecialPiece = false;}
+        if (chosenPiece != null) { chosenPiece.GetComponent<Piece>().isSpecialPiece = false; }
+        if (secondPiece != null) { secondPiece.GetComponent<Piece>().isSpecialPiece = false; }
         chosenPiece = null;
         secondPiece = null;
         //////////////////////////////////////////////////////////////////////////////
     }
 
-    private IEnumerator destroyAllMatches (List<Solution> allSolutions) {
+    private IEnumerator destroyAllMatches(List<Solution> allSolutions) {
         List<SpecialPieceToCreate> specialPiecesToCreate = new List<SpecialPieceToCreate>();
         int pieceIndex = 0;
         int creationColumn = 0;
@@ -258,54 +245,35 @@ public class Board : MonoBehaviour
                 }
                 //write backwards is more efficient (MUST)
                 if (solution.getShape() == "fiveLineShape0" || solution.getShape() == "fiveLineShape1") {
-                    pieceIndex = 20;}
-                    if (solution.getShape() == "fiveTShape0" || solution.getShape() == "fiveTShape1" || solution.getShape() == "fiveTShape2" || solution.getShape() == "fiveTShape3") {
-                        if (solution.getColor() == "Yellow") {pieceIndex = 4;}
-                        else if (solution.getColor() == "Green") {pieceIndex = 5;}
-                        else if (solution.getColor() == "Red") {pieceIndex = 6;}
-                        else if (solution.getColor() == "Black") {pieceIndex = 7;}
+                    pieceIndex = 20;
                 }
-                else if (solution.getShape() == "fiveLShape0" || solution.getShape() == "fiveLShape1" || solution.getShape() == "fiveLShape2" || solution.getShape() == "fiveLShape3") {
-                    if (solution.getColor() == "Yellow") {pieceIndex = 4;}
-                    else if (solution.getColor() == "Green") {pieceIndex = 5;}
-                    else if (solution.getColor() == "Red") {pieceIndex = 6;}
-                    else if (solution.getColor() == "Black") {pieceIndex = 7;}
-                }
-                else if (solution.getShape() == "fourLineShape0") {
-                    if (solution.getColor() == "Yellow") {pieceIndex = 12;}
-                    else if (solution.getColor() == "Green") {pieceIndex = 13;}
-                    else if (solution.getColor() == "Red") {pieceIndex = 14;}
-                    else if (solution.getColor() == "Black") {pieceIndex = 15;}
-                }
-                else if (solution.getShape() == "fourLineShape1") {
-                    if (solution.getColor() == "Yellow") {pieceIndex = 16;}
-                    else if (solution.getColor() == "Green") {pieceIndex = 17;}
-                    else if (solution.getColor() == "Red") {pieceIndex = 18;}
-                    else if (solution.getColor() == "Black") {pieceIndex = 19;}
-                }
-                else if (solution.getShape() == "fourSquareShape0") {
-                    
-                    if (solution.getColor() == "Yellow") {pieceIndex = 4;}
-                    else if (solution.getColor() == "Green") {pieceIndex = 5;}
-                    else if (solution.getColor() == "Red") {pieceIndex = 6;}
-                    else if (solution.getColor() == "Black") {pieceIndex = 7;}
-                    
+                if (solution.getShape() == "fiveTShape0" || solution.getShape() == "fiveTShape1" || solution.getShape() == "fiveTShape2" || solution.getShape() == "fiveTShape3") {
+                    if (solution.getColor() == "Yellow") { pieceIndex = 4; } else if (solution.getColor() == "Green") { pieceIndex = 5; } else if (solution.getColor() == "Red") { pieceIndex = 6; } else if (solution.getColor() == "Black") { pieceIndex = 7; }
+                } else if (solution.getShape() == "fiveLShape0" || solution.getShape() == "fiveLShape1" || solution.getShape() == "fiveLShape2" || solution.getShape() == "fiveLShape3") {
+                    if (solution.getColor() == "Yellow") { pieceIndex = 4; } else if (solution.getColor() == "Green") { pieceIndex = 5; } else if (solution.getColor() == "Red") { pieceIndex = 6; } else if (solution.getColor() == "Black") { pieceIndex = 7; }
+                } else if (solution.getShape() == "fourLineShape0") {
+                    if (solution.getColor() == "Yellow") { pieceIndex = 12; } else if (solution.getColor() == "Green") { pieceIndex = 13; } else if (solution.getColor() == "Red") { pieceIndex = 14; } else if (solution.getColor() == "Black") { pieceIndex = 15; }
+                } else if (solution.getShape() == "fourLineShape1") {
+                    if (solution.getColor() == "Yellow") { pieceIndex = 16; } else if (solution.getColor() == "Green") { pieceIndex = 17; } else if (solution.getColor() == "Red") { pieceIndex = 18; } else if (solution.getColor() == "Black") { pieceIndex = 19; }
+                } else if (solution.getShape() == "fourSquareShape0") {
+
+                    if (solution.getColor() == "Yellow") { pieceIndex = 4; } else if (solution.getColor() == "Green") { pieceIndex = 5; } else if (solution.getColor() == "Red") { pieceIndex = 6; } else if (solution.getColor() == "Black") { pieceIndex = 7; }
+
                 }
                 if (pieceIndex > 3) {
                     specialPiecesToCreate.Add(new SpecialPieceToCreate(allTiles[creationColumn, creationRow], solution.getShape(), pieceIndex));
-                    
-                }   
+
+                }
             }
         }
         //////////////////////////////////////////////
         //Start drestroying pieces and create new solutions when it is necesary
         List<Solution> newSolutionsToAdd = new List<Solution>();
         int counter = 3;
-        while (allSolutions.Count > 0) 
-        {   
+        while (allSolutions.Count > 0) {
             newSolutionsToAdd.Clear();
             foreach (Solution solution in allSolutions) {
-                
+
                 foreach (GameObject solutionPiece in solution.solutionPieces) {
                     if (solutionPiece.GetComponent<Piece>().type == "Regular" || solutionPiece.GetComponent<Piece>().type == "SpecialDove") {
                         solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
@@ -313,8 +281,7 @@ public class Board : MonoBehaviour
                             solutionPiece.GetComponent<Piece>().destructionSteps = counter;
                             counter = counter + 2;
                         }
-                    }
-                    else if (solutionPiece.GetComponent<Piece>().type == "SpecialTnt") {
+                    } else if (solutionPiece.GetComponent<Piece>().type == "SpecialTnt") {
                         Solution newTntSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy();
                         foreach (GameObject regularPieceTntDestroy in newTntSolution.solutionPieces) {
                             regularPieceTntDestroy.GetComponent<Piece>().destructionSteps = counter + 10; //short fixed time for pieces destroyed by bomb explosion
@@ -323,9 +290,8 @@ public class Board : MonoBehaviour
                         newSolutionsToAdd.Add(newTntSolution);
                         solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
                         solutionPiece.GetComponent<Piece>().destructionSteps = counter; //short fixed time for the bomb
-                    
-                    }
-                    else if (solutionPiece.GetComponent<Piece>().type == "SpecialVerticalRocket") {
+
+                    } else if (solutionPiece.GetComponent<Piece>().type == "SpecialVerticalRocket") {
                         int upCounter = counter;
                         int downCounter = counter;
                         Solution newVerticalRocketSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy();
@@ -334,21 +300,20 @@ public class Board : MonoBehaviour
                                 if (regularPieceVerticalRocketDestroy.GetComponent<Piece>().row > solutionPiece.GetComponent<Piece>().row) {
                                     regularPieceVerticalRocketDestroy.GetComponent<Piece>().destructionSteps = upCounter;
                                     upCounter = upCounter + 3;
-                                    counter = counter + 3;    
+                                    counter = counter + 3;
                                 }
                                 if (regularPieceVerticalRocketDestroy.GetComponent<Piece>().row < solutionPiece.GetComponent<Piece>().row) {
                                     regularPieceVerticalRocketDestroy.GetComponent<Piece>().destructionSteps = downCounter;
                                     downCounter = downCounter + 3;
-                                    counter = counter + 3; 
+                                    counter = counter + 3;
                                 }
                             }
-                        } 
+                        }
                         newSolutionsToAdd.Add(newVerticalRocketSolution);
                         solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
                         solutionPiece.GetComponent<Piece>().destructionSteps = 3; //short fixed explosion off with the other inicial explosions
-                    
-                    }
-                    else if (solutionPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
+
+                    } else if (solutionPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
                         int rightCounter = counter;
                         int leftCounter = counter;
                         Solution newHorizontalRocketSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy();
@@ -356,30 +321,29 @@ public class Board : MonoBehaviour
                             if (regularPieceHorizontalRocketDestroy.GetComponent<Piece>().destructionSteps == -1) {
                                 if (regularPieceHorizontalRocketDestroy.GetComponent<Piece>().column > solutionPiece.GetComponent<Piece>().column) {
                                     regularPieceHorizontalRocketDestroy.GetComponent<Piece>().destructionSteps = rightCounter;
-                                    rightCounter = rightCounter + 3;    
+                                    rightCounter = rightCounter + 3;
                                 }
                                 if (regularPieceHorizontalRocketDestroy.GetComponent<Piece>().column < solutionPiece.GetComponent<Piece>().column) {
                                     regularPieceHorizontalRocketDestroy.GetComponent<Piece>().destructionSteps = leftCounter;
-                                    leftCounter = leftCounter + 3;    
+                                    leftCounter = leftCounter + 3;
                                 }
                             }
-                        } 
+                        }
                         newSolutionsToAdd.Add(newHorizontalRocketSolution);
                         solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
                         solutionPiece.GetComponent<Piece>().destructionSteps = 3; //short fixed explosion off with the other inicial explosions
-                    
-                    }
-                    else if (solutionPiece.GetComponent<Piece>().type == "SpecialColorBomb") {
+
+                    } else if (solutionPiece.GetComponent<Piece>().type == "SpecialColorBomb") {
                         Solution newColorBombSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy();
                         foreach (GameObject regularPieceColorBombDestroy in newColorBombSolution.solutionPieces) {
                             if (regularPieceColorBombDestroy.GetComponent<Piece>().destructionSteps == -1) {
                                 regularPieceColorBombDestroy.GetComponent<Piece>().destructionSteps = Random.Range(counter, 5 * counter);
-                                
+
                             }
-                        newSolutionsToAdd.Add(newColorBombSolution);
-                        solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
-                        solutionPiece.GetComponent<Piece>().destructionSteps = 3; //short fixed explosion off with the other inicial explosions
-                    
+                            newSolutionsToAdd.Add(newColorBombSolution);
+                            solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
+                            solutionPiece.GetComponent<Piece>().destructionSteps = 3; //short fixed explosion off with the other inicial explosions
+
                         }
                     }
                 }
@@ -387,21 +351,21 @@ public class Board : MonoBehaviour
             allSolutions.Clear();
             if (newSolutionsToAdd != null) {
                 allSolutions = new List<Solution>(newSolutionsToAdd);
-                
+
             }
         }
-        
-        
+
+
 
         //////////////////////////////////////////////////////////////////////////////
         //Creating special pieces
         yield return new WaitUntil(() => areAllPiecesDestroyed() == true);
         if (specialPiecesToCreate.Count > 0) {
             foreach (SpecialPieceToCreate newSpecialPiece in specialPiecesToCreate) {
-                GameObject newPiece = Instantiate(pieces[newSpecialPiece.piecesIndex], new Vector2(newSpecialPiece.tile.column, newSpecialPiece.tile.row),Quaternion.identity);
-                
+                GameObject newPiece = Instantiate(pieces[newSpecialPiece.piecesIndex], new Vector2(newSpecialPiece.tile.column, newSpecialPiece.tile.row), Quaternion.identity);
+
                 allPieces[newSpecialPiece.tile.column, newSpecialPiece.tile.row] = newPiece;
-                
+
                 newPiece.GetComponent<Piece>().column = newSpecialPiece.tile.column;
                 newPiece.GetComponent<Piece>().row = newSpecialPiece.tile.row;
                 newPiece.GetComponent<Piece>().previousColumn = newSpecialPiece.tile.column;
@@ -413,7 +377,7 @@ public class Board : MonoBehaviour
         yield return new WaitUntil(() => areAllPiecesInRightPlace() == true);
         StartCoroutine(colapseAllColumns());
     }
-    
+
 
     private IEnumerator colapseAllColumns() {
         int blankSpacesCount;
@@ -422,19 +386,18 @@ public class Board : MonoBehaviour
             for (int j = 0; j < height; j++) {
                 if (allPieces[i, j] == null) {
                     blankSpacesCount += 1;
-                }
-                else if (blankSpacesCount > 0 && allPieces[i, j].GetComponent<Piece>().row - blankSpacesCount >= 0) {
+                } else if (blankSpacesCount > 0 && allPieces[i, j].GetComponent<Piece>().row - blankSpacesCount >= 0) {
                     allPieces[i, j].GetComponent<Piece>().row -= blankSpacesCount;
-                    allPieces[i, j].GetComponent<Piece>().previousRow = allPieces[i, j].GetComponent<Piece>().row; 
+                    allPieces[i, j].GetComponent<Piece>().previousRow = allPieces[i, j].GetComponent<Piece>().row;
                     allPieces[i, j - blankSpacesCount] = allPieces[i, j];
                     allPieces[i, j - blankSpacesCount].GetComponent<Piece>().wrongPosition = true;
-                    allPieces[i ,j] = null;
+                    allPieces[i, j] = null;
                 }
             }
         }
         yield return new WaitUntil(() => areAllPiecesInRightPlace() == true);
-        
-        StartCoroutine(fillBoardCoroutine());       
+
+        StartCoroutine(fillBoardCoroutine());
     }
 
     private IEnumerator fillBoardCoroutine() {
@@ -443,14 +406,14 @@ public class Board : MonoBehaviour
         yield return new WaitUntil(() => areAllPiecesDestroyed() == true);
         List<Solution> allSolutions = new List<Solution>();
         allSolutions = matchsFinder.lookingForAllLegalMatches();
-        if (allSolutions.Count > 0) {       
+        if (allSolutions.Count > 0) {
             StartCoroutine(destroyAllMatches(allSolutions));
-            
-            
-            
+
+
+
+        } else {
+            currentState = boardStates.gameInputAllowed;
         }
-        else {
-            currentState = boardStates.gameInputAllowed;}
     }
 
     private void refillBoard() {
@@ -471,7 +434,7 @@ public class Board : MonoBehaviour
             }
         }
     }
-        
-    
+
+
 }
 

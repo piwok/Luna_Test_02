@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpecialPieceToCreate
-{
+public class SpecialPieceToCreate {
     public Tile tile;
     public string shape;
     public int piecesIndex;

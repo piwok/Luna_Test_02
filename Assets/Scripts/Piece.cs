@@ -8,6 +8,7 @@ public class Piece : MonoBehaviour
 {
     [Header ("Board variables")]
     public Board board;
+    public Animator animator;
     public piecesState currentState = piecesState.enter;
     public int column;
     public int row;
@@ -19,6 +20,7 @@ public class Piece : MonoBehaviour
     public string color;
     public bool isSpecialPiece;
     public bool isExplored;
+    public bool isDestroyAnimationEnd;
     public bool isMatchToDestroy;
     public bool StartDestructionFlag;
     public float startingTimeToDestroy;
@@ -36,17 +38,17 @@ public class Piece : MonoBehaviour
     void Start()
     {   isSpecialPiece = false;
         isExplored = false;
+        isDestroyAnimationEnd = false;
         isMatchToDestroy = false;
         StartDestructionFlag = false;
         startingTimeToDestroy = 0;
-        destructionTimeStep = 0.15f;
+        destructionTimeStep = 0.1f;
         destructionSteps = -1;
         board = FindObjectOfType<Board>();
         previousColumn = column;
         previousRow = row;
         wrongPosition = false;
-    }
-
+    }   
     // Update is called once per frame
     void Update()
     {   
@@ -89,9 +91,24 @@ public class Piece : MonoBehaviour
                     timeLeftToDestruction -= Time.deltaTime;
                     }
                 if (timeLeftToDestruction < 0) {
-                    Instantiate(destroyEffect, transform.position, Quaternion.identity);
-                    board.allPieces[column, row] = null;
-                    Destroy(gameObject);
+                    if (color == "Red") {
+                        if (animator.GetBool("matchToDestroy") == false) {
+                        animator.SetBool("matchToDestroy", true);
+                        }
+                        else {
+                            if (isDestroyAnimationEnd == true) {
+                                board.allPieces[column, row] = null;
+                                Destroy(gameObject);
+                            }
+                        }
+
+
+                    }
+                    else {
+                        Instantiate(destroyEffect, transform.position, Quaternion.identity);
+                        board.allPieces[column, row] = null;
+                        Destroy(gameObject);
+                        }
                 }
             } 
             else if (type == "SpecialTnt") {
@@ -183,11 +200,6 @@ public class Piece : MonoBehaviour
             } else {
                 maxRightRow = row + 3;
             }
-            // Debug.Log(minLeftRow);
-            // Debug.Log(minLeftRow);
-            // Debug.Log(maxRightColumn);
-            // Debug.Log(maxRightRow);
-            
             for (int i = minLeftColumn; i < maxRightColumn; i++) {
                 Debug.Log(i);
                 for (int j = minLeftRow; j < maxRightRow; j++) {
@@ -205,8 +217,7 @@ public class Piece : MonoBehaviour
             //         newSolution.Add(board.allPieces[column + tntTarget[0], row + tntTarget[1]]);
             //     }
             // }
-            Debug.Log(newSolution.Count);
-            return new Solution(newSolution, null, null, null);
+            return new Solution(newSolution, null, "SpecialTnt", null, -1, -1);
         }
         else if (type == "SpecialVerticalRocket") { 
             for (int i = 1; i < board.height; i++) {
@@ -217,7 +228,7 @@ public class Piece : MonoBehaviour
                     newSolution.Add(board.allPieces[column, row - i]);
                 }
             }
-            return new Solution(newSolution, null, null, null); 
+            return new Solution(newSolution, null, "SpecialVerticalRocket", null, column, row); 
         }
         else if (type == "SpecialHorizontalRocket") { 
             for (int i = 1; i < board.width; i++) {
@@ -228,7 +239,7 @@ public class Piece : MonoBehaviour
                     newSolution.Add(board.allPieces[column - i, row]);
                 }
             }
-            return new Solution(newSolution, null, null, null);
+            return new Solution(newSolution, null, "SpecialHorizontalRocket", null, column, row);
         }
         else if (type == "SpecialColorBomb") { 
             
@@ -243,7 +254,7 @@ public class Piece : MonoBehaviour
             }
             
             
-            return new Solution(newSolution, null, null, null);
+            return new Solution(newSolution, null, "SpecialColorBomb", null, -1, -1);
         }
         return null;
     }

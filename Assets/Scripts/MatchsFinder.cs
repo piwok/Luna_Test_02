@@ -150,10 +150,8 @@ public class MatchsFinder : MonoBehaviour
     string exploringShape;
     int exploringColumn;
     int exploringRow;
-    List<GameObject> horizontalThreeInitial = new List<GameObject>();
-    List<GameObject> verticalThreeInitial = new List<GameObject>();
     List<GameObject> tempPieces = new List<GameObject>();
-    //looking for three size horizontal line 
+    // //looking for three size horizontal line 
     for (int i = 0; i < board.width - 2; i++) {
         for (int j = 0; j < board.height; j++) {
             exploringPiece = board.allPieces[i, j];
@@ -197,11 +195,12 @@ public class MatchsFinder : MonoBehaviour
             tempPieces = checkShapeMatch(exploringPiece, exploringColumn, exploringRow, exploringShape);
             if (tempPieces != null) {
                 tempSolution = new Solution(tempPieces, exploringShape,
-                exploringPiece.GetComponent<Piece>().type, exploringPiece.GetComponent<Piece>().color);
+                "Regular", exploringPiece.GetComponent<Piece>().color, -1, -1);
                 allLegalSolutions.Add(tempSolution);
             }
         }
     }
+    
     //looking for 4 size squares shape matchs in all points
     for (int i = 0; i < board.width; i++) {
         for (int j = 0; j < board.height; j++) {
@@ -213,7 +212,7 @@ public class MatchsFinder : MonoBehaviour
                 tempPieces = checkShapeMatch(exploringPiece, exploringColumn, exploringRow, exploringShape);
                 if (tempPieces != null) {
                     tempSolution = new Solution(tempPieces, exploringShape,
-                    exploringPiece.GetComponent<Piece>().type, exploringPiece.GetComponent<Piece>().color);
+                    "Regular", exploringPiece.GetComponent<Piece>().color, -1, -1);
                     allLegalSolutions.Add(tempSolution);
                 }
             }
@@ -222,6 +221,7 @@ public class MatchsFinder : MonoBehaviour
             } 
         }
     }
+    
     //looking for 3 size shape matchs in the points of allThreeInitialSolutios
     foreach(GameObject pointToExplore in allThreeSizeInitialSolutions) {
         exploringPiece = pointToExplore;
@@ -232,7 +232,7 @@ public class MatchsFinder : MonoBehaviour
             tempPieces = checkShapeMatch(exploringPiece, exploringColumn, exploringRow, exploringShape);
             if (tempPieces != null) {
                 tempSolution = new Solution(tempPieces, exploringShape,
-                exploringPiece.GetComponent<Piece>().type, exploringPiece.GetComponent<Piece>().color);
+                "Regular", exploringPiece.GetComponent<Piece>().color, -1, -1);
                 allLegalSolutions.Add(tempSolution);
             }
         }

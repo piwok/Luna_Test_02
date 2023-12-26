@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: -8922355876500026625}
   m_Layer: 7
   m_Name: RegularSpadePiece
-  m_TagString: Untagged
+  m_TagString: black piece
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -119,8 +119,8 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 3fe17c0fe3e3c4743a34d4e8561a5e86, type: 3}
+  m_SortingOrder: 2
+  m_Sprite: {fileID: 21300000, guid: ae696dda0a193004d87a58d96ddde21e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -155,4 +155,10 @@ MonoBehaviour:
   color: Black
   isSpecialPiece: 0
   isExplored: 0
+  isMatchToDestroy: 0
+  StartDestructionFlag: 0
+  startingTimeToDestroy: 0
+  destructionTimeStep: 0
+  destructionSteps: 0
+  timeLeftToDestruction: 0
   destroyEffect: {fileID: 2119390489706356576, guid: f2cccf2c4ee7b62489e6604ff1a857a4, type: 3}

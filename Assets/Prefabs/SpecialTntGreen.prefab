@@ -119,7 +119,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: aee4105c511e66549b00f71d5121636e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -155,4 +155,10 @@ MonoBehaviour:
   color: Green
   isSpecialPiece: 0
   isExplored: 0
+  isMatchToDestroy: 0
+  StartDestructionFlag: 0
+  startingTimeToDestroy: 0
+  destructionTimeStep: 0
+  destructionSteps: 0
+  timeLeftToDestruction: 0
   destroyEffect: {fileID: 2119390489706356576, guid: f2cccf2c4ee7b62489e6604ff1a857a4, type: 3}

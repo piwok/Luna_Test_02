@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DestroyEffect : MonoBehaviour
 {
-    public float timeLeft = 0.25f;
+    public float timeLeft = 0.10f;
     void Update() {
         timeLeft -= Time.deltaTime;
         if (timeLeft <= 0.0f) {

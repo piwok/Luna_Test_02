@@ -11,6 +11,7 @@ public class Board : MonoBehaviour
     public int height;
     private MatchsFinder matchsFinder;
     public GameObject[] pieces;
+    public GameObject[] tiles;
     public GameObject[,] allPieces;
     public Tile[,] allTiles;
     public GameObject chosenPiece;
@@ -31,8 +32,12 @@ public class Board : MonoBehaviour
             for (int j = 0; j < height; j++) {
                 positionForNewPiece = new Vector2(i, j);
                 int pieceIndex = Random.Range(0, 4); //only are random regular pieces (0, 1, 2, 3 index in the array pieces)
+                GameObject newTileGO = Instantiate(tiles[0], positionForNewPiece, Quaternion.identity);
+                //allTiles[i, j] = newTile;
+                newTileGO.transform.parent = this.transform;
                 GameObject newPiece = Instantiate(pieces[pieceIndex], positionForNewPiece, Quaternion.identity);
                 allPieces[i, j] = newPiece;
+                
                 newPiece.transform.parent = this.transform;
                 newPiece.GetComponent<Piece>().column = i;
                 newPiece.GetComponent<Piece>().row = j;
@@ -54,10 +59,13 @@ public class Board : MonoBehaviour
                     newPiece.transform.parent = this.transform;
                     newPiece.GetComponent<Piece>().column = pieceToChange.GetComponent<Piece>().column;
                     newPiece.GetComponent<Piece>().row = pieceToChange.GetComponent<Piece>().row;
-                    allPieces[newPiece.GetComponent<Piece>().column, newPiece.GetComponent<Piece>().row] = newPiece;
+                    allPieces[pieceToChange.GetComponent<Piece>().column, pieceToChange.GetComponent<Piece>().row] = null;
                     Destroy(pieceToChange);
+                    allPieces[newPiece.GetComponent<Piece>().column, newPiece.GetComponent<Piece>().row] = newPiece;
+                    
                 }
             }
+            matchsToEliminate.Clear();
             matchsToEliminate = matchsFinder.lookingForAllLegalMatches();
         }
         setAllPiecesUnexplored();
@@ -191,7 +199,7 @@ public class Board : MonoBehaviour
                 List<GameObject> tempPieces = new List<GameObject>();
                 Solution newSolution;
                 tempPieces.Add(chosenPiece);
-                newSolution = new Solution(tempPieces, null, chosenPiece.GetComponent<Piece>().type, null);
+                newSolution = new Solution(tempPieces, null, chosenPiece.GetComponent<Piece>().type, null, -1, -1);
                 tempSolution.Add(newSolution);
                 StartCoroutine(destroyAllMatches(tempSolution));
             }
@@ -246,13 +254,13 @@ public class Board : MonoBehaviour
                 chosenPiece.GetComponent<Piece>().isSpecialPiece = true;
                 List<GameObject> newSolutionPieces = new List<GameObject>();
                 newSolutionPieces.Add(secondPiece);
-                newSolution = new Solution(newSolutionPieces, null, null, null);
+                newSolution = new Solution(newSolutionPieces, null, null, null, -1, -1);
             }
             else {
                 secondPiece.GetComponent<Piece>().isSpecialPiece = true;
                 List<GameObject> newSolutionPieces = new List<GameObject>();
                 newSolutionPieces.Add(chosenPiece);
-                newSolution = new Solution(newSolutionPieces, null, null, null);
+                newSolution = new Solution(newSolutionPieces, null, null, null, -1, -1);
             }
             allSolutions.Add(newSolution);
             StartCoroutine(destroyAllMatches(allSolutions));
@@ -332,93 +340,266 @@ public class Board : MonoBehaviour
         //Start drestroying pieces and create new solutions when it is necesary
         List<Solution> newSolutionsToAdd = new List<Solution>();
         //There is problems with the sincronizacion of the explosions, i need to rewrite to get a offset of time between generations of explosions
-        int counter = - 1;
+        int counter = 1;
         while (allSolutions.Count > 0) 
-        {   if (counter != -1) {
-            counter += 15;
-        }
-            else {
-                counter = 1;
+        {   if (counter != 1) {
+            //counter += 3;
             }
             newSolutionsToAdd.Clear();
             foreach (Solution solution in allSolutions) {
-                counter = 1;
-                
-                foreach (GameObject solutionPiece in solution.solutionPieces) {
-                    if (solutionPiece.GetComponent<Piece>().type == "Regular" || solutionPiece.GetComponent<Piece>().type == "SpecialDove") {
-                        solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
-                        if (solutionPiece.GetComponent<Piece>().destructionSteps == -1) {
+                if (solution.getType() == "Regular") {
+                    foreach (GameObject solutionPiece in solution.solutionPieces) {
+                        if (solutionPiece.GetComponent<Piece>().type == "Regular" || solutionPiece.GetComponent<Piece>().type == "SpecialDove") {
+                            solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
                             solutionPiece.GetComponent<Piece>().destructionSteps = counter;
                             counter += 1;
                         }
-                    }
-                    else if (solutionPiece.GetComponent<Piece>().type == "SpecialTnt") {
-                        Solution newTntSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy();
-                        foreach (GameObject regularPieceTntDestroy in newTntSolution.solutionPieces) {
-                            regularPieceTntDestroy.GetComponent<Piece>().destructionSteps = counter;
-                        }
+                        else if (solutionPiece.GetComponent<Piece>().type == "SpecialTnt") {
+                            Solution newTntSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy();
+                            newSolutionsToAdd.Add(newTntSolution);
+                            solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
+                            solutionPiece.GetComponent<Piece>().destructionSteps = counter;
+                            counter += 1;
                         
-                        newSolutionsToAdd.Add(newTntSolution);
-                        solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
-                        solutionPiece.GetComponent<Piece>().destructionSteps = counter;
-                        counter += 1;
-                    
-                    }
-                    else if (solutionPiece.GetComponent<Piece>().type == "SpecialVerticalRocket") {
-                        int upCounter = counter;
-                        int downCounter = counter;
-                        Solution newVerticalRocketSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy();
-                        foreach (GameObject regularPieceVerticalRocketDestroy in newVerticalRocketSolution.solutionPieces) {
-                            if (regularPieceVerticalRocketDestroy.GetComponent<Piece>().destructionSteps == -1) {
-                                if (regularPieceVerticalRocketDestroy.GetComponent<Piece>().row > solutionPiece.GetComponent<Piece>().row) {
-                                    regularPieceVerticalRocketDestroy.GetComponent<Piece>().destructionSteps = upCounter;
-                                    upCounter += 1;    
-                                }
-                                if (regularPieceVerticalRocketDestroy.GetComponent<Piece>().row < solutionPiece.GetComponent<Piece>().row) {
-                                    regularPieceVerticalRocketDestroy.GetComponent<Piece>().destructionSteps = downCounter;
-                                    downCounter += 1; 
-                                }
-                            }
-                        } 
-                        newSolutionsToAdd.Add(newVerticalRocketSolution);
-                        solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
-                        solutionPiece.GetComponent<Piece>().destructionSteps = counter;
-                    
-                    }
-                    else if (solutionPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
-                        int rightCounter = counter;
-                        int leftCounter = counter;
-                        Solution newHorizontalRocketSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy();
-                        foreach (GameObject regularPieceHorizontalRocketDestroy in newHorizontalRocketSolution.solutionPieces) {
-                            if (regularPieceHorizontalRocketDestroy.GetComponent<Piece>().destructionSteps == -1) {
-                                if (regularPieceHorizontalRocketDestroy.GetComponent<Piece>().column > solutionPiece.GetComponent<Piece>().column) {
-                                    regularPieceHorizontalRocketDestroy.GetComponent<Piece>().destructionSteps = rightCounter;
-                                    rightCounter += 1;  
-                                }
-                                if (regularPieceHorizontalRocketDestroy.GetComponent<Piece>().column < solutionPiece.GetComponent<Piece>().column) {
-                                    regularPieceHorizontalRocketDestroy.GetComponent<Piece>().destructionSteps = leftCounter;
-                                    leftCounter += 1;  
-                                }
-                            }
-                        } 
-                        newSolutionsToAdd.Add(newHorizontalRocketSolution);
-                        solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
-                        solutionPiece.GetComponent<Piece>().destructionSteps = counter; 
-                    
-                    }
-                    else if (solutionPiece.GetComponent<Piece>().type == "SpecialColorBomb") {
-                        Solution newColorBombSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy();
-                        foreach (GameObject regularPieceColorBombDestroy in newColorBombSolution.solutionPieces) {
-                            if (regularPieceColorBombDestroy.GetComponent<Piece>().destructionSteps == -1) {
-                                regularPieceColorBombDestroy.GetComponent<Piece>().destructionSteps = Random.Range(1, 6);
-                                
-                            }
-                        newSolutionsToAdd.Add(newColorBombSolution);
-                        solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
-                        solutionPiece.GetComponent<Piece>().destructionSteps = counter; 
-                    
+                        }
+                        else if (solutionPiece.GetComponent<Piece>().type == "SpecialVerticalRocket") {
+                            int upCounter = counter;
+                            int downCounter = counter;
+                            Solution newVerticalRocketSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy();
+                            // foreach (GameObject regularPieceVerticalRocketDestroy in newVerticalRocketSolution.solutionPieces) {
+                            //     if (regularPieceVerticalRocketDestroy.GetComponent<Piece>().destructionSteps == -1) {
+                            //         if (regularPieceVerticalRocketDestroy.GetComponent<Piece>().row > solutionPiece.GetComponent<Piece>().row) {
+                            //             regularPieceVerticalRocketDestroy.GetComponent<Piece>().destructionSteps = upCounter;
+                            //             upCounter += 1;    
+                            //         }
+                            //         if (regularPieceVerticalRocketDestroy.GetComponent<Piece>().row < solutionPiece.GetComponent<Piece>().row) {
+                            //             regularPieceVerticalRocketDestroy.GetComponent<Piece>().destructionSteps = downCounter;
+                            //             downCounter += 1; 
+                            //         }
+                            //     }
+                            // } 
+                            newSolutionsToAdd.Add(newVerticalRocketSolution);
+                            solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
+                            solutionPiece.GetComponent<Piece>().destructionSteps = counter;
+                            counter += 1;
+                        
+                        }
+                        else if (solutionPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
+                            int rightCounter = counter;
+                            int leftCounter = counter;
+                            Solution newHorizontalRocketSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy();
+                            // foreach (GameObject regularPieceHorizontalRocketDestroy in newHorizontalRocketSolution.solutionPieces) {
+                            //     if (regularPieceHorizontalRocketDestroy.GetComponent<Piece>().destructionSteps == -1) {
+                            //         if (regularPieceHorizontalRocketDestroy.GetComponent<Piece>().column > solutionPiece.GetComponent<Piece>().column) {
+                            //             regularPieceHorizontalRocketDestroy.GetComponent<Piece>().destructionSteps = rightCounter;
+                            //             rightCounter += 1;  
+                            //         }
+                            //         if (regularPieceHorizontalRocketDestroy.GetComponent<Piece>().column < solutionPiece.GetComponent<Piece>().column) {
+                            //             regularPieceHorizontalRocketDestroy.GetComponent<Piece>().destructionSteps = leftCounter;
+                            //             leftCounter += 1;  
+                            //         }
+                            //     }
+                            // } 
+                            newSolutionsToAdd.Add(newHorizontalRocketSolution);
+                            solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
+                            solutionPiece.GetComponent<Piece>().destructionSteps = counter;
+                            counter += 1; 
+                        }
+                        else if (solutionPiece.GetComponent<Piece>().type == "SpecialColorBomb") {
+                            Solution newColorBombSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy();
+                            // foreach (GameObject regularPieceColorBombDestroy in newColorBombSolution.solutionPieces) {
+                            //     if (regularPieceColorBombDestroy.GetComponent<Piece>().destructionSteps == -1) {
+                            //         regularPieceColorBombDestroy.GetComponent<Piece>().destructionSteps = Random.Range(1, 6);
+                                    
+                            //     }
+                            // }
+                            newSolutionsToAdd.Add(newColorBombSolution);
+                            solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
+                            solutionPiece.GetComponent<Piece>().destructionSteps = counter;
+                            counter += 1; 
                         }
                     }
+                }
+                else if (solution.getType() == "SpecialTnt") {
+                    foreach (GameObject solutionPiece in solution.solutionPieces) {
+                        if (solutionPiece.GetComponent<Piece>().type == "Regular" || solutionPiece.GetComponent<Piece>().type == "SpecialDove") {
+                            solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
+                            solutionPiece.GetComponent<Piece>().destructionSteps = counter;
+                        }
+                        else if (solutionPiece.GetComponent<Piece>().type == "SpecialTnt") {
+                            Solution newTntSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy();
+                            newSolutionsToAdd.Add(newTntSolution);
+                            solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
+                            solutionPiece.GetComponent<Piece>().destructionSteps = counter;
+                        }
+                        else if (solutionPiece.GetComponent<Piece>().type == "SpecialVerticalRocket") {
+                            Solution newVerticalRocketSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy();
+                            newSolutionsToAdd.Add(newVerticalRocketSolution);
+                            solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
+                            solutionPiece.GetComponent<Piece>().destructionSteps = counter;
+                        }
+                        else if (solutionPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
+                            Solution newHorizontalRocketSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy();
+                            newSolutionsToAdd.Add(newHorizontalRocketSolution);
+                            solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
+                            solutionPiece.GetComponent<Piece>().destructionSteps = counter;
+                        }
+                        else if (solutionPiece.GetComponent<Piece>().type == "SpecialColorBomb") {
+                            Solution newColorBombSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy();
+                            // foreach (GameObject regularPieceColorBombDestroy in newColorBombSolution.solutionPieces) {
+                            //     if (regularPieceColorBombDestroy.GetComponent<Piece>().destructionSteps == -1) {
+                            //         regularPieceColorBombDestroy.GetComponent<Piece>().destructionSteps = Random.Range(1, 6);
+                                    
+                            //     }
+                            // }
+                            newSolutionsToAdd.Add(newColorBombSolution);
+                            solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
+                            solutionPiece.GetComponent<Piece>().destructionSteps = counter; 
+                        }
+                    }
+                }
+                else if (solution.getType() == "SpecialVerticalRocket") {
+                    int upCounter = counter;
+                    int downCounter = counter;
+                    foreach (GameObject solutionPiece in solution.solutionPieces) {
+                        if (solutionPiece.GetComponent<Piece>().type == "Regular" || solutionPiece.GetComponent<Piece>().type == "SpecialDove") {
+                            if (solutionPiece.GetComponent<Piece>().row > solution.specialPieceRow) {
+                                solutionPiece.GetComponent<Piece>().destructionSteps = upCounter;
+                                solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
+                                upCounter += 1;    
+                            }
+                            if (solutionPiece.GetComponent<Piece>().row < solution.specialPieceRow) {
+                                solutionPiece.GetComponent<Piece>().destructionSteps = downCounter;
+                                solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
+                                downCounter += 1;     
+                            }
+                        }
+                        else if (solutionPiece.GetComponent<Piece>().type == "SpecialTnt") {
+                            Solution newTntSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy();
+                            newSolutionsToAdd.Add(newTntSolution);
+                            solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
+                            if (solutionPiece.GetComponent<Piece>().row > solution.specialPieceRow) {
+                                solutionPiece.GetComponent<Piece>().destructionSteps = upCounter;
+                                upCounter += 1;
+                            }
+                            else {
+                                solutionPiece.GetComponent<Piece>().destructionSteps = downCounter;
+                                downCounter += 1;
+                            }
+                        }
+                        else if (solutionPiece.GetComponent<Piece>().type == "SpecialVerticalRocket") {
+                            Solution newVerticalRocketSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy(); 
+                            newSolutionsToAdd.Add(newVerticalRocketSolution);
+                            solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
+                            if (solutionPiece.GetComponent<Piece>().row > solution.specialPieceRow) {
+                                solutionPiece.GetComponent<Piece>().destructionSteps = upCounter;
+                                upCounter += 1;
+                            }
+                            else {
+                                solutionPiece.GetComponent<Piece>().destructionSteps = downCounter;
+                                downCounter += 1;
+                            }
+                        }
+                        else if (solutionPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
+                            Solution newHorizontalRocketSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy(); 
+                            newSolutionsToAdd.Add(newHorizontalRocketSolution);
+                            solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
+                            if (solutionPiece.GetComponent<Piece>().row > solution.specialPieceRow) {
+                                solutionPiece.GetComponent<Piece>().destructionSteps = upCounter;
+                                upCounter += 1;
+                            }
+                            else {
+                                solutionPiece.GetComponent<Piece>().destructionSteps = downCounter;
+                                downCounter += 1;
+                            }
+                        }
+                        else if (solutionPiece.GetComponent<Piece>().type == "SpecialColorBomb") {
+                            Solution newColorBombSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy(); 
+                            newSolutionsToAdd.Add(newColorBombSolution);
+                            solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
+                            if (solutionPiece.GetComponent<Piece>().row > solution.specialPieceRow) {
+                                solutionPiece.GetComponent<Piece>().destructionSteps = upCounter;
+                                upCounter += 1;
+                            }
+                            else {
+                                solutionPiece.GetComponent<Piece>().destructionSteps = downCounter;
+                                downCounter += 1;
+                            }
+                        }
+                    }
+                    counter = (int) Mathf.Max((float) upCounter, (float) downCounter);
+                }
+                else if (solution.getType() == "SpecialHorizontalRocket") {
+                    int leftCounter = counter;
+                    int rightCounter = counter;
+                    foreach (GameObject solutionPiece in solution.solutionPieces) {
+                        if (solutionPiece.GetComponent<Piece>().type == "Regular" || solutionPiece.GetComponent<Piece>().type == "SpecialDove") {
+                            if (solutionPiece.GetComponent<Piece>().column > solution.specialPieceColumn) {
+                                solutionPiece.GetComponent<Piece>().destructionSteps = rightCounter;
+                                solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
+                                rightCounter += 1;    
+                            }
+                            if (solutionPiece.GetComponent<Piece>().column < solution.specialPieceColumn) {
+                                solutionPiece.GetComponent<Piece>().destructionSteps = leftCounter;
+                                solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
+                                leftCounter += 1;     
+                            }
+                        }
+                        else if (solutionPiece.GetComponent<Piece>().type == "SpecialTnt") {
+                            Solution newTntSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy();
+                            newSolutionsToAdd.Add(newTntSolution);
+                            solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
+                            if (solutionPiece.GetComponent<Piece>().column > solution.specialPieceColumn) {
+                                solutionPiece.GetComponent<Piece>().destructionSteps = rightCounter;
+                                rightCounter += 1;
+                            }
+                            else {
+                                solutionPiece.GetComponent<Piece>().destructionSteps = leftCounter;
+                                leftCounter += 1;
+                            }
+                        }
+                        else if (solutionPiece.GetComponent<Piece>().type == "SpecialVerticalRocket") {
+                            Solution newVerticalRocketSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy(); 
+                            newSolutionsToAdd.Add(newVerticalRocketSolution);
+                            solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
+                            if (solutionPiece.GetComponent<Piece>().column > solution.specialPieceColumn) {
+                                solutionPiece.GetComponent<Piece>().destructionSteps = rightCounter;
+                                rightCounter += 1;
+                            }
+                            else {
+                                solutionPiece.GetComponent<Piece>().destructionSteps = leftCounter;
+                                leftCounter += 1;
+                            }
+                        }
+                        else if (solutionPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
+                            Solution newHorizontalRocketSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy(); 
+                            newSolutionsToAdd.Add(newHorizontalRocketSolution);
+                            solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
+                            if (solutionPiece.GetComponent<Piece>().column > solution.specialPieceColumn) {
+                                solutionPiece.GetComponent<Piece>().destructionSteps = rightCounter;
+                                rightCounter += 1;
+                            }
+                            else {
+                                solutionPiece.GetComponent<Piece>().destructionSteps = leftCounter;
+                                leftCounter += 1;
+                            }
+                        }
+                        else if (solutionPiece.GetComponent<Piece>().type == "SpecialColorBomb") {
+                            Solution newColorBombSolution = solutionPiece.GetComponent<Piece>().getPiecesToDestroy(); 
+                            newSolutionsToAdd.Add(newColorBombSolution);
+                            solutionPiece.GetComponent<Piece>().isMatchToDestroy = true;
+                            if (solutionPiece.GetComponent<Piece>().column > solution.specialPieceColumn) {
+                                solutionPiece.GetComponent<Piece>().destructionSteps = rightCounter;
+                                rightCounter += 1;
+                            }
+                            else {
+                                solutionPiece.GetComponent<Piece>().destructionSteps = leftCounter;
+                                leftCounter += 1;
+                            }
+                        }
+                    }
+                    counter = (int) Mathf.Max((float) leftCounter, (float) rightCounter);
+
                 }
             }
             allSolutions.Clear();

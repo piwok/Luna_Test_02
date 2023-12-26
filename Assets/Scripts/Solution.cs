@@ -10,12 +10,16 @@ public class Solution
     private string color;
     public int numStepsTodestruccion;
     private int size;
-    public Solution(List<GameObject> asolutionPieces, string ashape, string atype, string acolor) {
+    public int specialPieceColumn;
+    public int specialPieceRow;
+    public Solution(List<GameObject> asolutionPieces, string ashape, string atype, string acolor, int aspecialPieceColumn, int aspecialPieceRow) {
         solutionPieces = asolutionPieces;
         shape = ashape;
         type = atype;
         color = acolor;
         size = asolutionPieces.Count;
+        specialPieceColumn = aspecialPieceColumn;
+        specialPieceRow = aspecialPieceRow;
 
     }
     //Setters and getters

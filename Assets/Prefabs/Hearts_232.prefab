@@ -143,4 +143,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76181833f480b0448b6144f4840c9047, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  color: Red
+  type: Regular
+  column: 0
+  row: 0
+  isMatched: 0
   swipeAngle: 0

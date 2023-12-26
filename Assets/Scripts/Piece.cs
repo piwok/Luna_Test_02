@@ -4,11 +4,14 @@ using UnityEngine;
 
 public class Piece : MonoBehaviour
 {   
+    public string color;
+    public string type;
     public int column;
     public int row;
     private int targetColumn;
     private int targetRow;
     private Vector2 targetPosition;
+    public bool isMatched;
     private Board board;
     private GameObject secondPiece;
     private Vector2 firstTouchPosition;
@@ -22,6 +25,7 @@ public class Piece : MonoBehaviour
         targetRow = (int) transform.position.y;
         column = targetColumn;
         row = targetRow;
+        isMatched = false;
         board = FindObjectOfType<Board>();
         
     }
@@ -48,21 +52,28 @@ public class Piece : MonoBehaviour
             transform.position = Vector2.Lerp(transform.position, targetPosition,17f*Time.deltaTime);
         }
         else {
-            //Set the target position on X axis
+            //Set the target position on Y axis
             targetPosition = new Vector2(transform.position.x, targetRow);
             transform.position = targetPosition;
             board.allPieces[column, row] = this.gameObject;
+        }
+        //Code for destruction of matched pieces
+        findAllLegalMatches();
+        if (isMatched == true) {
+            SpriteRenderer sprite = GetComponent<SpriteRenderer>();
+            sprite.color = new Color(1f, 1f, 1f, 0.4f);
+
+
         }
 
         
     }
     private void OnMouseDown() {
         firstTouchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Debug.Log(firstTouchPosition);
+        
     }
     private void OnMouseUp() {
         lastTouchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Debug.Log(lastTouchPosition);
         calculateAngle();
     }
     private void calculateAngle() {
@@ -97,4 +108,27 @@ public class Piece : MonoBehaviour
         }
         
     }
+    public void findAllLegalMatches() {
+        if (column > 0 && column < board.width - 1) {
+            GameObject leftPiece1 = board.allPieces[column - 1, row];
+            GameObject rightPiece1 = board.allPieces[column + 1, row];
+            if (leftPiece1.GetComponent<Piece>().color == color && rightPiece1.GetComponent<Piece>().color == color) {
+                leftPiece1.GetComponent<Piece>().isMatched = true;
+                rightPiece1.GetComponent<Piece>().isMatched = true;
+                isMatched = true;
+
+            } 
+        }
+        if (row > 0 && row < board.height - 1) {
+            GameObject downPiece1 = board.allPieces[column, row - 1];
+            GameObject upPiece1 = board.allPieces[column, row + 1];
+            if (downPiece1.GetComponent<Piece>().color == color && upPiece1.GetComponent<Piece>().color == color) {
+                downPiece1.GetComponent<Piece>().isMatched = true;
+                upPiece1.GetComponent<Piece>().isMatched = true;
+                isMatched = true;
+
+            } 
+        }
+    }
+
 }

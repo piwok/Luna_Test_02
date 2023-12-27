@@ -81,6 +81,23 @@ public class Board : MonoBehaviour
                 }
             }
         }
+        StartCoroutine(collapseColumnsCoroutine());
+    }
+    private IEnumerator collapseColumnsCoroutine() {
+        int nullCount = 0;
+        for(int i = 0; i < width; i++) {
+            for(int j = 0; j < height; j++) {
+                if(allPieces[i, j] == null) {
+                    nullCount++;
+                }
+                else if (nullCount > 0) {
+                    allPieces[i, j].GetComponent<Piece>().row -= nullCount;
+                    allPieces[i, j] = null;
+                }
+            }
+        nullCount = 0;
+        }
+        yield return new WaitForSeconds(0.25f);
 
     }
 }

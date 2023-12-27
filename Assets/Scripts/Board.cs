@@ -98,6 +98,39 @@ public class Board : MonoBehaviour
         nullCount = 0;
         }
         yield return new WaitForSeconds(0.25f);
+        StartCoroutine(fillBoardCoroutine());
+    }
+    private void refillBoard() {
+        for(int i = 0; i < width; i++) {
+            for(int j = 0; j < height; j++) {
+                if(allPieces[i, j] == null) {
+                    Vector2 newPiecePosition = new Vector2(i, j);
+                    int newPieceindex = Random.Range(0, 4);
+                    GameObject newPiece = Instantiate(piecesPrefabs[newPieceindex], newPiecePosition, Quaternion.identity);
+                    allPieces[i, j] = newPiece;
+                }
+            }
+        }
+    }
+    private bool isMatchesOnBoard() {
+        for(int i = 0; i < width; i++) {
+            for(int j = 0; j < height; j++) {
+                if(allPieces[i, j] != null) {
+                    if(allPieces[i, j].GetComponent<Piece>().isMatched) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    private IEnumerator fillBoardCoroutine() {
+        refillBoard();
+        yield return new WaitForSeconds(0.25f);
+        while(isMatchesOnBoard()) {
+            yield return new WaitForSeconds(0.25f);
+            destrolAllMatches();
 
+        }
     }
 }

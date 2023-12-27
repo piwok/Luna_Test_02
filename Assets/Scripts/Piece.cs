@@ -24,12 +24,12 @@ public class Piece : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        targetColumn = (int) transform.position.x;
-        targetRow = (int) transform.position.y;
-        column = targetColumn;
-        row = targetRow;
-        previousColumn = column;
-        previousRow = row;
+        // targetColumn = (int) transform.position.x;
+        // targetRow = (int) transform.position.y;
+        // column = targetColumn;
+        // row = targetRow;
+        // previousColumn = column;
+        // previousRow = row;
         swipeThreshold = 1f;
         isMatched = false;
         board = FindObjectOfType<Board>();
@@ -97,24 +97,32 @@ public class Piece : MonoBehaviour
         if (swipeAngle > -45 && swipeAngle <= 45 && column < board.width - 1) {
             //Right swipe
             secondPiece = board.allPieces[column + 1, row];
+            previousColumn = column;
+            previousRow = row;
             secondPiece.GetComponent<Piece>().column -= 1;
             column += 1;
         }
         else if (swipeAngle > 45 && swipeAngle <= 135 && row < board.height - 1) {
             //Up swipe
             secondPiece = board.allPieces[column, row + 1];
+            previousColumn = column;
+            previousRow = row;
             secondPiece.GetComponent<Piece>().row -= 1;
             row += 1;
         }
         else if ((swipeAngle > 135 || swipeAngle <= -135) && column > 0) {
             //Left swipe
             secondPiece = board.allPieces[column - 1, row];
+            previousColumn = column;
+            previousRow = row;
             secondPiece.GetComponent<Piece>().column += 1;
             column -= 1;
         }
         else if (swipeAngle < -45 && swipeAngle >= -135 && row > 0) {
             //Down swipe
             secondPiece = board.allPieces[column, row - 1];
+            previousColumn = column;
+            previousRow = row;
             secondPiece.GetComponent<Piece>().row += 1;
             row -= 1;
         }

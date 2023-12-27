@@ -161,6 +161,7 @@ MonoBehaviour:
   - {fileID: 5295469822797771455, guid: fc5c6ca97a186a743bf5091eac7df871, type: 3}
   - {fileID: 4805421993757873530, guid: 7a5c4d8c503803743b2a71184484c766, type: 3}
   - {fileID: 5871233871117533438, guid: bb03179295ad9a74c9cb573c3b4f135f, type: 3}
+  offsetNewPieces: 20
 --- !u!4 &111425250
 Transform:
   m_ObjectHideFlags: 0

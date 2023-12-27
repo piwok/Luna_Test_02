@@ -11,6 +11,7 @@ public class Board : MonoBehaviour
     public GameObject[] piecesPrefabs;
     private GameObject[,] allTiles;
     public GameObject[,] allPieces;
+    public int offsetNewPieces;
     // Start is called before the first frame update
     void Start()
     {
@@ -22,8 +23,8 @@ public class Board : MonoBehaviour
     private void setUp() {
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                Vector2 positionForNewPiece = new Vector2(i, j);
-                GameObject newTile = Instantiate(tilesPrefabs[0], positionForNewPiece, Quaternion.identity);
+                Vector2 positionForNewTile = new Vector2(i, j);
+                GameObject newTile = Instantiate(tilesPrefabs[0], positionForNewTile, Quaternion.identity);
                 newTile.transform.parent = this.transform;
                 newTile.GetComponent<Tile>().column = i;
                 newTile.GetComponent<Tile>().row = j;
@@ -34,7 +35,12 @@ public class Board : MonoBehaviour
                     newRegularPieceTypeIndex = Random.Range(0, piecesPrefabs.Length);
                     maxIterations++;
                 }
+                maxIterations = 0;
+                Vector2 positionForNewPiece = new Vector2(i, j + offsetNewPieces);
                 GameObject newRegularPiece = Instantiate(piecesPrefabs[newRegularPieceTypeIndex], positionForNewPiece, Quaternion.identity);
+                newRegularPiece.GetComponent<Piece>().column = i;
+                newRegularPiece.GetComponent<Piece>().row = j;
+                transform.parent = this.transform;
                 allPieces[i, j] = newRegularPiece;
             }
         }
@@ -104,10 +110,12 @@ public class Board : MonoBehaviour
         for(int i = 0; i < width; i++) {
             for(int j = 0; j < height; j++) {
                 if(allPieces[i, j] == null) {
-                    Vector2 newPiecePosition = new Vector2(i, j);
+                    Vector2 newPiecePosition = new Vector2(i, j + offsetNewPieces);
                     int newPieceindex = Random.Range(0, 4);
                     GameObject newPiece = Instantiate(piecesPrefabs[newPieceindex], newPiecePosition, Quaternion.identity);
                     allPieces[i, j] = newPiece;
+                    newPiece.GetComponent<Piece>().column = i;
+                    newPiece.GetComponent<Piece>().row = j;
                 }
             }
         }

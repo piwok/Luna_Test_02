@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8961842782048252}
   m_Layer: 0
   m_Name: Spades_232
-  m_TagString: Untagged
+  m_TagString: black piece
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -147,5 +147,8 @@ MonoBehaviour:
   type: Regular
   column: 0
   row: 0
+  previousColumn: 0
+  previousRow: 0
   isMatched: 0
   swipeAngle: 0
+  swipeThreshold: 0

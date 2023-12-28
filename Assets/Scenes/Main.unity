@@ -162,6 +162,19 @@ MonoBehaviour:
   - {fileID: 5295469822797771455, guid: fc5c6ca97a186a743bf5091eac7df871, type: 3}
   - {fileID: 4805421993757873530, guid: 7a5c4d8c503803743b2a71184484c766, type: 3}
   - {fileID: 5871233871117533438, guid: bb03179295ad9a74c9cb573c3b4f135f, type: 3}
+  - {fileID: 8689228684983217905, guid: 8bf1711ba4ae64b458377adb54b82342, type: 3}
+  - {fileID: 1027790981695024386, guid: 919cc64474523f04f9176d403efab8c5, type: 3}
+  - {fileID: 2099561111404867047, guid: e308c7fbe67fa31459601fc86a471ef7, type: 3}
+  - {fileID: 4912140063837944088, guid: 525f6f002ba5a4e45a3f0e81c115c9f1, type: 3}
+  - {fileID: 5331788795826228670, guid: acb91d476c6566a4786d035c17975499, type: 3}
+  - {fileID: 882436719375055582, guid: 2671c5e1e54165446abbceb6bb051759, type: 3}
+  - {fileID: 7359395189214769853, guid: 8c942612917c69447ad71cb20e585861, type: 3}
+  - {fileID: 5452855775265020665, guid: 5e6818d7726b1a34682f4ee2a3bd33b1, type: 3}
+  - {fileID: 3158870096636385660, guid: 24bc02d1e3471b14fbf33e886a015ecd, type: 3}
+  - {fileID: 8992198501381999687, guid: 0bc16fc34ac77954492c5aff219e81f1, type: 3}
+  - {fileID: 3646155700534985138, guid: 38960c80fdae95841949ba4e2fbe63ba, type: 3}
+  - {fileID: 425120972783994892, guid: feff29249bdd01349bfbb983b9f116e1, type: 3}
+  regularDestroyEffect: {fileID: 7877691994782150433, guid: dd7e48cb46b28d5418d6feb812164d39, type: 3}
   offsetNewPieces: 30
   isCheckMoveCoroutineDone: 0
   isCollapseCollumnsDone: 0

@@ -55,10 +55,10 @@ public class Board : MonoBehaviour
                 newTile.GetComponent<Tile>().column = i;
                 newTile.GetComponent<Tile>().row = j;
                 allTiles[i, j] = newTile;
-                int newRegularPieceTypeIndex = Random.Range(0, piecesPrefabs.Length);
+                int newRegularPieceTypeIndex = Random.Range(0, 4); //only the firts four prefabs are regular pieces
                 int maxIterations = 0;
                 while(isMatchAt(i, j, piecesPrefabs[newRegularPieceTypeIndex]) && maxIterations < 100) {
-                    newRegularPieceTypeIndex = Random.Range(0, piecesPrefabs.Length);
+                    newRegularPieceTypeIndex = Random.Range(0, 4);
                     maxIterations++;
                 }
                 maxIterations = 0;

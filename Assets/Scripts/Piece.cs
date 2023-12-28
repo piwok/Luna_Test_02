@@ -18,6 +18,8 @@ public class Piece : MonoBehaviour
     private Board board;
     private MatchFinder matchFinder;
     private GameObject secondPiece;
+
+    [Header("Swipe variables")]
     private Vector2 firstTouchPosition;
     private Vector2 lastTouchPosition;
     public float swipeAngle;
@@ -37,11 +39,34 @@ public class Piece : MonoBehaviour
         matchFinder = FindObjectOfType<MatchFinder>();
         
     }
+    //this is for testing a debugging
+    private void OnMouseOver() {
+        if(Input.GetMouseButtonDown(1)) {
+            int pieceToDestroyIndex = -1;
+            if(color == "Green") {
+                pieceToDestroyIndex = 8;
+            }
+            else if(color == "Yellow") {
+                pieceToDestroyIndex = 9;
+            }
+            else if(color == "Red") {
+                pieceToDestroyIndex = 10;
+            }
+            else if(color == "Black") {
+                pieceToDestroyIndex = 11;
+            }
+            Vector2 pieceToDestroyPosition = new Vector2(this.gameObject.transform.position.x, this.gameObject.transform.position.y);
+            board.allPieces[column, row] = Instantiate(board.piecesPrefabs[pieceToDestroyIndex], pieceToDestroyPosition, Quaternion.identity);
+            board.allPieces[column, row].GetComponent<Piece>().column = column;
+            board.allPieces[column, row].GetComponent<Piece>().row = row;
+            Destroy(this.gameObject);
+        }
+    }
+    /////////////////////////////////////////////////////////
 
     // Update is called once per frame
     void Update()
     {   //Code for destruction of matched pieces
-        //findAllLegalMatches();
         if (isMatched) {
             SpriteRenderer sprite = GetComponent<SpriteRenderer>();
             sprite.color = new Color(1f, 1f, 1f, 0.4f);

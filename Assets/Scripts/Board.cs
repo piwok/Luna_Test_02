@@ -3,22 +3,47 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
+public enum gameState {
+    wait,
+    move
+}
+
 public class Board : MonoBehaviour
 {
+    public gameState currentState;
     public int width;
     public int height;
+    private MatchFinder matchFinder;
     public GameObject[] tilesPrefabs;
     public GameObject[] piecesPrefabs;
     private GameObject[,] allTiles;
     public GameObject[,] allPieces;
     public int offsetNewPieces;
     // Start is called before the first frame update
+    public bool isCheckMoveCoroutineDone;
+    public bool isCollapseCollumnsDone;
+    public bool isFillBoardCoroutineDone;
     void Start()
     {
+        matchFinder = FindObjectOfType<MatchFinder>();
+        currentState = gameState.move;
+        isCheckMoveCoroutineDone = true;
+        isCollapseCollumnsDone = true;
+        isFillBoardCoroutineDone = true;
         allTiles = new GameObject[width, height];
         allPieces = new GameObject[width, height];
         setUp();
         
+    }
+    void Update() {
+        if(isCheckMoveCoroutineDone == false || isCollapseCollumnsDone == false || isFillBoardCoroutineDone == false) {
+            
+            currentState = gameState.wait;
+        }
+        else {
+            currentState = gameState.move;
+        }
+
     }
     private void setUp() {
         for (int i = 0; i < width; i++) {
@@ -75,6 +100,7 @@ public class Board : MonoBehaviour
     }
     private void destroyMatchesAt(int column, int row) {
         if(allPieces[column, row].GetComponent<Piece>().isMatched) {
+            matchFinder.currentMatches.Remove(allPieces[column, row]);
             Destroy(allPieces[column, row]);
             allPieces[column, row] = null;
         }
@@ -90,6 +116,7 @@ public class Board : MonoBehaviour
         StartCoroutine(collapseColumnsCoroutine());
     }
     private IEnumerator collapseColumnsCoroutine() {
+        isCollapseCollumnsDone = false;
         int nullCount = 0;
         for(int i = 0; i < width; i++) {
             for(int j = 0; j < height; j++) {
@@ -105,6 +132,7 @@ public class Board : MonoBehaviour
         }
         yield return new WaitForSeconds(0.25f);
         StartCoroutine(fillBoardCoroutine());
+        isCollapseCollumnsDone = true;
     }
     private void refillBoard() {
         for(int i = 0; i < width; i++) {
@@ -132,13 +160,19 @@ public class Board : MonoBehaviour
         }
         return false;
     }
+    //there is a bug here, in the videos works ok but i suspect that the coroutine running in paralel maybe generates the problem
     private IEnumerator fillBoardCoroutine() {
+        isFillBoardCoroutineDone = false;
         refillBoard();
         yield return new WaitForSeconds(0.25f);
         while(isMatchesOnBoard()) {
             yield return new WaitForSeconds(0.25f);
             destrolAllMatches();
-
         }
+        yield return new WaitForSeconds(0.25f);
+        
+        //currentState = gameState.move;
+        isFillBoardCoroutineDone = true;
+        
     }
 }

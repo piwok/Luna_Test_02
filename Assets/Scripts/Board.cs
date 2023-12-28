@@ -18,6 +18,7 @@ public class Board : MonoBehaviour
     public GameObject[] piecesPrefabs;
     private GameObject[,] allTiles;
     public GameObject[,] allPieces;
+    public GameObject regularDestroyEffect;
     public int offsetNewPieces;
     // Start is called before the first frame update
     public bool isCheckMoveCoroutineDone;
@@ -101,6 +102,8 @@ public class Board : MonoBehaviour
     private void destroyMatchesAt(int column, int row) {
         if(allPieces[column, row].GetComponent<Piece>().isMatched) {
             matchFinder.currentMatches.Remove(allPieces[column, row]);
+            GameObject destroyEffectParticle = Instantiate(regularDestroyEffect, allPieces[column, row].transform.position, Quaternion.identity);
+            Destroy(destroyEffectParticle, 1.0f); 
             Destroy(allPieces[column, row]);
             allPieces[column, row] = null;
         }

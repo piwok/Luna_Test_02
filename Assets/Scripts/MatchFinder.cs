@@ -38,6 +38,15 @@ public class MatchFinder : MonoBehaviour
                                 if(rightPiece.GetComponent<Piece>().type == "SpecialVerticalRocket") {
                                     currentMatches.Union(getColumnPieces(i + 1));
                                 }
+                                if(exploringPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
+                                    currentMatches.Union(getRowPieces(j));
+                                }
+                                if(leftPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
+                                    currentMatches.Union(getRowPieces(j));
+                                }
+                                if(rightPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
+                                    currentMatches.Union(getRowPieces(j));
+                                }
                                 if(!currentMatches.Contains(leftPiece)) {
                                     currentMatches.Add(leftPiece);
                                 }
@@ -67,6 +76,15 @@ public class MatchFinder : MonoBehaviour
                                 }
                                 if(upPiece.GetComponent<Piece>().type == "SpecialVerticalRocket") {
                                     currentMatches.Union(getColumnPieces(i));
+                                }
+                                if(exploringPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
+                                    currentMatches.Union(getRowPieces(j));
+                                }
+                                if(downPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
+                                    currentMatches.Union(getRowPieces(j - 1));
+                                }
+                                if(upPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
+                                    currentMatches.Union(getRowPieces(j + 1));
                                 }
                                 if(!currentMatches.Contains(downPiece)) {
                                     currentMatches.Add(downPiece);

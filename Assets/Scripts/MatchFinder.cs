@@ -128,6 +128,15 @@ public class MatchFinder : MonoBehaviour
         }
         return rowPieces; 
     }
+    public void matchAllPieceOfSameColor(string color) {
+        for(int i = 0; i < board.width; i++) {
+            for(int j = 0; j < board.height; j++) {
+                if(board.allPieces[i, j] != null && board.allPieces[i, j].GetComponent<Piece>().color == color) {
+                    board.allPieces[i, j].GetComponent<Piece>().isMatched = true;
+                }
+            }
+        }
+    }
     public void checkSpecialPiecesToCreate() {
         //Did the player move something?
         if(board.currentPiece != null) {

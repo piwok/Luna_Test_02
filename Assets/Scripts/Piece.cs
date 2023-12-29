@@ -44,16 +44,16 @@ public class Piece : MonoBehaviour
         if(Input.GetMouseButtonDown(1)) {
             int pieceToDestroyIndex = -1;
             if(color == "Green") {
-                pieceToDestroyIndex = 4;
+                pieceToDestroyIndex = 16;
             }
             else if(color == "Yellow") {
-                pieceToDestroyIndex = 5;
+                pieceToDestroyIndex = 16;
             }
             else if(color == "Red") {
-                pieceToDestroyIndex = 6;
+                pieceToDestroyIndex = 16;
             }
             else if(color == "Black") {
-                pieceToDestroyIndex = 7;
+                pieceToDestroyIndex = 16;
             }
             Vector2 pieceToDestroyPosition = new Vector2(this.gameObject.transform.position.x, this.gameObject.transform.position.y);
             board.allPieces[column, row] = Instantiate(board.piecesPrefabs[pieceToDestroyIndex], pieceToDestroyPosition, Quaternion.identity);
@@ -170,6 +170,17 @@ public class Piece : MonoBehaviour
     }
     public IEnumerator checkMoveCoroutine() {
         board.isCheckMoveCoroutineDone = false;
+        //detect a detonates a color bomb this piece or the second piece
+        if(type == "SpecialColorBomb") {
+            matchFinder.matchAllPieceOfSameColor(secondPiece.GetComponent<Piece>().color);
+            isMatched = true;
+            
+            }
+        else if(secondPiece.GetComponent<Piece>().type == "SpecialColorBomb") {
+            matchFinder.matchAllPieceOfSameColor(color);
+            secondPiece.GetComponent<Piece>().isMatched = true;
+
+        }
         yield return new WaitForSeconds(0.25f);
         if (secondPiece != null) {
             if(!isMatched && !secondPiece.GetComponent<Piece>().isMatched) {

@@ -17,7 +17,7 @@ public class Piece : MonoBehaviour
     public bool isMatched;
     private Board board;
     private MatchFinder matchFinder;
-    private GameObject secondPiece;
+    public GameObject secondPiece;
 
     [Header("Swipe variables")]
     private Vector2 firstTouchPosition;
@@ -67,10 +67,10 @@ public class Piece : MonoBehaviour
     // Update is called once per frame
     void Update()
     {   //Code for destruction of matched pieces
-        if (isMatched) {
+        /*if (isMatched) {
             SpriteRenderer sprite = GetComponent<SpriteRenderer>();
             sprite.color = new Color(1f, 1f, 1f, 0.4f);
-        }
+        }*/
         //Code for the movement of the piece, the piece always goes to the position of the column and row variables
         targetColumn = column;
         targetRow = row;
@@ -124,10 +124,12 @@ public class Piece : MonoBehaviour
             swipeAngle = Mathf.Atan2(lastTouchPosition.y - firstTouchPosition.y, lastTouchPosition.x - firstTouchPosition.x) * 180/Mathf.PI;
             movePieces();
             board.currentState = gameState.wait;
+            board.currentPiece = this.gameObject;
         }
         else {
             
             board.currentState = gameState.move;
+            
         }
     }
     private void movePieces() {
@@ -176,13 +178,14 @@ public class Piece : MonoBehaviour
                 column = previousColumn;
                 row = previousRow;
                 yield return new WaitForSeconds(0.25f);
+                board.currentPiece = null;
                 board.currentState = gameState.move;
             }
             else {
             
                 board.destrolAllMatches();
             }
-            secondPiece = null;
+            //secondPiece = null;
         }
         board.isCheckMoveCoroutineDone = true;
     }
@@ -209,5 +212,45 @@ public class Piece : MonoBehaviour
                 }
             }
         }
+    }
+    public void makeSpecialHorizontalRocket() {
+        int pieceToDestroyIndex = -1;
+        if(color == "Green") {
+            pieceToDestroyIndex = 4;
+        }
+        else if(color == "Yellow") {
+            pieceToDestroyIndex = 5;
+        }
+        else if(color == "Red") {
+            pieceToDestroyIndex = 6;
+        }
+        else if(color == "Black") {
+            pieceToDestroyIndex = 7;
+        }
+        Vector2 pieceToDestroyPosition = new Vector2(this.gameObject.transform.position.x, this.gameObject.transform.position.y);
+        board.allPieces[column, row] = Instantiate(board.piecesPrefabs[pieceToDestroyIndex], pieceToDestroyPosition, Quaternion.identity);
+        board.allPieces[column, row].GetComponent<Piece>().column = column;
+        board.allPieces[column, row].GetComponent<Piece>().row = row;
+        Destroy(this.gameObject);
+    }
+    public void makeSpecialVerticalRocket() {
+        int pieceToDestroyIndex = -1;
+        if(color == "Green") {
+            pieceToDestroyIndex = 8;
+        }
+        else if(color == "Yellow") {
+            pieceToDestroyIndex = 9;
+        }
+        else if(color == "Red") {
+            pieceToDestroyIndex = 10;
+        }
+        else if(color == "Black") {
+            pieceToDestroyIndex = 11;
+        }
+        Vector2 pieceToDestroyPosition = new Vector2(this.gameObject.transform.position.x, this.gameObject.transform.position.y);
+        board.allPieces[column, row] = Instantiate(board.piecesPrefabs[pieceToDestroyIndex], pieceToDestroyPosition, Quaternion.identity);
+        board.allPieces[column, row].GetComponent<Piece>().column = column;
+        board.allPieces[column, row].GetComponent<Piece>().row = row;
+        Destroy(this.gameObject);
     }
 }

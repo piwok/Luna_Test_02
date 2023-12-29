@@ -14,6 +14,9 @@ public class MatchFinder : MonoBehaviour
         currentMatches = new List<GameObject>();
         
     }
+    void Update() {
+        Debug.Log(currentMatches.Count);
+    }
     public void findAllLegalMatches() {
         StartCoroutine(findAllLegalMatchesCoroutine());
     }
@@ -124,5 +127,47 @@ public class MatchFinder : MonoBehaviour
             }
         }
         return rowPieces; 
+    }
+    public void checkSpecialPiecesToCreate() {
+        //Did the player move something?
+        if(board.currentPiece != null) {
+            //If the piece moved matched?
+            if(board.currentPiece.GetComponent<Piece>().isMatched) {
+                //make it unmatched
+                board.currentPiece.GetComponent<Piece>().isMatched = false;
+                //currentMatches.Remove(board.currentPiece);
+                //Decide the type of special piece
+                int typeSpecialPiece = Random.Range(0, 100);
+                if(typeSpecialPiece < 50) {
+                    //Make a horizontal rocket
+                    board.currentPiece.GetComponent<Piece>().makeSpecialHorizontalRocket();
+
+                }
+                else if(typeSpecialPiece >= 50) {
+                    //make a vertical rocket
+                    board.currentPiece.GetComponent<Piece>().makeSpecialVerticalRocket();
+
+                }
+            }
+            //is the second piece matched?
+            else if(board.currentPiece.GetComponent<Piece>().secondPiece != null) {
+                if(board.currentPiece.GetComponent<Piece>().secondPiece.GetComponent<Piece>().isMatched) {
+                    board.currentPiece.GetComponent<Piece>().secondPiece.GetComponent<Piece>().isMatched = false;
+                    int typeSpecialPiece = Random.Range(0, 100);
+                    if(typeSpecialPiece < 50) {
+                    //Make a horizontal rocket
+                    board.currentPiece.GetComponent<Piece>().secondPiece.GetComponent<Piece>().makeSpecialHorizontalRocket();
+                    }
+                    else if(typeSpecialPiece >= 50) {
+                    //make a vertical rocket
+                    board.currentPiece.GetComponent<Piece>().secondPiece.GetComponent<Piece>().makeSpecialVerticalRocket();
+                    }
+
+                }
+
+            
+            }
+
+        }
     }
 }

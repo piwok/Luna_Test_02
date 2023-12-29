@@ -135,39 +135,30 @@ public class MatchFinder : MonoBehaviour
             if(board.currentPiece.GetComponent<Piece>().isMatched) {
                 //make it unmatched
                 board.currentPiece.GetComponent<Piece>().isMatched = false;
-                //currentMatches.Remove(board.currentPiece);
-                //Decide the type of special piece
-                int typeSpecialPiece = Random.Range(0, 100);
-                if(typeSpecialPiece < 50) {
-                    //Make a horizontal rocket
+                //Special rocket create with a horizontal swipe
+                if((board.currentPiece.GetComponent<Piece>().swipeAngle > -45 && board.currentPiece.GetComponent<Piece>().swipeAngle <= 45) ||
+                (board.currentPiece.GetComponent<Piece>().swipeAngle < -135 || board.currentPiece.GetComponent<Piece>().swipeAngle >= 135)) {
                     board.currentPiece.GetComponent<Piece>().makeSpecialHorizontalRocket();
-
-                }
-                else if(typeSpecialPiece >= 50) {
-                    //make a vertical rocket
+                //Special rocket create with a vertical swipe
+                } 
+                else {
                     board.currentPiece.GetComponent<Piece>().makeSpecialVerticalRocket();
-
                 }
             }
             //is the second piece matched?
             else if(board.currentPiece.GetComponent<Piece>().secondPiece != null) {
                 if(board.currentPiece.GetComponent<Piece>().secondPiece.GetComponent<Piece>().isMatched) {
                     board.currentPiece.GetComponent<Piece>().secondPiece.GetComponent<Piece>().isMatched = false;
-                    int typeSpecialPiece = Random.Range(0, 100);
-                    if(typeSpecialPiece < 50) {
-                    //Make a horizontal rocket
-                    board.currentPiece.GetComponent<Piece>().secondPiece.GetComponent<Piece>().makeSpecialHorizontalRocket();
+                    if((board.currentPiece.GetComponent<Piece>().swipeAngle > -45 && board.currentPiece.GetComponent<Piece>().swipeAngle <= 45) ||
+                    (board.currentPiece.GetComponent<Piece>().swipeAngle < -135 || board.currentPiece.GetComponent<Piece>().swipeAngle >= 135)) {
+                        board.currentPiece.GetComponent<Piece>().secondPiece.GetComponent<Piece>().makeSpecialHorizontalRocket();
+                    //Special rocket create with a vertical swipe
+                    } 
+                    else {
+                        board.currentPiece.GetComponent<Piece>().secondPiece.GetComponent<Piece>().makeSpecialVerticalRocket();
                     }
-                    else if(typeSpecialPiece >= 50) {
-                    //make a vertical rocket
-                    board.currentPiece.GetComponent<Piece>().secondPiece.GetComponent<Piece>().makeSpecialVerticalRocket();
-                    }
-
                 }
-
-            
             }
-
         }
     }
 }

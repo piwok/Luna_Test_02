@@ -15,10 +15,44 @@ public class MatchFinder : MonoBehaviour
         
     }
     void Update() {
-        Debug.Log(currentMatches.Count);
+        //Debug.Log(currentMatches.Count);
     }
     public void findAllLegalMatches() {
         StartCoroutine(findAllLegalMatchesCoroutine());
+    }
+    //the three pieces are left, current, right or down, current, up
+    private void formatThreeMatchedPieces(GameObject piece1, GameObject piece2, GameObject piece3) {
+        if(piece2.GetComponent<Piece>().type == "SpecialVerticalRocket") {
+            currentMatches.Union(getColumnPieces(piece2.GetComponent<Piece>().column));
+        }
+        if(piece1.GetComponent<Piece>().type == "SpecialVerticalRocket") {
+            currentMatches.Union(getColumnPieces(piece1.GetComponent<Piece>().column));
+        }
+        if(piece3.GetComponent<Piece>().type == "SpecialVerticalRocket") {
+            currentMatches.Union(getColumnPieces(piece3.GetComponent<Piece>().column));
+        }
+        if(piece2.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
+            currentMatches.Union(getRowPieces(piece2.GetComponent<Piece>().row));
+        }
+        if(piece1.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
+            currentMatches.Union(getRowPieces(piece1.GetComponent<Piece>().row));
+        }
+        if(piece3.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
+            currentMatches.Union(getRowPieces(piece3.GetComponent<Piece>().row));
+        }
+        if(!currentMatches.Contains(piece2)) {
+            currentMatches.Add(piece2);
+        }
+        piece2.GetComponent<Piece>().isMatched = true;
+        if(!currentMatches.Contains(piece1)) {
+            currentMatches.Add(piece1);
+        }
+        piece1.GetComponent<Piece>().isMatched = true;
+        if(!currentMatches.Contains(piece3)) {
+            currentMatches.Add(piece3);
+        }
+        piece3.GetComponent<Piece>().isMatched = true;
+
     }
     private IEnumerator findAllLegalMatchesCoroutine() {
         yield return new WaitForSeconds(0.15f);
@@ -32,36 +66,7 @@ public class MatchFinder : MonoBehaviour
                         if(leftPiece != null && rightPiece != null) {
                             if(leftPiece.GetComponent<Piece>().color == exploringPiece.GetComponent<Piece>().color &&
                             rightPiece.GetComponent<Piece>().color == exploringPiece.GetComponent<Piece>().color) {
-                                if(exploringPiece.GetComponent<Piece>().type == "SpecialVerticalRocket") {
-                                    currentMatches.Union(getColumnPieces(i));
-                                }
-                                if(leftPiece.GetComponent<Piece>().type == "SpecialVerticalRocket") {
-                                    currentMatches.Union(getColumnPieces(i - 1));
-                                }
-                                if(rightPiece.GetComponent<Piece>().type == "SpecialVerticalRocket") {
-                                    currentMatches.Union(getColumnPieces(i + 1));
-                                }
-                                if(exploringPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
-                                    currentMatches.Union(getRowPieces(j));
-                                }
-                                if(leftPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
-                                    currentMatches.Union(getRowPieces(j));
-                                }
-                                if(rightPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
-                                    currentMatches.Union(getRowPieces(j));
-                                }
-                                if(!currentMatches.Contains(leftPiece)) {
-                                    currentMatches.Add(leftPiece);
-                                }
-                                leftPiece.GetComponent<Piece>().isMatched = true;
-                                if(!currentMatches.Contains(rightPiece)) {
-                                    currentMatches.Add(rightPiece);
-                                }
-                                rightPiece.GetComponent<Piece>().isMatched = true;
-                                 if(!currentMatches.Contains(exploringPiece)) {
-                                    currentMatches.Add(exploringPiece);
-                                }
-                                exploringPiece.GetComponent<Piece>().isMatched = true;
+                                formatThreeMatchedPieces(leftPiece, exploringPiece, rightPiece);
                             }
                         }
                     }
@@ -71,36 +76,7 @@ public class MatchFinder : MonoBehaviour
                         if(downPiece != null && upPiece != null) {
                             if(downPiece.GetComponent<Piece>().color == exploringPiece.GetComponent<Piece>().color &&
                             upPiece.GetComponent<Piece>().color == exploringPiece.GetComponent<Piece>().color) {
-                                if(exploringPiece.GetComponent<Piece>().type == "SpecialVerticalRocket") {
-                                    currentMatches.Union(getColumnPieces(i));
-                                }
-                                if(downPiece.GetComponent<Piece>().type == "SpecialVerticalRocket") {
-                                    currentMatches.Union(getColumnPieces(i));
-                                }
-                                if(upPiece.GetComponent<Piece>().type == "SpecialVerticalRocket") {
-                                    currentMatches.Union(getColumnPieces(i));
-                                }
-                                if(exploringPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
-                                    currentMatches.Union(getRowPieces(j));
-                                }
-                                if(downPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
-                                    currentMatches.Union(getRowPieces(j - 1));
-                                }
-                                if(upPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
-                                    currentMatches.Union(getRowPieces(j + 1));
-                                }
-                                if(!currentMatches.Contains(downPiece)) {
-                                    currentMatches.Add(downPiece);
-                                }
-                                downPiece.GetComponent<Piece>().isMatched = true;
-                                if(!currentMatches.Contains(upPiece)) {
-                                    currentMatches.Add(upPiece);
-                                }
-                                upPiece.GetComponent<Piece>().isMatched = true;
-                                 if(!currentMatches.Contains(exploringPiece)) {
-                                    currentMatches.Add(exploringPiece);
-                                }
-                                exploringPiece.GetComponent<Piece>().isMatched = true;
+                                formatThreeMatchedPieces(downPiece, exploringPiece, upPiece);
                             }
                         }
                     }

@@ -67,7 +67,7 @@ public class Board : MonoBehaviour
                 GameObject newRegularPiece = Instantiate(piecesPrefabs[newRegularPieceTypeIndex], positionForNewPiece, Quaternion.identity);
                 newRegularPiece.GetComponent<Piece>().column = i;
                 newRegularPiece.GetComponent<Piece>().row = j;
-                transform.parent = this.transform;
+                newRegularPiece.transform.parent = this.transform;
                 allPieces[i, j] = newRegularPiece;
             }
         }
@@ -152,6 +152,7 @@ public class Board : MonoBehaviour
                     allPieces[i, j] = newPiece;
                     newPiece.GetComponent<Piece>().column = i;
                     newPiece.GetComponent<Piece>().row = j;
+                    newPiece.transform.parent = this.transform;
                 }
             }
         }

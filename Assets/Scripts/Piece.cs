@@ -181,6 +181,36 @@ public class Piece : MonoBehaviour
             secondPiece.GetComponent<Piece>().isMatched = true;
 
         }
+        if(type == "SpecialVerticalRocket") {
+            matchFinder.getColumnPieces(column);
+            isMatched = true;
+            
+            }
+        else if(secondPiece.GetComponent<Piece>().type == "SpecialVerticalRocket") {
+            matchFinder.getColumnPieces(secondPiece.GetComponent<Piece>().column);
+            secondPiece.GetComponent<Piece>().isMatched = true;
+
+        }
+        if(type == "SpecialHorizontalRocket") {
+            matchFinder.getRowPieces(row);
+            isMatched = true;
+            
+            }
+        else if(secondPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
+            matchFinder.getRowPieces(secondPiece.GetComponent<Piece>().row);
+            secondPiece.GetComponent<Piece>().isMatched = true;
+
+        }
+        if(type == "SpecialTnt") {
+            matchFinder.getTntPieces(column, row);
+            isMatched = true;
+            
+            }
+        else if(secondPiece.GetComponent<Piece>().type == "SpecialTnt") {
+            matchFinder.getTntPieces(secondPiece.GetComponent<Piece>().column, secondPiece.GetComponent<Piece>().row);
+            secondPiece.GetComponent<Piece>().isMatched = true;
+
+        }
         yield return new WaitForSeconds(0.25f);
         if (secondPiece != null) {
             if(!isMatched && !secondPiece.GetComponent<Piece>().isMatched) {

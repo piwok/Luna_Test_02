@@ -83,7 +83,7 @@ public class MatchFinder : MonoBehaviour
             }
         }
     }
-    private List<GameObject> getColumnPieces(int column) {
+    public List<GameObject> getColumnPieces(int column) {
         List<GameObject> columnPieces = new List<GameObject>();
         for(int i = 0; i < board.height; i++) {
             if(board.allPieces[column, i] != null) {
@@ -93,7 +93,7 @@ public class MatchFinder : MonoBehaviour
         }
         return columnPieces; 
     }
-    private List<GameObject> getRowPieces(int row) {
+    public List<GameObject> getRowPieces(int row) {
         List<GameObject> rowPieces = new List<GameObject>();
         for(int i = 0; i < board.width; i++) {
             if(board.allPieces[i, row] != null) {
@@ -103,7 +103,7 @@ public class MatchFinder : MonoBehaviour
         }
         return rowPieces; 
     }
-    private List<GameObject> getTntPieces(int column, int row) {
+    public List<GameObject> getTntPieces(int column, int row) {
         List<GameObject> tntPieces = new List<GameObject>();
         for(int i = column - 2; i <= column + 2; i++) {
             for(int j = row - 2; j <= row + 2; j++) {

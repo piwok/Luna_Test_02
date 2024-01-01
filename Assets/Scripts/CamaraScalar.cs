@@ -7,12 +7,12 @@ public class CamaraScalar : MonoBehaviour
     private Board board;
     public float cameraOffset;
     public float aspectRatio;
-    public float padding = 1;
+    public float padding = 2;
 
     // Start is called before the first frame update
     void Start()
     {
-        aspectRatio = 0.5f;
+        aspectRatio = (float) Screen.width/(float) Screen.height;
         cameraOffset = -10f;
         board = FindObjectOfType<Board>();
         if(board != null) {

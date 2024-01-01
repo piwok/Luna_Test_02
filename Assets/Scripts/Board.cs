@@ -113,7 +113,7 @@ public class Board : MonoBehaviour
             allPieces[column, row] = null;
         }
     }
-    public void destrolAllMatches() {
+    public void destroyAllMatches() {
         for(int i = 0; i < width;i++) {
             for(int j = 0; j < height; j++) {
                 if(allPieces[i, j] != null) {
@@ -121,6 +121,7 @@ public class Board : MonoBehaviour
                 }
             }
         }
+        matchFinder.currentMatches.Clear();
         StartCoroutine(collapseColumnsCoroutine());
     }
     private IEnumerator collapseColumnsCoroutine() {
@@ -176,7 +177,7 @@ public class Board : MonoBehaviour
         yield return new WaitForSeconds(0.25f);
         while(isMatchesOnBoard()) {
             yield return new WaitForSeconds(0.25f);
-            destrolAllMatches();
+            destroyAllMatches();
         }
         matchFinder.currentMatches.Clear();
         currentPiece = null;

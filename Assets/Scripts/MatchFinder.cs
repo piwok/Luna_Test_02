@@ -40,19 +40,18 @@ public class MatchFinder : MonoBehaviour
         if(piece3.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
             currentMatches.Union(getRowPieces(piece3.GetComponent<Piece>().row));
         }
-        if(!currentMatches.Contains(piece2)) {
-            currentMatches.Add(piece2);
+        if(piece2.GetComponent<Piece>().type == "SpecialTnt") {
+            currentMatches.Union(getTntPieces(piece2.GetComponent<Piece>().column, piece2.GetComponent<Piece>().row));
         }
-        piece2.GetComponent<Piece>().isMatched = true;
-        if(!currentMatches.Contains(piece1)) {
-            currentMatches.Add(piece1);
+        if(piece1.GetComponent<Piece>().type == "SpecialTnt") {
+            currentMatches.Union(getTntPieces(piece1.GetComponent<Piece>().column, piece1.GetComponent<Piece>().row));
         }
-        piece1.GetComponent<Piece>().isMatched = true;
-        if(!currentMatches.Contains(piece3)) {
-            currentMatches.Add(piece3);
+        if(piece3.GetComponent<Piece>().type == "SpecialTnt") {
+            currentMatches.Union(getTntPieces(piece3.GetComponent<Piece>().column, piece3.GetComponent<Piece>().row));
         }
-        piece3.GetComponent<Piece>().isMatched = true;
-
+        addCurrentSolutionsAndMatch(piece2);
+        addCurrentSolutionsAndMatch(piece1);
+        addCurrentSolutionsAndMatch(piece3);
     }
     private IEnumerator findAllLegalMatchesCoroutine() {
         yield return new WaitForSeconds(0.15f);
@@ -104,6 +103,18 @@ public class MatchFinder : MonoBehaviour
         }
         return rowPieces; 
     }
+    private List<GameObject> getTntPieces(int column, int row) {
+        List<GameObject> tntPieces = new List<GameObject>();
+        for(int i = column - 2; i <= column + 2; i++) {
+            for(int j = row - 2; j <= row + 2; j++) {
+                if(i >= 0 && i < board.width && j >= 0 && j < board.height) {
+                    tntPieces.Add(board.allPieces[i, j]);
+                    board.allPieces[i, j].GetComponent<Piece>().isMatched = true;
+                }
+            }
+        }
+        return tntPieces;
+    }
     public void matchAllPieceOfSameColor(string color) {
         for(int i = 0; i < board.width; i++) {
             for(int j = 0; j < board.height; j++) {
@@ -112,6 +123,13 @@ public class MatchFinder : MonoBehaviour
                 }
             }
         }
+    }
+    private void addCurrentSolutionsAndMatch(GameObject piece) {
+        if(!currentMatches.Contains(piece)) {
+            currentMatches.Add(piece);
+        }
+        piece.GetComponent<Piece>().isMatched = true;
+
     }
     public void checkSpecialPiecesToCreate() {
         //Did the player move something?

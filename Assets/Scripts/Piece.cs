@@ -44,16 +44,16 @@ public class Piece : MonoBehaviour
         if(Input.GetMouseButtonDown(1)) {
             int pieceToDestroyIndex = -1;
             if(color == "Green") {
-                pieceToDestroyIndex = 16;
+                pieceToDestroyIndex = 12;
             }
             else if(color == "Yellow") {
-                pieceToDestroyIndex = 16;
+                pieceToDestroyIndex = 13;
             }
             else if(color == "Red") {
-                pieceToDestroyIndex = 16;
+                pieceToDestroyIndex = 14;
             }
             else if(color == "Black") {
-                pieceToDestroyIndex = 16;
+                pieceToDestroyIndex = 15;
             }
             Vector2 pieceToDestroyPosition = new Vector2(this.gameObject.transform.position.x, this.gameObject.transform.position.y);
             board.allPieces[column, row] = Instantiate(board.piecesPrefabs[pieceToDestroyIndex], pieceToDestroyPosition, Quaternion.identity);
@@ -194,7 +194,7 @@ public class Piece : MonoBehaviour
             }
             else {
             
-                board.destrolAllMatches();
+                board.destroyAllMatches();
             }
             //secondPiece = null;
         }

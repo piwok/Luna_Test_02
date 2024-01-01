@@ -127,8 +127,10 @@ public class Piece : MonoBehaviour
             board.currentPiece = this.gameObject;
         }
         else {
+            board.currentState = gameState.wait;
+            board.currentPiece = this.gameObject;
+            StartCoroutine(checkClickCoroutine());
             
-            board.currentState = gameState.move;
             
         }
     }
@@ -229,6 +231,31 @@ public class Piece : MonoBehaviour
             //secondPiece = null;
         }
         board.isCheckMoveCoroutineDone = true;
+    }
+    public IEnumerator checkClickCoroutine() {
+        board.isCheckClickCoroutineDone = false;
+        //detect a detonates a color bomb this piece or the second piece
+        if(type == "SpecialColorBomb") {
+            matchFinder.matchAllPieceOfSameColor(secondPiece.GetComponent<Piece>().color);
+            isMatched = true;
+        }
+        if(type == "SpecialVerticalRocket") {
+            matchFinder.getColumnPieces(column);
+            isMatched = true;
+            }
+        if(type == "SpecialHorizontalRocket") {
+            matchFinder.getRowPieces(row);
+            isMatched = true;
+        }
+        if(type == "SpecialTnt") {
+            matchFinder.getTntPieces(column, row);
+            isMatched = true;
+        }
+        
+        board.isCheckClickCoroutineDone = true;
+        board.destroyAllMatches();
+        yield return new WaitForSeconds(0.25f);
+        board.currentState = gameState.move;
     }
     public void findAllLegalMatches() {
         if (column > 0 && column < board.width - 1) {

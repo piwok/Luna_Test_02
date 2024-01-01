@@ -25,13 +25,16 @@ public class Board : MonoBehaviour
     public bool isCheckMoveCoroutineDone;
     public bool isCollapseCollumnsDone;
     public bool isFillBoardCoroutineDone;
+    public bool isCheckClickCoroutineDone;
     void Start()
     {
         matchFinder = FindObjectOfType<MatchFinder>();
         currentState = gameState.move;
         isCheckMoveCoroutineDone = true;
+        isCheckClickCoroutineDone = true;
         isCollapseCollumnsDone = true;
         isFillBoardCoroutineDone = true;
+
         allTiles = new GameObject[width, height];
         allPieces = new GameObject[width, height];
         setUp();

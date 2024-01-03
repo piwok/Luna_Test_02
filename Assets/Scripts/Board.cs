@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -21,15 +22,23 @@ public class Board : MonoBehaviour
     public GameObject currentPiece;
     public GameObject regularDestroyEffect;
     public int offsetNewPieces;
-    // Start is called before the first frame update
+    private string[] colorBombShapes;
+    private string[] tntShapes;
+    private string[] verticalRocketShapes;
+    private string[] horizontalRocketShapes;
     public bool isCheckMoveCoroutineDone;
     public bool isCollapseCollumnsDone;
     public bool isFillBoardCoroutineDone;
     public bool isCheckClickCoroutineDone;
+    // Start is called before the first frame update
     void Start()
     {
         matchFinder = FindObjectOfType<MatchFinder>();
         currentState = gameState.move;
+        colorBombShapes = new string[] {"fiveLineShape0", "fiveLineShape1"};
+        tntShapes = new string[] {"fiveTShape0", "fiveTShape1", "fiveTShape2", "fiveTShape3", "fiveLShape0", "fiveLShape1", "fiveLShape2", "fiveLShape3"};
+        verticalRocketShapes = new string[] {"fourLineShape0"};
+        horizontalRocketShapes = new string[] {"fourLineShape1"};
         isCheckMoveCoroutineDone = true;
         isCheckClickCoroutineDone = true;
         isCollapseCollumnsDone = true;
@@ -48,6 +57,9 @@ public class Board : MonoBehaviour
         else {
             currentState = gameState.move;
         }
+
+    }
+    void LateUpdate() {
 
     }
     private void setUp() {
@@ -103,28 +115,34 @@ public class Board : MonoBehaviour
         }
         return false;
     }
-    private void destroyMatchesAt(int column, int row) {
-        if(allPieces[column, row].GetComponent<Piece>().isMatched) {
-            //how many elements are in the currentMatches List
-            if(matchFinder.currentMatches.Count == 4 || matchFinder.currentMatches.Count == 7) {
-                matchFinder.checkSpecialPiecesToCreate();
-            }
-            matchFinder.currentMatches.Remove(allPieces[column, row]);
-            GameObject destroyEffectParticle = Instantiate(regularDestroyEffect, allPieces[column, row].transform.position, Quaternion.identity);
-            Destroy(destroyEffectParticle, 1.0f); 
-            Destroy(allPieces[column, row]);
-            allPieces[column, row] = null;
-        }
-    }
-    public void destroyAllMatches() {
-        for(int i = 0; i < width;i++) {
-            for(int j = 0; j < height; j++) {
-                if(allPieces[i, j] != null) {
-                    destroyMatchesAt(i, j);
+    private void destroySolution(Solution solution) {
+        foreach(GameObject solutionPiece in solution.solutionPieces) {
+            if(solution.type == "regularMatches") {
+                if(colorBombShapes.Contains(solution.shape)) {
+                    solutionPiece.GetComponent<Piece>().createSpecialPiece("colorBombPiece", solution.newSpecialPieceColumn, solution.newSpecialPieceRow, solution.color);
+                }
+                else if(tntShapes.Contains(solution.shape)) {
+                    solutionPiece.GetComponent<Piece>().createSpecialPiece("tntPiece", solution.newSpecialPieceColumn, solution.newSpecialPieceRow, solution.color);
+                }
+                else if(verticalRocketShapes.Contains(solution.shape)) {
+                    solutionPiece.GetComponent<Piece>().createSpecialPiece("verticalRocketPiece", solution.newSpecialPieceColumn, solution.newSpecialPieceRow, solution.color);
+                }
+                else if(horizontalRocketShapes.Contains(solution.shape)) {
+                    solutionPiece.GetComponent<Piece>().createSpecialPiece("horizontalRocketPiece", solution.newSpecialPieceColumn, solution.newSpecialPieceRow, solution.color);
                 }
             }
+            
+            GameObject destroyEffectParticle = Instantiate(regularDestroyEffect, solutionPiece.transform.position, Quaternion.identity);
+            Destroy(destroyEffectParticle, 1.0f);
+            allPieces[solutionPiece.GetComponent<Piece>().column, solutionPiece.GetComponent<Piece>().row] = null;
+            Destroy(solutionPiece);
         }
-        matchFinder.currentMatches.Clear();
+    }
+    public void destroyAllSolutions() {
+        foreach(Solution solution in matchFinder.currentSolutions) {
+            destroySolution(solution);
+        }       
+        matchFinder.currentSolutions.Clear();
         StartCoroutine(collapseColumnsCoroutine());
     }
     private IEnumerator collapseColumnsCoroutine() {
@@ -161,28 +179,20 @@ public class Board : MonoBehaviour
             }
         }
     }
-    private bool isMatchesOnBoard() {
-        for(int i = 0; i < width; i++) {
-            for(int j = 0; j < height; j++) {
-                if(allPieces[i, j] != null) {
-                    if(allPieces[i, j].GetComponent<Piece>().isMatched) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-    //there is a bug here, in the videos works ok but i suspect that the coroutine running in paralel maybe generates the problem
     private IEnumerator fillBoardCoroutine() {
         isFillBoardCoroutineDone = false;
         refillBoard();
+        matchFinder.findAllLegalSolutions();
         yield return new WaitForSeconds(0.25f);
-        while(isMatchesOnBoard()) {
+        
+        while(matchFinder.currentSolutions.Count > 0) {
             yield return new WaitForSeconds(0.25f);
-            destroyAllMatches();
+            destroyAllSolutions();
+            matchFinder.currentSolutions.Clear();
+            matchFinder.findAllLegalSolutions();
+            
         }
-        matchFinder.currentMatches.Clear();
+        matchFinder.currentSolutions.Clear();
         currentPiece = null;
         yield return new WaitForSeconds(0.25f);
         

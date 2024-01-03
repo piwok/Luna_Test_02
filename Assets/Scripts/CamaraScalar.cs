@@ -7,7 +7,7 @@ public class CamaraScalar : MonoBehaviour
     private Board board;
     public float cameraOffset;
     public float aspectRatio;
-    public float padding = 2;
+    public float padding = 1;
 
     // Start is called before the first frame update
     void Start()

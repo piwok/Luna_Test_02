@@ -181,6 +181,7 @@ MonoBehaviour:
   isCheckMoveCoroutineDone: 0
   isCollapseCollumnsDone: 0
   isFillBoardCoroutineDone: 0
+  isCheckClickCoroutineDone: 0
 --- !u!4 &111425250
 Transform:
   m_ObjectHideFlags: 0
@@ -301,8 +302,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68b2dd5bb6000f24dbcc4bf85e3152bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraOffset: 10
-  aspectRatio: 0.5
+  cameraOffset: -10
+  aspectRatio: 0
   padding: 1
 --- !u!1 &2015409711
 GameObject:
@@ -382,7 +383,7 @@ Transform:
   m_GameObject: {fileID: 2015409711}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5, y: 15, z: 0}
+  m_LocalPosition: {x: 29.37, y: 11.32, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -418,6 +419,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentMatches: []
+  shapeNames: []
+  isFindAllLegalMatchesCoroutineDone: 0
 --- !u!4 &2042121300
 Transform:
   m_ObjectHideFlags: 0

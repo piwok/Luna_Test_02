@@ -5,84 +5,278 @@ using UnityEngine;
 
 public class MatchFinder : MonoBehaviour
 {
+    // --------------------------------------- //
+    // 5 pieces math in FiveLineShape0          5 pieces math in FiveLineShape1
+    //    
+    //      O X X X X                                       X 
+    //                                                      X
+    //                                                      X
+    //                                                      X
+    //                                                      O
+    // 5 pieces match in FiveTshape0             5 pieces match in FiveTShape1             5 pieces match in FiveTShape2            5 pieces match in FiveTShape 3                                                          
+    //    X                                             O X X                                       X                                       X                                       
+    //    X X X                                           X                                     O X X                                       X
+    //    O                                               X                                         X                                     O X X                               
+    // 5 pieces match in FiveLShape 0            5 pieces match in FiveLShape1            5 pieces match in FiveLShape2            5 pieces match in FiveLShape3
+    //    X                                               X X X                                   O X X                                      X
+    //    X                                               X                                           X                                      X
+    //    O X X                                           O                                           X                                  O X X
+    // 4 pieces match in FourLineShape0          4 pieces match in FourLineShape1
+    //    
+    //      O X X X                                         X 
+    //                                                      X
+    //                                                      X
+    //                                                      O
+    // 4 pieces match in SquareShape0
+    //    
+    //      X X
+    //      O X
+    // 3 pieces match in ThreeLineShape0         3 pieces match in ThreeLineShape1
+    //    
+    //      O X X                                           X
+    //                                                      X                                    
+    //                                                      O
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private Board board;
     public List<GameObject> currentMatches;
+    public List<Solution> currentSolutions;
+    public string[] shapeNames;
+    public IDictionary<string, Dictionary<string, int>> shapesBoardLimits;
+    private IDictionary<string, int> boardLimits;
+    public IDictionary<string, int[][]> shapes;
+    private int[] tempPiece1;
+    private int[] tempPiece2;
+    private int[] tempPiece3;
+    private int[] tempPiece4;
+    private int[][] tempShape;
+    public bool isFindAllLegalMatchesCoroutineDone;
     // Start is called before the first frame update
     void Start()
     {
         board = FindObjectOfType<Board>();
         currentMatches = new List<GameObject>();
+        currentSolutions = new List<Solution>();
+        isFindAllLegalMatchesCoroutineDone = true;
+        //initializing all the shape parameters of a match
+        shapeNames = new string[15] {"fiveLineShape0", "fiveLineShape1", "fiveTShape0", "fiveTShape1", "fiveTShape2", "fiveTShape3",
+        "fiveLShape0", "fiveLShape1", "fiveLShape2", "fiveLShape3", "fourLineShape0", "fourLineShape1", "fourSquareShape0", "threeLineShape0", "threeLineShape1"};
+        shapes = new Dictionary<string, int[][]>();
+        shapesBoardLimits = new Dictionary<string, Dictionary<string, int>>();
+        // Five pieces Line Shapes//
+        tempPiece1 = new int[2] {1, 0}; tempPiece2 = new int[2] {2, 0}; tempPiece3 = new int[2] {3, 0}; tempPiece4 = new int[2] {4, 0};
+        tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3, tempPiece4};
+        shapes.Add("fiveLineShape0", tempShape);
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", board.width - 5}, {"minRow", 0}, {"maxRow", board.height - 1}, {"matchSize", 5}};
+        shapesBoardLimits.Add("fiveLineShape0", new Dictionary<string, int>(boardLimits));
+        tempPiece1 = new int[2] {0, 1}; tempPiece2 = new int[2] {0, 2}; tempPiece3 = new int[2] {0, 3}; tempPiece4 = new int[2] {0, 4};
+        tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3, tempPiece4};
+        shapes.Add("fiveLineShape1", tempShape);
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", board.width - 1}, {"minRow", 0}, {"maxRow", board.height - 5}, {"matchSize", 5}};
+        shapesBoardLimits.Add("fiveLineShape1", new Dictionary<string, int>(boardLimits));
+        // Five pieces T Shapes//
+        tempPiece1 = new int[2] {0, 1}; tempPiece2 = new int[2] {0, 2}; tempPiece3 = new int[2] {1, 1}; tempPiece4 = new int[2] {2, 1};
+        tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3, tempPiece4};
+        shapes.Add("fiveTShape0", tempShape);
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", board.width - 3}, {"minRow", 0}, {"maxRow", board.height - 3}, {"matchSize", 5}};
+        shapesBoardLimits.Add("fiveTShape0", new Dictionary<string, int>(boardLimits));
+        tempPiece1 = new int[2] {1, 0}; tempPiece2 = new int[2] {2, 0}; tempPiece3 = new int[2] {1, -1}; tempPiece4 = new int[2] {1, -2};
+        tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3, tempPiece4};
+        shapes.Add("fiveTShape1", tempShape);
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", board.width - 3}, {"minRow", 2}, {"maxRow", board.height - 1}, {"matchSize", 5}};
+        shapesBoardLimits.Add("fiveTShape1", new Dictionary<string, int>(boardLimits));
+        tempPiece1 = new int[2] {1, 0}; tempPiece2 = new int[2] {2, 0}; tempPiece3 = new int[2] {2, 1}; tempPiece4 = new int[2] {2, -1};
+        tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3, tempPiece4};
+        shapes.Add("fiveTShape2", tempShape);
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", board.width - 3}, {"minRow", 1}, {"maxRow", board.height - 2}, {"matchSize", 5}};
+        shapesBoardLimits.Add("fiveTShape2", new Dictionary<string, int>(boardLimits));
+        tempPiece1 = new int[2] {1, 0}; tempPiece2 = new int[2] {2, 0}; tempPiece3 = new int[2] {1, 1}; tempPiece4 = new int[2] {1, 2};
+        tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3, tempPiece4};
+        shapes.Add("fiveTShape3", tempShape);
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", board.width - 3}, {"minRow", 0}, {"maxRow", board.height - 3}, {"matchSize", 5}};
+        shapesBoardLimits.Add("fiveTShape3", new Dictionary<string, int>(boardLimits));
+        //Five pieces L Shapes//
+        tempPiece1 = new int[2] {0, 1}; tempPiece2 = new int[2] {0, 2}; tempPiece3 = new int[2] {1, 0}; tempPiece4 = new int[2] {2, 0};
+        tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3, tempPiece4};
+        shapes.Add("fiveLShape0", tempShape);
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", board.width - 3}, {"minRow", 0}, {"maxRow", board.height - 3}, {"matchSize", 5}};
+        shapesBoardLimits.Add("fiveLShape0", new Dictionary<string, int>(boardLimits));
+        tempPiece1 = new int[2] {0, 1}; tempPiece2 = new int[2] {0, 2}; tempPiece3 = new int[2] {1, 2}; tempPiece4 = new int[2] {2, 2};
+        tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3, tempPiece4};
+        shapes.Add("fiveLShape1", tempShape);
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", board.width - 3}, {"minRow", 0}, {"maxRow", board.height - 3}, {"matchSize", 5}};
+        shapesBoardLimits.Add("fiveLShape1", new Dictionary<string, int>(boardLimits));
+        tempPiece1 = new int[2] {1, 0}; tempPiece2 = new int[2] {2, 0}; tempPiece3 = new int[2] {2, -1}; tempPiece4 = new int[2] {2, -2};
+        tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3, tempPiece4};
+        shapes.Add("fiveLShape2", tempShape);
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", board.width - 3}, {"minRow", 2}, {"maxRow", board.height - 1}, {"matchSize", 5}};
+        shapesBoardLimits.Add("fiveLShape2", new Dictionary<string, int>(boardLimits));
+        tempPiece1 = new int[2] {1, 0}; tempPiece2 = new int[2] {2, 0}; tempPiece3 = new int[2] {2, 1}; tempPiece4 = new int[2] {2, 2};
+        tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3, tempPiece4};
+        shapes.Add("fiveLShape3", tempShape);
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", board.width - 3}, {"minRow", 0}, {"maxRow", board.height - 3}, {"matchSize", 5}};
+        shapesBoardLimits.Add("fiveLShape3", new Dictionary<string, int>(boardLimits));
+        // Four pieces Line Shapes//
+        tempPiece1 = new int[2] {1, 0}; tempPiece2 = new int[2] {2, 0}; tempPiece3 = new int[2] {3, 0};
+        tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3};
+        shapes.Add("fourLineShape0", tempShape);
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", board.width - 4}, {"minRow", 0}, {"maxRow", board.height - 1}, {"matchSize", 4}};
+        shapesBoardLimits.Add("fourLineShape0", new Dictionary<string, int>(boardLimits));
+        tempPiece1 = new int[2] {0, 1}; tempPiece2 = new int[2] {0, 2}; tempPiece3 = new int[2] {0, 3};
+        tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3};
+        shapes.Add("fourLineShape1", tempShape);
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", board.width - 1}, {"minRow", 0}, {"maxRow", board.height - 4}, {"matchSize", 4}};
+        shapesBoardLimits.Add("fourLineShape1", new Dictionary<string, int>(boardLimits));
+        // Four pieces Square Shapes//
+        tempPiece1 = new int[2] {1, 0}; tempPiece2 = new int[2] {1, 1}; tempPiece3 = new int[2] {0, 1};
+        tempShape = new int[][] {tempPiece1, tempPiece2, tempPiece3};
+        shapes.Add("fourSquareShape0", tempShape);
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", board.width - 2}, {"minRow", 0}, {"maxRow", board.height - 2}, {"matchSize", 4}};
+        shapesBoardLimits.Add("fourSquareShape0", new Dictionary<string, int>(boardLimits));
+        // Three pieces Line Shapes//
+        tempPiece1 = new int[2] {1, 0}; tempPiece2 = new int[2] {2, 0};
+        tempShape = new int[][] {tempPiece1, tempPiece2};
+        shapes.Add("threeLineShape0", tempShape);
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", board.width - 3}, {"minRow", 0}, {"maxRow", board.height - 1}, {"matchSize", 3}};
+        shapesBoardLimits.Add("threeLineShape0", new Dictionary<string, int>(boardLimits));
+        tempPiece1 = new int[2] {0, 1}; tempPiece2 = new int[2] {0, 2};
+        tempShape = new int[][] {tempPiece1, tempPiece2};
+        shapes.Add("threeLineShape1", tempShape);
+        boardLimits = new Dictionary<string, int>() {{"minColumn", 0},{"maxColumn", board.width - 1}, {"minRow", 0}, {"maxRow", board.height - 3}, {"matchSize", 3}};
+        shapesBoardLimits.Add("threeLineShape1", new Dictionary<string, int>(boardLimits));
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         
     }
     void Update() {
         //Debug.Log(currentMatches.Count);
     }
-    public void findAllLegalMatches() {
-        StartCoroutine(findAllLegalMatchesCoroutine());
+    public void findAllLegalSolutions() {
+        StartCoroutine(findAllLegalSolutionsCoroutine());
     }
-    //the three pieces are left, current, right or down, current, up
-    private void formatThreeMatchedPieces(GameObject piece1, GameObject piece2, GameObject piece3) {
-        if(piece2.GetComponent<Piece>().type == "SpecialVerticalRocket") {
-            currentMatches.Union(getColumnPieces(piece2.GetComponent<Piece>().column));
-        }
-        if(piece1.GetComponent<Piece>().type == "SpecialVerticalRocket") {
-            currentMatches.Union(getColumnPieces(piece1.GetComponent<Piece>().column));
-        }
-        if(piece3.GetComponent<Piece>().type == "SpecialVerticalRocket") {
-            currentMatches.Union(getColumnPieces(piece3.GetComponent<Piece>().column));
-        }
-        if(piece2.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
-            currentMatches.Union(getRowPieces(piece2.GetComponent<Piece>().row));
-        }
-        if(piece1.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
-            currentMatches.Union(getRowPieces(piece1.GetComponent<Piece>().row));
-        }
-        if(piece3.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
-            currentMatches.Union(getRowPieces(piece3.GetComponent<Piece>().row));
-        }
-        if(piece2.GetComponent<Piece>().type == "SpecialTnt") {
-            currentMatches.Union(getTntPieces(piece2.GetComponent<Piece>().column, piece2.GetComponent<Piece>().row));
-        }
-        if(piece1.GetComponent<Piece>().type == "SpecialTnt") {
-            currentMatches.Union(getTntPieces(piece1.GetComponent<Piece>().column, piece1.GetComponent<Piece>().row));
-        }
-        if(piece3.GetComponent<Piece>().type == "SpecialTnt") {
-            currentMatches.Union(getTntPieces(piece3.GetComponent<Piece>().column, piece3.GetComponent<Piece>().row));
-        }
-        addCurrentSolutionsAndMatch(piece2);
-        addCurrentSolutionsAndMatch(piece1);
-        addCurrentSolutionsAndMatch(piece3);
-    }
-    private IEnumerator findAllLegalMatchesCoroutine() {
+    ///This method found solutions of type "regularMatches" and "swipeMatches"
+    public IEnumerator findAllLegalSolutionsCoroutine() {
+        isFindAllLegalMatchesCoroutineDone = false;
         yield return new WaitForSeconds(0.15f);
-        for(int i = 0; i < board.width; i++) {
-            for(int j = 0; j < board.height; j++) {
-                GameObject exploringPiece = board.allPieces[i, j];
-                if(exploringPiece != null) {
-                    if(i > 0 && i < board.width - 1) {
-                        GameObject leftPiece = board.allPieces[i - 1, j];
-                        GameObject rightPiece = board.allPieces[i + 1, j];
-                        if(leftPiece != null && rightPiece != null) {
-                            if(leftPiece.GetComponent<Piece>().color == exploringPiece.GetComponent<Piece>().color &&
-                            rightPiece.GetComponent<Piece>().color == exploringPiece.GetComponent<Piece>().color) {
-                                formatThreeMatchedPieces(leftPiece, exploringPiece, rightPiece);
-                            }
-                        }
-                    }
-                    if(j > 0 && j < board.height - 1) {
-                        GameObject downPiece = board.allPieces[i, j - 1];
-                        GameObject upPiece = board.allPieces[i, j + 1];
-                        if(downPiece != null && upPiece != null) {
-                            if(downPiece.GetComponent<Piece>().color == exploringPiece.GetComponent<Piece>().color &&
-                            upPiece.GetComponent<Piece>().color == exploringPiece.GetComponent<Piece>().color) {
-                                formatThreeMatchedPieces(downPiece, exploringPiece, upPiece);
-                            }
-                        }
+        List<GameObject> allThreeSizeInitialSolutions = new List<GameObject>();
+        Solution tempSolution;
+        GameObject exploringPiece;
+        string exploringShape;
+        int exploringColumn;
+        int exploringRow;
+        List<GameObject> tempPieces = new List<GameObject>();
+        // //looking for three size horizontal line 
+        for (int i = 0; i < board.width - 2; i++) {
+            for (int j = 0; j < board.height; j++) {
+                exploringPiece = board.allPieces[i, j];
+                if (exploringPiece != null && board.allPieces[i + 1, j] != null && board.allPieces[i + 2, j] != null) {
+                    if (exploringPiece.GetComponent<Piece>().color == board.allPieces[i + 1, j].GetComponent<Piece>().color
+                    && exploringPiece.GetComponent<Piece>().color == board.allPieces[i + 2, j].GetComponent<Piece>().color) {
+                        allThreeSizeInitialSolutions.Add(exploringPiece);
+                        allThreeSizeInitialSolutions.Add(board.allPieces[i + 1, j]);
+                        allThreeSizeInitialSolutions.Add(board.allPieces[i + 2, j]);
                     }
                 }
             }
         }
+        //looking for three size vertical line
+        for (int i = 0; i < board.width; i++) {
+            for (int j = 0; j < board.height - 2; j++) {
+                exploringPiece = board.allPieces[i, j];
+                if (exploringPiece != null && board.allPieces[i, j + 1] != null && board.allPieces[i, j + 2] != null) {
+                    if (exploringPiece.GetComponent<Piece>().color == board.allPieces[i, j + 1].GetComponent<Piece>().color
+                    && exploringPiece.GetComponent<Piece>().color == board.allPieces[i, j + 2].GetComponent<Piece>().color) {
+                        allThreeSizeInitialSolutions.Add(exploringPiece);
+                        allThreeSizeInitialSolutions.Add(board.allPieces[i, j + 1]);
+                        allThreeSizeInitialSolutions.Add(board.allPieces[i, j + 2]);
+                    }
+                }
+            }
+        }
+        //looking for 5 size shape matchs in the points of allThreeInitialSolutios
+        foreach(GameObject pieceToExplore in allThreeSizeInitialSolutions) {
+            exploringPiece = pieceToExplore;
+            if(exploringPiece.GetComponent<Piece>().isMatched == false) {
+                exploringColumn = exploringPiece.GetComponent<Piece>().column;
+                exploringRow = exploringPiece.GetComponent<Piece>().row;
+                for (int i = 0; i < 12; i++) {
+                    exploringShape = shapeNames[i];
+                    tempPieces = checkShapeMatch(exploringPiece, exploringColumn, exploringRow, exploringShape);
+                    if (tempPieces != null) {
+                        tempSolution = new Solution(tempPieces, exploringShape, "regularMatch", exploringPiece.GetComponent<Piece>().color);
+                        currentSolutions.Add(tempSolution);
+                    }
+                }
+            }
+        }
+        //looking for 4 size squares shape matchs in all points
+        for (int i = 0; i < board.width; i++) {
+            for (int j = 0; j < board.height; j++) {
+                exploringPiece = board.allPieces[i, j];
+                if(exploringPiece != null && exploringPiece.GetComponent<Piece>().isMatched == false) {
+                    exploringColumn = exploringPiece.GetComponent<Piece>().column;
+                    exploringRow = exploringPiece.GetComponent<Piece>().row;
+                    exploringShape = "fourSquareShape0";
+                    tempPieces = checkShapeMatch(exploringPiece, exploringColumn, exploringRow, exploringShape);
+                    if (tempPieces != null) {
+                        tempSolution = new Solution(tempPieces, exploringShape, "regularMatch", exploringPiece.GetComponent<Piece>().color);
+                        currentSolutions.Add(tempSolution);
+                    }
+                }
+            }
+        }
+        //looking for 3 size shape matchs in the points of allThreeInitialSolutios
+        foreach(GameObject pieceToExplore in allThreeSizeInitialSolutions) {
+            exploringPiece = pieceToExplore;
+            if(exploringPiece.GetComponent<Piece>().isMatched == false) {
+                exploringColumn = exploringPiece.GetComponent<Piece>().column;
+                exploringRow = exploringPiece.GetComponent<Piece>().row;
+                for (int i = 13; i < 15; i++) {
+                    exploringShape = shapeNames[i];
+                    tempPieces = checkShapeMatch(exploringPiece, exploringColumn, exploringRow, exploringShape);
+                    if (tempPieces != null) {
+                        tempSolution = new Solution(tempPieces, exploringShape, "regularMatch", exploringPiece.GetComponent<Piece>().color);
+                        currentSolutions.Add(tempSolution);
+                    }
+                }
+            }
+        }
+        isFindAllLegalMatchesCoroutineDone = false;
     }
+    private List<GameObject> checkShapeMatch (GameObject exploringPiece, int column, int row, string exploringShape) {
+        
+        List<GameObject> tempPieces = new List<GameObject>();
+        int exploringColumn = column;
+        int exploringRow = row;
+        int minColumn = shapesBoardLimits[exploringShape]["minColumn"];
+        int maxColumn = shapesBoardLimits[exploringShape]["maxColumn"];
+        int minRow = shapesBoardLimits[exploringShape]["minRow"];
+        int maxRow = shapesBoardLimits[exploringShape]["maxRow"];
+        int matchSize = shapesBoardLimits[exploringShape]["matchSize"];
+        GameObject probePiece;
+        
+        if (exploringColumn >= minColumn && exploringColumn <= maxColumn && exploringRow >= minRow && exploringRow <= maxRow) {
+            if(exploringPiece.GetComponent<Piece>().isMatched != true) {
+                tempPieces.Add(exploringPiece);
+            }
+            foreach (int[] shapePoint in shapes[exploringShape]) {
+                if(board.allPieces[exploringColumn + shapePoint[0], exploringRow + shapePoint[1]] != null) {
+                    probePiece = board.allPieces[exploringColumn + shapePoint[0], exploringRow + shapePoint[1]];
+                
+                    if (probePiece.GetComponent<Piece>().isMatched != true && probePiece != null && exploringPiece.GetComponent<Piece>().color == probePiece.GetComponent<Piece>().color) {
+                        tempPieces.Add(probePiece);
+                    }
+                }
+            }
+            
+            if (tempPieces.Count == matchSize) {
+                foreach(GameObject matchedPiece in tempPieces) {
+                    matchedPiece.GetComponent<Piece>().isMatched = true;
+                }
+                return tempPieces;
+            }
+        }
+        return null;
+    }
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     public List<GameObject> getColumnPieces(int column) {
         List<GameObject> columnPieces = new List<GameObject>();
         for(int i = 0; i < board.height; i++) {
@@ -93,6 +287,17 @@ public class MatchFinder : MonoBehaviour
         }
         return columnPieces; 
     }
+    public Solution getColumnSolution(int column) {
+        List<GameObject> columnPieces = new List<GameObject>();
+        for(int i = 0; i < board.height; i++) {
+            if(board.allPieces[column, i] != null) {
+                columnPieces.Add(board.allPieces[column, i]);
+                board.allPieces[column, i].GetComponent<Piece>().isMatched = true;
+            }
+        }
+        Solution columnSolution = new Solution(columnPieces, null, "specialPowerMatches", null);
+        return columnSolution; 
+    }
     public List<GameObject> getRowPieces(int row) {
         List<GameObject> rowPieces = new List<GameObject>();
         for(int i = 0; i < board.width; i++) {
@@ -102,6 +307,17 @@ public class MatchFinder : MonoBehaviour
             }
         }
         return rowPieces; 
+    }
+    public Solution getRowSolution(int row) {
+        List<GameObject> rowPieces = new List<GameObject>();
+        for(int i = 0; i < board.width; i++) {
+            if(board.allPieces[i, row] != null) {
+                rowPieces.Add(board.allPieces[i, row]);
+                board.allPieces[i, row].GetComponent<Piece>().isMatched = true;
+            }
+        }
+        Solution rowSolution = new Solution(rowPieces, null, "specialPowerMatches", null);
+        return rowSolution; 
     }
     public List<GameObject> getTntPieces(int column, int row) {
         List<GameObject> tntPieces = new List<GameObject>();
@@ -115,6 +331,19 @@ public class MatchFinder : MonoBehaviour
         }
         return tntPieces;
     }
+    public Solution getTntSolution(int column, int row) {
+        List<GameObject> tntPieces = new List<GameObject>();
+        for(int i = column - 2; i <= column + 2; i++) {
+            for(int j = row - 2; j <= row + 2; j++) {
+                if(i >= 0 && i < board.width && j >= 0 && j < board.height && board.allPieces[i, j] != null) {
+                    tntPieces.Add(board.allPieces[i, j]);
+                    board.allPieces[i, j].GetComponent<Piece>().isMatched = true;
+                }
+            }
+        }
+        Solution tntSolution = new Solution(tntPieces, null, "specialPowerMatches", null);
+        return tntSolution;
+    }
     public void matchAllPieceOfSameColor(string color) {
         for(int i = 0; i < board.width; i++) {
             for(int j = 0; j < board.height; j++) {
@@ -124,44 +353,17 @@ public class MatchFinder : MonoBehaviour
             }
         }
     }
-    private void addCurrentSolutionsAndMatch(GameObject piece) {
-        if(!currentMatches.Contains(piece)) {
-            currentMatches.Add(piece);
-        }
-        piece.GetComponent<Piece>().isMatched = true;
-
-    }
-    public void checkSpecialPiecesToCreate() {
-        //Did the player move something?
-        if(board.currentPiece != null) {
-            //If the piece moved matched?
-            if(board.currentPiece.GetComponent<Piece>().isMatched) {
-                //make it unmatched
-                board.currentPiece.GetComponent<Piece>().isMatched = false;
-                //Special rocket create with a horizontal swipe
-                if((board.currentPiece.GetComponent<Piece>().swipeAngle > -45 && board.currentPiece.GetComponent<Piece>().swipeAngle <= 45) ||
-                (board.currentPiece.GetComponent<Piece>().swipeAngle < -135 || board.currentPiece.GetComponent<Piece>().swipeAngle >= 135)) {
-                    board.currentPiece.GetComponent<Piece>().makeSpecialHorizontalRocket();
-                //Special rocket create with a vertical swipe
-                } 
-                else {
-                    board.currentPiece.GetComponent<Piece>().makeSpecialVerticalRocket();
-                }
-            }
-            //is the second piece matched?
-            else if(board.currentPiece.GetComponent<Piece>().secondPiece != null) {
-                if(board.currentPiece.GetComponent<Piece>().secondPiece.GetComponent<Piece>().isMatched) {
-                    board.currentPiece.GetComponent<Piece>().secondPiece.GetComponent<Piece>().isMatched = false;
-                    if((board.currentPiece.GetComponent<Piece>().swipeAngle > -45 && board.currentPiece.GetComponent<Piece>().swipeAngle <= 45) ||
-                    (board.currentPiece.GetComponent<Piece>().swipeAngle < -135 || board.currentPiece.GetComponent<Piece>().swipeAngle >= 135)) {
-                        board.currentPiece.GetComponent<Piece>().secondPiece.GetComponent<Piece>().makeSpecialHorizontalRocket();
-                    //Special rocket create with a vertical swipe
-                    } 
-                    else {
-                        board.currentPiece.GetComponent<Piece>().secondPiece.GetComponent<Piece>().makeSpecialVerticalRocket();
-                    }
+    public Solution getColorBombSolution(string color) {
+        List<GameObject> colorBombPieces = new List<GameObject>();
+        for(int i = 0; i < board.width; i++) {
+            for(int j = 0; j < board.height; j++) {
+                if(board.allPieces[i, j] != null && board.allPieces[i, j].GetComponent<Piece>().color == color) {
+                    colorBombPieces.Add(board.allPieces[i, j]);
+                    board.allPieces[i, j].GetComponent<Piece>().isMatched = true;
                 }
             }
         }
+        Solution colorBombSolution = new Solution(colorBombPieces, null, "specialPowerMatches", null);
+        return colorBombSolution;
     }
 }

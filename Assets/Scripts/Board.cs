@@ -173,16 +173,11 @@ public class Board : MonoBehaviour
             foreach(Solution solution in matchFinder.currentSolutions) {
                 destroySolution(solution);
             }
-                 
             matchFinder.currentSolutions.Clear();
-              
             if(matchFinder.newCurrentSolutions.Count > 0) {
-                
                 matchFinder.currentSolutions = new List<Solution>(matchFinder.newCurrentSolutions);
             }
-             
             matchFinder.newCurrentSolutions.Clear();
-            
         }
         StartCoroutine(collapseColumnsCoroutine());
     }

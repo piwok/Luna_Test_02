@@ -27,4 +27,7 @@ public class Solution
     public void addSolutionPieceToSolution(GameObject newSolutionPiece) {
         solutionPieces.Add(newSolutionPiece);
     }
+    public void removeSolutionPieceFromSolution(GameObject SolutionPiece) {
+        solutionPieces.Remove(SolutionPiece);
+    }
 }

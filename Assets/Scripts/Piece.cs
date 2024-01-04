@@ -173,48 +173,39 @@ public class Piece : MonoBehaviour
             Solution newSolution = matchFinder.getColumnSolution(this.gameObject);
             newSolution.addSolutionPieceToSolution(this.gameObject);
             matchFinder.currentSolutions.Add(newSolution);
-            }
+        }
         else if(secondPiece.GetComponent<Piece>().type == "SpecialVerticalRocket") {
             secondPiece.GetComponent<Piece>().type = "Powerless";
             Solution newSolution = matchFinder.getColumnSolution(secondPiece);
+            newSolution.removeSolutionPieceFromSolution(this.gameObject);
             newSolution.addSolutionPieceToSolution(secondPiece);
             matchFinder.currentSolutions.Add(newSolution);
-            
-
         }
         if(type == "SpecialHorizontalRocket") {
             type = "Powerless";
             Solution newSolution = matchFinder.getRowSolution(this.gameObject);
             newSolution.addSolutionPieceToSolution(this.gameObject);
             matchFinder.currentSolutions.Add(newSolution);
-            
-            
-            }
+        }
         else if(secondPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
             secondPiece.GetComponent<Piece>().type = "Powerless";
             Solution newSolution = matchFinder.getRowSolution(secondPiece);
+            newSolution.removeSolutionPieceFromSolution(this.gameObject);
             newSolution.addSolutionPieceToSolution(secondPiece);
             matchFinder.currentSolutions.Add(newSolution);
-            
-
         }
         if(type == "SpecialTnt") {
             type = "Powerless";
             Solution newSolution = matchFinder.getTntSolution(this.gameObject);
             newSolution.addSolutionPieceToSolution(this.gameObject);
             matchFinder.currentSolutions.Add(newSolution);
-            
-            
         }
         else if(secondPiece.GetComponent<Piece>().type == "SpecialTnt") {
             secondPiece.GetComponent<Piece>().type = "Powerless";
             Solution newSolution = matchFinder.getTntSolution(secondPiece);
             newSolution.addSolutionPieceToSolution(secondPiece);
             matchFinder.currentSolutions.Add(newSolution);
-            
-
         }
-        
         matchFinder.findAllLegalSolutions();
         yield return new WaitForSeconds(0.25f);
         if (secondPiece != null) {

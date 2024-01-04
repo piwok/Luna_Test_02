@@ -38,8 +38,8 @@ public class MatchFinder : MonoBehaviour
     //                                                      O
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     private Board board;
-    public List<GameObject> currentMatches;
     public List<Solution> currentSolutions;
+    public List<Solution> newCurrentSolutions;
     public string[] shapeNames;
     public IDictionary<string, Dictionary<string, int>> shapesBoardLimits;
     private IDictionary<string, int> boardLimits;
@@ -54,8 +54,8 @@ public class MatchFinder : MonoBehaviour
     void Start()
     {
         board = FindObjectOfType<Board>();
-        currentMatches = new List<GameObject>();
         currentSolutions = new List<Solution>();
+        newCurrentSolutions = new List<Solution>();
         isFindAllLegalMatchesCoroutineDone = true;
         //initializing all the shape parameters of a match
         shapeNames = new string[15] {"fiveLineShape0", "fiveLineShape1", "fiveTShape0", "fiveTShape1", "fiveTShape2", "fiveTShape3",
@@ -147,7 +147,7 @@ public class MatchFinder : MonoBehaviour
         
     }
     void Update() {
-        //Debug.Log(currentMatches.Count);
+        
     }
     public void findAllLegalSolutions() {
         StartCoroutine(findAllLegalSolutionsCoroutine());
@@ -276,82 +276,50 @@ public class MatchFinder : MonoBehaviour
         }
         return null;
     }
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    public List<GameObject> getColumnPieces(int column) {
+    public Solution getColumnSolution(GameObject explodingPiece) {
+        
         List<GameObject> columnPieces = new List<GameObject>();
         for(int i = 0; i < board.height; i++) {
-            if(board.allPieces[column, i] != null) {
-                columnPieces.Add(board.allPieces[column, i]);
-                board.allPieces[column, i].GetComponent<Piece>().isMatched = true;
+            if(board.allPieces[explodingPiece.GetComponent<Piece>().column, i] != null &&
+            board.allPieces[explodingPiece.GetComponent<Piece>().column, i] != explodingPiece.GetComponent<Piece>().secondPiece) {
+                columnPieces.Add(board.allPieces[explodingPiece.GetComponent<Piece>().column, i]);
+                
             }
         }
-        return columnPieces; 
-    }
-    public Solution getColumnSolution(int column) {
-        List<GameObject> columnPieces = new List<GameObject>();
-        for(int i = 0; i < board.height; i++) {
-            if(board.allPieces[column, i] != null) {
-                columnPieces.Add(board.allPieces[column, i]);
-                board.allPieces[column, i].GetComponent<Piece>().isMatched = true;
-            }
+        if(explodingPiece.GetComponent<Piece>().secondPiece != null &&
+        explodingPiece.GetComponent<Piece>().column == explodingPiece.GetComponent<Piece>().secondPiece.GetComponent<Piece>().column) {
+            columnPieces.Add(explodingPiece.GetComponent<Piece>().secondPiece);
         }
         Solution columnSolution = new Solution(columnPieces, null, "specialPowerMatches", null);
         return columnSolution; 
     }
-    public List<GameObject> getRowPieces(int row) {
+    public Solution getRowSolution(GameObject explodingPiece) {
         List<GameObject> rowPieces = new List<GameObject>();
         for(int i = 0; i < board.width; i++) {
-            if(board.allPieces[i, row] != null) {
-                rowPieces.Add(board.allPieces[i, row]);
-                board.allPieces[i, row].GetComponent<Piece>().isMatched = true;
+            if(board.allPieces[i, explodingPiece.GetComponent<Piece>().row] != null &&
+            board.allPieces[i, explodingPiece.GetComponent<Piece>().row] != explodingPiece.GetComponent<Piece>().secondPiece) {
+                rowPieces.Add(board.allPieces[i, explodingPiece.GetComponent<Piece>().row]);
             }
         }
-        return rowPieces; 
-    }
-    public Solution getRowSolution(int row) {
-        List<GameObject> rowPieces = new List<GameObject>();
-        for(int i = 0; i < board.width; i++) {
-            if(board.allPieces[i, row] != null) {
-                rowPieces.Add(board.allPieces[i, row]);
-                board.allPieces[i, row].GetComponent<Piece>().isMatched = true;
-            }
+        if(explodingPiece.GetComponent<Piece>().secondPiece != null &&
+        explodingPiece.GetComponent<Piece>().row == explodingPiece.GetComponent<Piece>().secondPiece.GetComponent<Piece>().row) {
+            rowPieces.Add(explodingPiece.GetComponent<Piece>().secondPiece);
         }
         Solution rowSolution = new Solution(rowPieces, null, "specialPowerMatches", null);
         return rowSolution; 
     }
-    public List<GameObject> getTntPieces(int column, int row) {
+    public Solution getTntSolution(GameObject explodingPiece) {
         List<GameObject> tntPieces = new List<GameObject>();
-        for(int i = column - 2; i <= column + 2; i++) {
-            for(int j = row - 2; j <= row + 2; j++) {
-                if(i >= 0 && i < board.width && j >= 0 && j < board.height) {
-                    tntPieces.Add(board.allPieces[i, j]);
-                    board.allPieces[i, j].GetComponent<Piece>().isMatched = true;
-                }
-            }
-        }
-        return tntPieces;
-    }
-    public Solution getTntSolution(int column, int row) {
-        List<GameObject> tntPieces = new List<GameObject>();
-        for(int i = column - 2; i <= column + 2; i++) {
-            for(int j = row - 2; j <= row + 2; j++) {
+        for(int i = explodingPiece.GetComponent<Piece>().column - 2; i <= explodingPiece.GetComponent<Piece>().column + 2; i++) {
+            for(int j = explodingPiece.GetComponent<Piece>().row - 2; j <= explodingPiece.GetComponent<Piece>().row + 2; j++) {
                 if(i >= 0 && i < board.width && j >= 0 && j < board.height && board.allPieces[i, j] != null) {
                     tntPieces.Add(board.allPieces[i, j]);
-                    board.allPieces[i, j].GetComponent<Piece>().isMatched = true;
+                    
                 }
             }
         }
         Solution tntSolution = new Solution(tntPieces, null, "specialPowerMatches", null);
         return tntSolution;
-    }
-    public void matchAllPieceOfSameColor(string color) {
-        for(int i = 0; i < board.width; i++) {
-            for(int j = 0; j < board.height; j++) {
-                if(board.allPieces[i, j] != null && board.allPieces[i, j].GetComponent<Piece>().color == color) {
-                    board.allPieces[i, j].GetComponent<Piece>().isMatched = true;
-                }
-            }
-        }
     }
     public Solution getColorBombSolution(string color) {
         List<GameObject> colorBombPieces = new List<GameObject>();
@@ -359,7 +327,7 @@ public class MatchFinder : MonoBehaviour
             for(int j = 0; j < board.height; j++) {
                 if(board.allPieces[i, j] != null && board.allPieces[i, j].GetComponent<Piece>().color == color) {
                     colorBombPieces.Add(board.allPieces[i, j]);
-                    board.allPieces[i, j].GetComponent<Piece>().isMatched = true;
+                    
                 }
             }
         }

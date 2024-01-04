@@ -24,4 +24,7 @@ public class Solution
         color = acolor;
         size = asolutionPieces.Count;
     }
+    public void addSolutionPieceToSolution(GameObject newSolutionPiece) {
+        solutionPieces.Add(newSolutionPiece);
+    }
 }

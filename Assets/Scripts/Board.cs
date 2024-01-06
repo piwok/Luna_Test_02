@@ -20,6 +20,7 @@ public class Board : MonoBehaviour
     private GameObject[,] allTiles;
     public GameObject[,] allPieces;
     public GameObject currentPiece;
+    public GameObject secondPiece;
     public GameObject regularDestroyEffect;
     public int offsetNewPieces;
     private string[] colorBombShapes;
@@ -115,70 +116,59 @@ public class Board : MonoBehaviour
         }
         return false;
     }
-    private void destroySolution(Solution solution) {
+    private IEnumerator destroySolution(Solution solution) {
         
         Solution newSolution;
         foreach(GameObject solutionPiece in solution.solutionPieces) {
-            //creation of special pieces when is necesary
-            if(solution.type == "regularMatches") {
-                if(colorBombShapes.Contains(solution.shape)) {
-                    solutionPiece.GetComponent<Piece>().createSpecialPiece("colorBombPiece", solution.newSpecialPieceColumn, solution.newSpecialPieceRow, solution.color);
+            if(solutionPiece != null) {
+                //creation of special pieces when is necesary
+                //TO DO?
+
+                //new solutions for the matched special pieces
+                if(solutionPiece.GetComponent<Piece>().type == "SpecialTnt") {
+                    //The piece become powerless
+                    solutionPiece.GetComponent<Piece>().type = "Powerless";
+                    newSolution = matchFinder.getTntSolution(solutionPiece);
+                    matchFinder.newCurrentSolutions.Add(newSolution);
                 }
-                else if(tntShapes.Contains(solution.shape)) {
-                    solutionPiece.GetComponent<Piece>().createSpecialPiece("tntPiece", solution.newSpecialPieceColumn, solution.newSpecialPieceRow, solution.color);
+                else if(solutionPiece.GetComponent<Piece>().type == "SpecialVerticalRocket") {
+                    //The piece become powerless
+                    solutionPiece.GetComponent<Piece>().type = "Powerless";
+                    newSolution = matchFinder.getColumnSolution(solutionPiece);
+                    matchFinder.newCurrentSolutions.Add(newSolution);
                 }
-                else if(verticalRocketShapes.Contains(solution.shape)) {
-                    solutionPiece.GetComponent<Piece>().createSpecialPiece("verticalRocketPiece", solution.newSpecialPieceColumn, solution.newSpecialPieceRow, solution.color);
+                else if(solutionPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
+                    //The piece become powerless
+                    solutionPiece.GetComponent<Piece>().type = "Powerless";
+                    newSolution = matchFinder.getRowSolution(solutionPiece);
+                    matchFinder.newCurrentSolutions.Add(newSolution);
                 }
-                else if(horizontalRocketShapes.Contains(solution.shape)) {
-                    solutionPiece.GetComponent<Piece>().createSpecialPiece("horizontalRocketPiece", solution.newSpecialPieceColumn, solution.newSpecialPieceRow, solution.color);
-                }
+                // else if(solutionPiece.GetComponent<Piece>().type == "SpecialColorBomb") {
+                    //  //The piece become powerless
+                    // solutionPiece.GetComponent<Piece>().type = "Powerless";
+                    // solution = matchFinder.getColorBombSolution(color);
+                    // newSolutions.Add(newSolution);
+                //    }
+                
+                GameObject destroyEffectParticle = Instantiate(regularDestroyEffect, solutionPiece.transform.position, Quaternion.identity);
+                Destroy(destroyEffectParticle, 1.0f);
+                allPieces[solutionPiece.GetComponent<Piece>().column, solutionPiece.GetComponent<Piece>().row] = null;
+                Destroy(solutionPiece);
             }
-            //new solutions for the matched special pieces
-            if(solutionPiece.GetComponent<Piece>().type == "SpecialTnt") {
-                //The piece become powerless
-                solutionPiece.GetComponent<Piece>().type = "Powerless";
-                newSolution = matchFinder.getTntSolution(solutionPiece);
-                matchFinder.newCurrentSolutions.Add(newSolution);
-            }
-            else if(solutionPiece.GetComponent<Piece>().type == "SpecialVerticalRocket") {
-                //The piece become powerless
-                solutionPiece.GetComponent<Piece>().type = "Powerless";
-                newSolution = matchFinder.getColumnSolution(solutionPiece);
-                matchFinder.newCurrentSolutions.Add(newSolution);
-            }
-            else if(solutionPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
-                //The piece become powerless
-                solutionPiece.GetComponent<Piece>().type = "Powerless";
-                newSolution = matchFinder.getRowSolution(solutionPiece);
-                matchFinder.newCurrentSolutions.Add(newSolution);
-            }
-            // else if(solutionPiece.GetComponent<Piece>().type == "SpecialColorBomb") {
-                //  //The piece become powerless
-                // solutionPiece.GetComponent<Piece>().type = "Powerless";
-                // solution = matchFinder.getColorBombSolution(color);
-                // newSolutions.Add(newSolution);
-            //    }
-            
-            GameObject destroyEffectParticle = Instantiate(regularDestroyEffect, solutionPiece.transform.position, Quaternion.identity);
-            Destroy(destroyEffectParticle, 1.0f);
-            allPieces[solutionPiece.GetComponent<Piece>().column, solutionPiece.GetComponent<Piece>().row] = null;
-            Destroy(solutionPiece);
         }
+        yield return new WaitForSeconds(0.15f);
     }   
-    public void destroyAllSolutions() {
+    public IEnumerator destroyAllSolutions() {
         /// convertir en coroutine
-        if(matchFinder.currentSolutions.Count > 0) {
-            foreach(Solution solution in matchFinder.currentSolutions) {
-                destroySolution(solution);
+        while(matchFinder.currentSolutions.Count > 0) {
+            foreach(Solution solution in matchFinder.currentSolutions.ToList()) {
+                yield return StartCoroutine(destroySolution(solution));
             }
             matchFinder.currentSolutions.Clear();
-        }
-        if(matchFinder.newCurrentSolutions.Count > 0) {
-            foreach(Solution solution in matchFinder.newCurrentSolutions) {
-                destroySolution(solution);
+            if(matchFinder.newCurrentSolutions.Count > 0) {
+                matchFinder.currentSolutions = new List<Solution>(matchFinder.newCurrentSolutions);
+                matchFinder.newCurrentSolutions.Clear();
             }
-            matchFinder.newCurrentSolutions.Clear();
         }
         //Aqui hay que crear las fichas que haya en la lista currentSpecialPiecesToCreate
         StartCoroutine(collapseColumnsCoroutine());
@@ -225,7 +215,7 @@ public class Board : MonoBehaviour
         
         while(matchFinder.currentSolutions.Count > 0) {
             yield return new WaitForSeconds(0.25f);
-            destroyAllSolutions();
+            yield return StartCoroutine(destroyAllSolutions());
             matchFinder.currentSolutions.Clear();
             matchFinder.findAllLegalSolutions();
             
@@ -237,5 +227,121 @@ public class Board : MonoBehaviour
         //currentState = gameState.move;
         isFillBoardCoroutineDone = true;
         
+    }
+    public void checkMove() {
+        StartCoroutine(checkMoveCoroutine());
+    }
+    public IEnumerator checkMoveCoroutine() {
+        isCheckMoveCoroutineDone = false;
+        if(secondPiece != null) {
+            if(currentPiece.GetComponent<Piece>().type == "Regular" && secondPiece.GetComponent<Piece>().type == "Regular") {
+                matchFinder.findAllLegalSolutions();
+                yield return new WaitForSeconds(0.25f);
+                if(!currentPiece.GetComponent<Piece>().isMatched && !secondPiece.GetComponent<Piece>().isMatched) {
+                secondPiece.GetComponent<Piece>().column = currentPiece.GetComponent<Piece>().column;
+                secondPiece.GetComponent<Piece>().row = currentPiece.GetComponent<Piece>().row;
+                currentPiece.GetComponent<Piece>().column = currentPiece.GetComponent<Piece>().previousColumn;
+                currentPiece.GetComponent<Piece>().row = currentPiece.GetComponent<Piece>().previousRow;
+                yield return new WaitForSeconds(0.25f);
+                currentPiece = null;
+                currentState = gameState.move;
+            }
+            else {
+                secondPiece = null;
+                StartCoroutine(destroyAllSolutions());
+                
+            }
+            secondPiece = null;
+            }
+            else if((currentPiece.GetComponent<Piece>().type != "Regular" && secondPiece.GetComponent<Piece>().type == "Regular") ||
+             (currentPiece.GetComponent<Piece>().type == "Regular" && secondPiece.GetComponent<Piece>().type != "Regular")) {
+                matchFinder.findAllLegalSolutions();
+                yield return new WaitForSeconds(0.25f);
+                if(currentPiece.GetComponent<Piece>().type == "SpecialVerticalRocket") {
+                    currentPiece.GetComponent<Piece>().type = "Powerless";
+                    Solution newSolution = matchFinder.getColumnSolution(currentPiece);
+                    newSolution.addSolutionPieceToSolution(currentPiece);
+                    matchFinder.currentSolutions.Add(newSolution);
+                }
+                else if(secondPiece.GetComponent<Piece>().type == "SpecialVerticalRocket") {
+                    secondPiece.GetComponent<Piece>().type = "Powerless";
+                    Solution newSolution = matchFinder.getColumnSolution(secondPiece);
+                    newSolution.removeSolutionPieceFromSolution(currentPiece);
+                    newSolution.addSolutionPieceToSolution(secondPiece);
+                    matchFinder.currentSolutions.Add(newSolution);
+                }
+                if(currentPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
+                    currentPiece.GetComponent<Piece>().type = "Powerless";
+                    Solution newSolution = matchFinder.getRowSolution(currentPiece);
+                    newSolution.addSolutionPieceToSolution(currentPiece);
+                    matchFinder.currentSolutions.Add(newSolution);
+                }
+                else if(secondPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
+                    secondPiece.GetComponent<Piece>().type = "Powerless";
+                    Solution newSolution = matchFinder.getRowSolution(secondPiece);
+                    newSolution.removeSolutionPieceFromSolution(currentPiece);
+                    newSolution.addSolutionPieceToSolution(secondPiece);
+                    matchFinder.currentSolutions.Add(newSolution);
+                }
+                if(currentPiece.GetComponent<Piece>().type == "SpecialTnt") {
+                    currentPiece.GetComponent<Piece>().type = "Powerless";
+                    Solution newSolution = matchFinder.getTntSolution(currentPiece);
+                    newSolution.addSolutionPieceToSolution(currentPiece);
+                    matchFinder.currentSolutions.Add(newSolution);
+                }
+                else if(secondPiece.GetComponent<Piece>().type == "SpecialTnt") {
+                    secondPiece.GetComponent<Piece>().type = "Powerless";
+                    Solution newSolution = matchFinder.getTntSolution(secondPiece);
+                    newSolution.addSolutionPieceToSolution(secondPiece);
+                    matchFinder.currentSolutions.Add(newSolution);
+                }
+                StartCoroutine(destroyAllSolutions());
+            }
+            else if(currentPiece.GetComponent<Piece>().type != "Regular" && secondPiece.GetComponent<Piece>().type != "Regular") {
+                matchFinder.findAllLegalSolutions();
+                yield return new WaitForSeconds(0.25f);
+
+            }
+                
+            
+        }
+        
+        isCheckMoveCoroutineDone = true;
+
+    }
+    public void checkClick() {
+        StartCoroutine(checkClickCoroutine());
+    }
+    public IEnumerator checkClickCoroutine() {
+        
+        isCheckClickCoroutineDone = false;
+        // if(type == "SpecialColorBomb") {
+        //     matchFinder.matchAllPieceOfSameColor(secondPiece.GetComponent<Piece>().color);
+        //     isMatched = true;
+        // }
+        if(currentPiece.GetComponent<Piece>().type == "SpecialVerticalRocket") {
+            currentPiece.GetComponent<Piece>().type = "Powerless";
+            Solution newSolution = matchFinder.getColumnSolution(currentPiece);
+            matchFinder.currentSolutions.Add(newSolution);
+            currentPiece.GetComponent<Piece>().isMatched = true;
+            
+            }
+        if(currentPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
+            currentPiece.GetComponent<Piece>().type = "Powerless";
+            Solution newSolution = matchFinder.getRowSolution(currentPiece);
+            matchFinder.currentSolutions.Add(newSolution);
+            currentPiece.GetComponent<Piece>().isMatched = true;
+        }
+        if(currentPiece.GetComponent<Piece>().type == "SpecialTnt") {
+            currentPiece.GetComponent<Piece>().type = "Powerless";
+            Solution newSolution = matchFinder.getTntSolution(currentPiece);
+            matchFinder.currentSolutions.Add(newSolution);
+            currentPiece.GetComponent<Piece>().isMatched = true;
+        }
+        StartCoroutine(destroyAllSolutions());
+        matchFinder.currentSolutions.Clear();
+        yield return new WaitForSeconds(0.25f);
+        currentState = gameState.move;
+        isCheckClickCoroutineDone = true;
     }
 }

@@ -50,7 +50,6 @@ public class MatchFinder : MonoBehaviour
     private int[] tempPiece3;
     private int[] tempPiece4;
     private int[][] tempShape;
-    public bool isFindAllLegalMatchesCoroutineDone;
     // Start is called before the first frame update
     void Start()
     {
@@ -58,7 +57,6 @@ public class MatchFinder : MonoBehaviour
         currentSolutions = new List<Solution>();
         newCurrentSolutions = new List<Solution>();
         currentSpecialPiecesToCreate = new List<GameObject>();
-        isFindAllLegalMatchesCoroutineDone = true;
         //initializing all the shape parameters of a match
         shapeNames = new string[15] {"fiveLineShape0", "fiveLineShape1", "fiveTShape0", "fiveTShape1", "fiveTShape2", "fiveTShape3",
         "fiveLShape0", "fiveLShape1", "fiveLShape2", "fiveLShape3", "fourLineShape0", "fourLineShape1", "fourSquareShape0", "threeLineShape0", "threeLineShape1"};
@@ -151,13 +149,8 @@ public class MatchFinder : MonoBehaviour
     void Update() {
         
     }
-    public void findAllLegalSolutions() {
-        StartCoroutine(findAllLegalSolutionsCoroutine());
-    }
     ///This method found solutions of type "regularMatches" and "swipeMatches"
-    public IEnumerator findAllLegalSolutionsCoroutine() {
-        isFindAllLegalMatchesCoroutineDone = false;
-        yield return new WaitForSeconds(0.15f);
+    public void findAllLegalSolutions() {
         List<GameObject> allThreeSizeInitialSolutions = new List<GameObject>();
         Solution tempSolution;
         GameObject exploringPiece;
@@ -244,7 +237,6 @@ public class MatchFinder : MonoBehaviour
                 }
             }
         }
-        isFindAllLegalMatchesCoroutineDone = false;
     }
     private List<GameObject> checkShapeMatch (GameObject exploringPiece, int column, int row, string exploringShape) {
         
@@ -286,14 +278,14 @@ public class MatchFinder : MonoBehaviour
         List<GameObject> columnPieces = new List<GameObject>();
         for(int i = 0; i < board.height; i++) {
             if(board.allPieces[explodingPiece.GetComponent<Piece>().column, i] != null &&
-            board.allPieces[explodingPiece.GetComponent<Piece>().column, i] != explodingPiece.GetComponent<Piece>().secondPiece) {
+            board.allPieces[explodingPiece.GetComponent<Piece>().column, i] != board.secondPiece) {
                 columnPieces.Add(board.allPieces[explodingPiece.GetComponent<Piece>().column, i]);
                 
             }
         }
-        if(explodingPiece.GetComponent<Piece>().secondPiece != null &&
-        explodingPiece.GetComponent<Piece>().column == explodingPiece.GetComponent<Piece>().secondPiece.GetComponent<Piece>().column) {
-            columnPieces.Add(explodingPiece.GetComponent<Piece>().secondPiece);
+        if(board.secondPiece != null &&
+        explodingPiece.GetComponent<Piece>().column == board.secondPiece.GetComponent<Piece>().column) {
+            columnPieces.Add(board.secondPiece);
         }
         Solution columnSolution = new Solution(columnPieces, null, "specialPowerMatches", null);
         return columnSolution; 
@@ -302,13 +294,13 @@ public class MatchFinder : MonoBehaviour
         List<GameObject> rowPieces = new List<GameObject>();
         for(int i = 0; i < board.width; i++) {
             if(board.allPieces[i, explodingPiece.GetComponent<Piece>().row] != null &&
-            board.allPieces[i, explodingPiece.GetComponent<Piece>().row] != explodingPiece.GetComponent<Piece>().secondPiece) {
+            board.allPieces[i, explodingPiece.GetComponent<Piece>().row] != board.secondPiece) {
                 rowPieces.Add(board.allPieces[i, explodingPiece.GetComponent<Piece>().row]);
             }
         }
-        if(explodingPiece.GetComponent<Piece>().secondPiece != null &&
-        explodingPiece.GetComponent<Piece>().row == explodingPiece.GetComponent<Piece>().secondPiece.GetComponent<Piece>().row) {
-            rowPieces.Add(explodingPiece.GetComponent<Piece>().secondPiece);
+        if(board.secondPiece != null &&
+        explodingPiece.GetComponent<Piece>().row == board.secondPiece.GetComponent<Piece>().row) {
+            rowPieces.Add(board.secondPiece);
         }
         Solution rowSolution = new Solution(rowPieces, null, "specialPowerMatches", null);
         return rowSolution; 

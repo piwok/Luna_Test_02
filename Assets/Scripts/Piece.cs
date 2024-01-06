@@ -17,8 +17,7 @@ public class Piece : MonoBehaviour
     public bool isMatched;
     public bool isSeedOfSpecialPiece;
     private Board board;
-    private MatchFinder matchFinder;
-    public GameObject secondPiece;
+    
 
     [Header("Swipe variables")]
     private Vector2 firstTouchPosition;
@@ -31,23 +30,23 @@ public class Piece : MonoBehaviour
         isMatched = false;
         isSeedOfSpecialPiece = false;
         board = FindObjectOfType<Board>();
-        matchFinder = FindObjectOfType<MatchFinder>();
+        
     }
     //this is for testing and debugging
     private void OnMouseOver() {
         if(Input.GetMouseButtonDown(1)) {
             int pieceToDestroyIndex = -1;
             if(color == "Green") {
-                pieceToDestroyIndex = 8;
+                pieceToDestroyIndex = 12;
             }
             else if(color == "Yellow") {
-                pieceToDestroyIndex = 9;
+                pieceToDestroyIndex = 13;
             }
             else if(color == "Red") {
-                pieceToDestroyIndex = 10;
+                pieceToDestroyIndex = 14;
             }
             else if(color == "Black") {
-                pieceToDestroyIndex = 11;
+                pieceToDestroyIndex = 15;
             }
             Vector2 pieceToDestroyPosition = new Vector2(this.gameObject.transform.position.x, this.gameObject.transform.position.y);
             board.allPieces[column, row] = Instantiate(board.piecesPrefabs[pieceToDestroyIndex], pieceToDestroyPosition, Quaternion.identity);
@@ -113,7 +112,7 @@ public class Piece : MonoBehaviour
         else {
             board.currentState = gameState.wait;
             board.currentPiece = this.gameObject;
-            StartCoroutine(checkClickCoroutine());
+            StartCoroutine(board.checkClickCoroutine());
             
             
         }
@@ -123,262 +122,47 @@ public class Piece : MonoBehaviour
         //Code to the movement of one piece with the adjacent piece from a swipe
         if (swipeAngle > -45 && swipeAngle <= 45 && column < board.width - 1) {
             //Right swipe
-            secondPiece = board.allPieces[column + 1, row];
+            board.secondPiece = board.allPieces[column + 1, row];
             previousColumn = column;
             previousRow = row;
-            secondPiece.GetComponent<Piece>().column -= 1;
+            board.secondPiece.GetComponent<Piece>().column -= 1;
             column += 1;
-            board.allPieces[secondPiece.GetComponent<Piece>().column, secondPiece.GetComponent<Piece>().row] = secondPiece;
+            board.allPieces[board.secondPiece.GetComponent<Piece>().column, board.secondPiece.GetComponent<Piece>().row] = board.secondPiece;
             board.allPieces[column, row] = this.gameObject;
 
             
         }
         else if (swipeAngle > 45 && swipeAngle <= 135 && row < board.height - 1) {
             //Up swipe
-            secondPiece = board.allPieces[column, row + 1];
+            board.secondPiece = board.allPieces[column, row + 1];
             previousColumn = column;
             previousRow = row;
-            secondPiece.GetComponent<Piece>().row -= 1;
+            board.secondPiece.GetComponent<Piece>().row -= 1;
             row += 1;
-            board.allPieces[secondPiece.GetComponent<Piece>().column, secondPiece.GetComponent<Piece>().row] = secondPiece;
+            board.allPieces[board.secondPiece.GetComponent<Piece>().column, board.secondPiece.GetComponent<Piece>().row] = board.secondPiece;
             board.allPieces[column, row] = this.gameObject;
         }
         else if ((swipeAngle > 135 || swipeAngle <= -135) && column > 0) {
             //Left swipe
-            secondPiece = board.allPieces[column - 1, row];
+            board.secondPiece = board.allPieces[column - 1, row];
             previousColumn = column;
             previousRow = row;
-            secondPiece.GetComponent<Piece>().column += 1;
+            board.secondPiece.GetComponent<Piece>().column += 1;
             column -= 1;
-            board.allPieces[secondPiece.GetComponent<Piece>().column, secondPiece.GetComponent<Piece>().row] = secondPiece;
+            board.allPieces[board.secondPiece.GetComponent<Piece>().column, board.secondPiece.GetComponent<Piece>().row] = board.secondPiece;
             board.allPieces[column, row] = this.gameObject;
         }
         else if (swipeAngle < -45 && swipeAngle >= -135 && row > 0) {
             //Down swipe
-            secondPiece = board.allPieces[column, row - 1];
+            board.secondPiece = board.allPieces[column, row - 1];
             previousColumn = column;
             previousRow = row;
-            secondPiece.GetComponent<Piece>().row += 1;
+            board.secondPiece.GetComponent<Piece>().row += 1;
             row -= 1;
-            board.allPieces[secondPiece.GetComponent<Piece>().column, secondPiece.GetComponent<Piece>().row] = secondPiece;
+            board.allPieces[board.secondPiece.GetComponent<Piece>().column, board.secondPiece.GetComponent<Piece>().row] = board.secondPiece;
             board.allPieces[column, row] = this.gameObject;
         }
-        StartCoroutine(checkMoveCoroutine());
+        board.checkMove();
     }
-    public IEnumerator checkMoveCoroutine() {
-        board.isCheckMoveCoroutineDone = false;
-        if(secondPiece != null) {
-            if(type == "Regular" && secondPiece.GetComponent<Piece>().type == "Regular") {
-                matchFinder.findAllLegalSolutions();
-                yield return new WaitForSeconds(0.25f);
-                if(!isMatched && !secondPiece.GetComponent<Piece>().isMatched) {
-                secondPiece.GetComponent<Piece>().column = column;
-                secondPiece.GetComponent<Piece>().row = row;
-                column = previousColumn;
-                row = previousRow;
-                yield return new WaitForSeconds(0.25f);
-                board.currentPiece = null;
-                board.currentState = gameState.move;
-            }
-            else {
-                secondPiece = null;
-                board.destroyAllSolutions();
-                
-            }
-            secondPiece = null;
-            }
-            else if((type != "Regular" && secondPiece.GetComponent<Piece>().type == "Regular") ||
-             (type == "Regular" && secondPiece.GetComponent<Piece>().type != "Regular")) {
-                matchFinder.findAllLegalSolutions();
-                yield return new WaitForSeconds(0.25f);
-                if(type == "SpecialVerticalRocket") {
-                    type = "Powerless";
-                    Solution newSolution = matchFinder.getColumnSolution(this.gameObject);
-                    newSolution.addSolutionPieceToSolution(this.gameObject);
-                    matchFinder.currentSolutions.Add(newSolution);
-                }
-                else if(secondPiece.GetComponent<Piece>().type == "SpecialVerticalRocket") {
-                    secondPiece.GetComponent<Piece>().type = "Powerless";
-                    Solution newSolution = matchFinder.getColumnSolution(secondPiece);
-                    newSolution.removeSolutionPieceFromSolution(this.gameObject);
-                    newSolution.addSolutionPieceToSolution(secondPiece);
-                    matchFinder.currentSolutions.Add(newSolution);
-                }
-                if(type == "SpecialHorizontalRocket") {
-                    type = "Powerless";
-                    Solution newSolution = matchFinder.getRowSolution(this.gameObject);
-                    newSolution.addSolutionPieceToSolution(this.gameObject);
-                    matchFinder.currentSolutions.Add(newSolution);
-                }
-                else if(secondPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
-                    secondPiece.GetComponent<Piece>().type = "Powerless";
-                    Solution newSolution = matchFinder.getRowSolution(secondPiece);
-                    newSolution.removeSolutionPieceFromSolution(this.gameObject);
-                    newSolution.addSolutionPieceToSolution(secondPiece);
-                    matchFinder.currentSolutions.Add(newSolution);
-                }
-                if(type == "SpecialTnt") {
-                    type = "Powerless";
-                    Solution newSolution = matchFinder.getTntSolution(this.gameObject);
-                    newSolution.addSolutionPieceToSolution(this.gameObject);
-                    matchFinder.currentSolutions.Add(newSolution);
-                }
-                else if(secondPiece.GetComponent<Piece>().type == "SpecialTnt") {
-                    secondPiece.GetComponent<Piece>().type = "Powerless";
-                    Solution newSolution = matchFinder.getTntSolution(secondPiece);
-                    newSolution.addSolutionPieceToSolution(secondPiece);
-                    matchFinder.currentSolutions.Add(newSolution);
-                }
-            board.destroyAllSolutions();
-            }
-            else if(type != "Regular" && secondPiece.GetComponent<Piece>().type != "Regular") {
-                matchFinder.findAllLegalSolutions();
-                yield return new WaitForSeconds(0.25f);
-
-            }
-                
-            
-        }
-        
-        board.isCheckMoveCoroutineDone = true;
-    }
-    public IEnumerator checkClickCoroutine() {
-        
-        
-        board.isCheckClickCoroutineDone = false;
-        // if(type == "SpecialColorBomb") {
-        //     matchFinder.matchAllPieceOfSameColor(secondPiece.GetComponent<Piece>().color);
-        //     isMatched = true;
-        // }
-        if(type == "SpecialVerticalRocket") {
-            Solution newSolution = matchFinder.getColumnSolution(this.gameObject);
-            matchFinder.currentSolutions.Add(newSolution);
-            isMatched = true;
-            
-            }
-        if(type == "SpecialHorizontalRocket") {
-            Solution newSolution = matchFinder.getRowSolution(this.gameObject);
-            matchFinder.currentSolutions.Add(newSolution);
-            isMatched = true;
-        }
-        if(type == "SpecialTnt") {
-            Solution newSolution = matchFinder.getTntSolution(this.gameObject);
-            matchFinder.currentSolutions.Add(newSolution);
-            isMatched = true;
-        }
-        board.destroyAllSolutions();
-        matchFinder.currentSolutions.Clear();
-        yield return new WaitForSeconds(0.25f);
-        board.currentState = gameState.move;
-        board.isCheckClickCoroutineDone = true;
-    }
-    public void makeSpecialHorizontalRocket() {
-        int pieceToDestroyIndex = -1;
-        if(color == "Green") {
-            pieceToDestroyIndex = 4;
-        }
-        else if(color == "Yellow") {
-            pieceToDestroyIndex = 5;
-        }
-        else if(color == "Red") {
-            pieceToDestroyIndex = 6;
-        }
-        else if(color == "Black") {
-            pieceToDestroyIndex = 7;
-        }
-        Vector2 pieceToDestroyPosition = new Vector2(this.gameObject.transform.position.x, this.gameObject.transform.position.y);
-        board.allPieces[column, row] = Instantiate(board.piecesPrefabs[pieceToDestroyIndex], pieceToDestroyPosition, Quaternion.identity);
-        board.allPieces[column, row].GetComponent<Piece>().column = column;
-        board.allPieces[column, row].GetComponent<Piece>().row = row;
-        Destroy(this.gameObject);
-    }
-    public void makeSpecialVerticalRocket() {
-        int pieceToDestroyIndex = -1;
-        if(color == "Green") {
-            pieceToDestroyIndex = 8;
-        }
-        else if(color == "Yellow") {
-            pieceToDestroyIndex = 9;
-        }
-        else if(color == "Red") {
-            pieceToDestroyIndex = 10;
-        }
-        else if(color == "Black") {
-            pieceToDestroyIndex = 11;
-        }
-        Vector2 pieceToDestroyPosition = new Vector2(this.gameObject.transform.position.x, this.gameObject.transform.position.y);
-        board.allPieces[column, row] = Instantiate(board.piecesPrefabs[pieceToDestroyIndex], pieceToDestroyPosition, Quaternion.identity);
-        board.allPieces[column, row].GetComponent<Piece>().column = column;
-        board.allPieces[column, row].GetComponent<Piece>().row = row;
-        Destroy(this.gameObject);
-    }
-    public void createSpecialPiece(string typeOfSpecialPiece, int column, int row, string color) {
-        int pieceIndex = -1;
-        Vector2 positionNewPiece = new Vector2(column, row);
-        if(typeOfSpecialPiece == "colorBombPiece") {
-            pieceIndex = 16;
-            board.allPieces[column, row] = Instantiate(board.piecesPrefabs[pieceIndex], positionNewPiece, Quaternion.identity);
-            board.allPieces[column, row].GetComponent<Piece>().column = column;
-            board.allPieces[column, row].GetComponent<Piece>().row = row;
-            board.allPieces[column, row].GetComponent<Piece>().previousColumn = column;
-            board.allPieces[column, row].GetComponent<Piece>().previousRow = row;
-        }
-        else if(typeOfSpecialPiece == "tntPiece") {
-            if(color == "Green") {
-                pieceIndex = 12;
-            }
-            else if(color == "Yellow") {
-                pieceIndex = 13;
-            }
-            else if(color == "Red") {
-                pieceIndex = 14;
-            }
-            else if(color == "Black") {
-                pieceIndex = 15;
-            }
-            board.allPieces[column, row] = Instantiate(board.piecesPrefabs[pieceIndex], positionNewPiece, Quaternion.identity);
-            board.allPieces[column, row].GetComponent<Piece>().column = column;
-            board.allPieces[column, row].GetComponent<Piece>().row = row;
-            board.allPieces[column, row].GetComponent<Piece>().previousColumn = column;
-            board.allPieces[column, row].GetComponent<Piece>().previousRow = row;
-        }
-        else if(typeOfSpecialPiece == "verticalRocketPiece") {
-            if(color == "Green") {
-                pieceIndex = 8;
-            }
-            else if(color == "Yellow") {
-                pieceIndex = 9;
-            }
-            else if(color == "Red") {
-                pieceIndex = 10;
-            }
-            else if(color == "Black") {
-                pieceIndex = 11;
-            }
-            board.allPieces[column, row] = Instantiate(board.piecesPrefabs[pieceIndex], positionNewPiece, Quaternion.identity);
-            board.allPieces[column, row].GetComponent<Piece>().column = column;
-            board.allPieces[column, row].GetComponent<Piece>().row = row;
-            board.allPieces[column, row].GetComponent<Piece>().previousColumn = column;
-            board.allPieces[column, row].GetComponent<Piece>().previousRow = row;
-        }
-        else if(typeOfSpecialPiece == "horizontalRocketPiece") {
-            if(color == "Green") {
-                pieceIndex = 12;
-            }
-            else if(color == "Yellow") {
-                pieceIndex = 13;
-            }
-            else if(color == "Red") {
-                pieceIndex = 14;
-            }
-            else if(color == "Black") {
-                pieceIndex = 15;
-            }
-            board.allPieces[column, row] = Instantiate(board.piecesPrefabs[pieceIndex], positionNewPiece, Quaternion.identity);
-            board.allPieces[column, row].GetComponent<Piece>().column = column;
-            board.allPieces[column, row].GetComponent<Piece>().row = row;
-            board.allPieces[column, row].GetComponent<Piece>().previousColumn = column;
-            board.allPieces[column, row].GetComponent<Piece>().previousRow = row;
-        }
-    }
+    
 }

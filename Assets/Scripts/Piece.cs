@@ -119,6 +119,7 @@ public class Piece : MonoBehaviour
         }
     }
     private void movePieces() {
+        
         //Code to the movement of one piece with the adjacent piece from a swipe
         if (swipeAngle > -45 && swipeAngle <= 45 && column < board.width - 1) {
             //Right swipe
@@ -127,6 +128,10 @@ public class Piece : MonoBehaviour
             previousRow = row;
             secondPiece.GetComponent<Piece>().column -= 1;
             column += 1;
+            board.allPieces[secondPiece.GetComponent<Piece>().column, secondPiece.GetComponent<Piece>().row] = secondPiece;
+            board.allPieces[column, row] = this.gameObject;
+
+            
         }
         else if (swipeAngle > 45 && swipeAngle <= 135 && row < board.height - 1) {
             //Up swipe
@@ -135,6 +140,8 @@ public class Piece : MonoBehaviour
             previousRow = row;
             secondPiece.GetComponent<Piece>().row -= 1;
             row += 1;
+            board.allPieces[secondPiece.GetComponent<Piece>().column, secondPiece.GetComponent<Piece>().row] = secondPiece;
+            board.allPieces[column, row] = this.gameObject;
         }
         else if ((swipeAngle > 135 || swipeAngle <= -135) && column > 0) {
             //Left swipe
@@ -143,6 +150,8 @@ public class Piece : MonoBehaviour
             previousRow = row;
             secondPiece.GetComponent<Piece>().column += 1;
             column -= 1;
+            board.allPieces[secondPiece.GetComponent<Piece>().column, secondPiece.GetComponent<Piece>().row] = secondPiece;
+            board.allPieces[column, row] = this.gameObject;
         }
         else if (swipeAngle < -45 && swipeAngle >= -135 && row > 0) {
             //Down swipe
@@ -151,65 +160,18 @@ public class Piece : MonoBehaviour
             previousRow = row;
             secondPiece.GetComponent<Piece>().row += 1;
             row -= 1;
+            board.allPieces[secondPiece.GetComponent<Piece>().column, secondPiece.GetComponent<Piece>().row] = secondPiece;
+            board.allPieces[column, row] = this.gameObject;
         }
         StartCoroutine(checkMoveCoroutine());
     }
     public IEnumerator checkMoveCoroutine() {
         board.isCheckMoveCoroutineDone = false;
-        // if(type == "SpecialColorBomb") {
-        //     Solution newSolution = new Solution(matchFinder.getColorBombSolution(color)); //TENGO QUE HACER LAS SOLUCIONES ESPECIALES DEL MOVIMIENTO
-        //     matchFinder.matchAllPieceOfSameColor(secondPiece.GetComponent<Piece>().color);
-        //     isMatched = true;
-            
-        //     }
-        // else if(secondPiece.GetComponent<Piece>().type == "SpecialColorBomb") {
-        //     secondPiece.GetComponent<Piece>().type = "Powerless";
-        //     matchFinder.matchAllPieceOfSameColor(color);
-        //     
-
-        // }
-        if(type == "SpecialVerticalRocket") {
-            type = "Powerless";
-            Solution newSolution = matchFinder.getColumnSolution(this.gameObject);
-            newSolution.addSolutionPieceToSolution(this.gameObject);
-            matchFinder.currentSolutions.Add(newSolution);
-        }
-        else if(secondPiece.GetComponent<Piece>().type == "SpecialVerticalRocket") {
-            secondPiece.GetComponent<Piece>().type = "Powerless";
-            Solution newSolution = matchFinder.getColumnSolution(secondPiece);
-            newSolution.removeSolutionPieceFromSolution(this.gameObject);
-            newSolution.addSolutionPieceToSolution(secondPiece);
-            matchFinder.currentSolutions.Add(newSolution);
-        }
-        if(type == "SpecialHorizontalRocket") {
-            type = "Powerless";
-            Solution newSolution = matchFinder.getRowSolution(this.gameObject);
-            newSolution.addSolutionPieceToSolution(this.gameObject);
-            matchFinder.currentSolutions.Add(newSolution);
-        }
-        else if(secondPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
-            secondPiece.GetComponent<Piece>().type = "Powerless";
-            Solution newSolution = matchFinder.getRowSolution(secondPiece);
-            newSolution.removeSolutionPieceFromSolution(this.gameObject);
-            newSolution.addSolutionPieceToSolution(secondPiece);
-            matchFinder.currentSolutions.Add(newSolution);
-        }
-        if(type == "SpecialTnt") {
-            type = "Powerless";
-            Solution newSolution = matchFinder.getTntSolution(this.gameObject);
-            newSolution.addSolutionPieceToSolution(this.gameObject);
-            matchFinder.currentSolutions.Add(newSolution);
-        }
-        else if(secondPiece.GetComponent<Piece>().type == "SpecialTnt") {
-            secondPiece.GetComponent<Piece>().type = "Powerless";
-            Solution newSolution = matchFinder.getTntSolution(secondPiece);
-            newSolution.addSolutionPieceToSolution(secondPiece);
-            matchFinder.currentSolutions.Add(newSolution);
-        }
-        matchFinder.findAllLegalSolutions();
-        yield return new WaitForSeconds(0.25f);
-        if (secondPiece != null) {
-            if(!isMatched && !secondPiece.GetComponent<Piece>().isMatched && type == "Regular" && secondPiece.GetComponent<Piece>().type == "Regular") {
+        if(secondPiece != null) {
+            if(type == "Regular" && secondPiece.GetComponent<Piece>().type == "Regular") {
+                matchFinder.findAllLegalSolutions();
+                yield return new WaitForSeconds(0.25f);
+                if(!isMatched && !secondPiece.GetComponent<Piece>().isMatched) {
                 secondPiece.GetComponent<Piece>().column = column;
                 secondPiece.GetComponent<Piece>().row = row;
                 column = previousColumn;
@@ -219,10 +181,65 @@ public class Piece : MonoBehaviour
                 board.currentState = gameState.move;
             }
             else {
+                secondPiece = null;
                 board.destroyAllSolutions();
+                
             }
             secondPiece = null;
+            }
+            else if((type != "Regular" && secondPiece.GetComponent<Piece>().type == "Regular") ||
+             (type == "Regular" && secondPiece.GetComponent<Piece>().type != "Regular")) {
+                matchFinder.findAllLegalSolutions();
+                yield return new WaitForSeconds(0.25f);
+                if(type == "SpecialVerticalRocket") {
+                    type = "Powerless";
+                    Solution newSolution = matchFinder.getColumnSolution(this.gameObject);
+                    newSolution.addSolutionPieceToSolution(this.gameObject);
+                    matchFinder.currentSolutions.Add(newSolution);
+                }
+                else if(secondPiece.GetComponent<Piece>().type == "SpecialVerticalRocket") {
+                    secondPiece.GetComponent<Piece>().type = "Powerless";
+                    Solution newSolution = matchFinder.getColumnSolution(secondPiece);
+                    newSolution.removeSolutionPieceFromSolution(this.gameObject);
+                    newSolution.addSolutionPieceToSolution(secondPiece);
+                    matchFinder.currentSolutions.Add(newSolution);
+                }
+                if(type == "SpecialHorizontalRocket") {
+                    type = "Powerless";
+                    Solution newSolution = matchFinder.getRowSolution(this.gameObject);
+                    newSolution.addSolutionPieceToSolution(this.gameObject);
+                    matchFinder.currentSolutions.Add(newSolution);
+                }
+                else if(secondPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
+                    secondPiece.GetComponent<Piece>().type = "Powerless";
+                    Solution newSolution = matchFinder.getRowSolution(secondPiece);
+                    newSolution.removeSolutionPieceFromSolution(this.gameObject);
+                    newSolution.addSolutionPieceToSolution(secondPiece);
+                    matchFinder.currentSolutions.Add(newSolution);
+                }
+                if(type == "SpecialTnt") {
+                    type = "Powerless";
+                    Solution newSolution = matchFinder.getTntSolution(this.gameObject);
+                    newSolution.addSolutionPieceToSolution(this.gameObject);
+                    matchFinder.currentSolutions.Add(newSolution);
+                }
+                else if(secondPiece.GetComponent<Piece>().type == "SpecialTnt") {
+                    secondPiece.GetComponent<Piece>().type = "Powerless";
+                    Solution newSolution = matchFinder.getTntSolution(secondPiece);
+                    newSolution.addSolutionPieceToSolution(secondPiece);
+                    matchFinder.currentSolutions.Add(newSolution);
+                }
+            board.destroyAllSolutions();
+            }
+            else if(type != "Regular" && secondPiece.GetComponent<Piece>().type != "Regular") {
+                matchFinder.findAllLegalSolutions();
+                yield return new WaitForSeconds(0.25f);
+
+            }
+                
+            
         }
+        
         board.isCheckMoveCoroutineDone = true;
     }
     public IEnumerator checkClickCoroutine() {

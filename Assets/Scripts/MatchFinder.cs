@@ -40,6 +40,7 @@ public class MatchFinder : MonoBehaviour
     private Board board;
     public List<Solution> currentSolutions;
     public List<Solution> newCurrentSolutions;
+    public List<GameObject> currentSpecialPiecesToCreate;
     public string[] shapeNames;
     public IDictionary<string, Dictionary<string, int>> shapesBoardLimits;
     private IDictionary<string, int> boardLimits;
@@ -56,6 +57,7 @@ public class MatchFinder : MonoBehaviour
         board = FindObjectOfType<Board>();
         currentSolutions = new List<Solution>();
         newCurrentSolutions = new List<Solution>();
+        currentSpecialPiecesToCreate = new List<GameObject>();
         isFindAllLegalMatchesCoroutineDone = true;
         //initializing all the shape parameters of a match
         shapeNames = new string[15] {"fiveLineShape0", "fiveLineShape1", "fiveTShape0", "fiveTShape1", "fiveTShape2", "fiveTShape3",
@@ -201,6 +203,7 @@ public class MatchFinder : MonoBehaviour
                     exploringShape = shapeNames[i];
                     tempPieces = checkShapeMatch(exploringPiece, exploringColumn, exploringRow, exploringShape);
                     if (tempPieces != null) {
+                        //Aqui se van a crear las piezas especiales
                         tempSolution = new Solution(tempPieces, exploringShape, "regularMatch", exploringPiece.GetComponent<Piece>().color);
                         currentSolutions.Add(tempSolution);
                     }
@@ -217,6 +220,7 @@ public class MatchFinder : MonoBehaviour
                     exploringShape = "fourSquareShape0";
                     tempPieces = checkShapeMatch(exploringPiece, exploringColumn, exploringRow, exploringShape);
                     if (tempPieces != null) {
+                        //Aqui se van a crear las piezas especiales
                         tempSolution = new Solution(tempPieces, exploringShape, "regularMatch", exploringPiece.GetComponent<Piece>().color);
                         currentSolutions.Add(tempSolution);
                     }
@@ -233,6 +237,7 @@ public class MatchFinder : MonoBehaviour
                     exploringShape = shapeNames[i];
                     tempPieces = checkShapeMatch(exploringPiece, exploringColumn, exploringRow, exploringShape);
                     if (tempPieces != null) {
+                        //Aqui se van a crear las piezas especiales
                         tempSolution = new Solution(tempPieces, exploringShape, "regularMatch", exploringPiece.GetComponent<Piece>().color);
                         currentSolutions.Add(tempSolution);
                     }

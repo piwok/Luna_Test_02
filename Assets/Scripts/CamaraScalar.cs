@@ -12,6 +12,7 @@ public class CamaraScalar : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Application.targetFrameRate = 60;
         aspectRatio = (float) Screen.width/(float) Screen.height;
         cameraOffset = -10f;
         board = FindObjectOfType<Board>();

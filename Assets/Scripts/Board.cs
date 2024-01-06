@@ -116,6 +116,7 @@ public class Board : MonoBehaviour
         return false;
     }
     private void destroySolution(Solution solution) {
+        
         Solution newSolution;
         foreach(GameObject solutionPiece in solution.solutionPieces) {
             //creation of special pieces when is necesary
@@ -165,20 +166,21 @@ public class Board : MonoBehaviour
             Destroy(solutionPiece);
         }
     }   
-    
-    
     public void destroyAllSolutions() {
-        //revisar si o si
-        while(matchFinder.currentSolutions.Count > 0) {
+        /// convertir en coroutine
+        if(matchFinder.currentSolutions.Count > 0) {
             foreach(Solution solution in matchFinder.currentSolutions) {
                 destroySolution(solution);
             }
             matchFinder.currentSolutions.Clear();
-            if(matchFinder.newCurrentSolutions.Count > 0) {
-                matchFinder.currentSolutions = new List<Solution>(matchFinder.newCurrentSolutions);
+        }
+        if(matchFinder.newCurrentSolutions.Count > 0) {
+            foreach(Solution solution in matchFinder.newCurrentSolutions) {
+                destroySolution(solution);
             }
             matchFinder.newCurrentSolutions.Clear();
         }
+        //Aqui hay que crear las fichas que haya en la lista currentSpecialPiecesToCreate
         StartCoroutine(collapseColumnsCoroutine());
     }
     private IEnumerator collapseColumnsCoroutine() {

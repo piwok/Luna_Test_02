@@ -50,9 +50,15 @@ public class MatchFinder : MonoBehaviour
     private int[] tempPiece3;
     private int[] tempPiece4;
     private int[][] tempShape;
+    private string[] colorBombRandomColors;
     // Start is called before the first frame update
     void Start()
     {
+        colorBombRandomColors = new string[] {"Green", "Yellow", "Red", "Black"};
+        Debug.Log(colorBombRandomColors[0]);
+        Debug.Log(colorBombRandomColors[1]);
+        Debug.Log(colorBombRandomColors[2]);
+        Debug.Log(colorBombRandomColors[3]);
         board = FindObjectOfType<Board>();
         currentSolutions = new List<Solution>();
         newCurrentSolutions = new List<Solution>();
@@ -287,7 +293,7 @@ public class MatchFinder : MonoBehaviour
         explodingPiece.GetComponent<Piece>().column == board.secondPiece.GetComponent<Piece>().column) {
             columnPieces.Add(board.secondPiece);
         }
-        Solution columnSolution = new Solution(columnPieces, null, "specialPowerMatches", null);
+        Solution columnSolution = new Solution(columnPieces, null, "verticalRocketMatches", null);
         return columnSolution; 
     }
     public Solution getRowSolution(GameObject explodingPiece) {
@@ -302,7 +308,7 @@ public class MatchFinder : MonoBehaviour
         explodingPiece.GetComponent<Piece>().row == board.secondPiece.GetComponent<Piece>().row) {
             rowPieces.Add(board.secondPiece);
         }
-        Solution rowSolution = new Solution(rowPieces, null, "specialPowerMatches", null);
+        Solution rowSolution = new Solution(rowPieces, null, "horizontalRocketMatches", null);
         return rowSolution; 
     }
     public Solution getTntSolution(GameObject explodingPiece) {
@@ -315,7 +321,7 @@ public class MatchFinder : MonoBehaviour
                 }
             }
         }
-        Solution tntSolution = new Solution(tntPieces, null, "specialPowerMatches", null);
+        Solution tntSolution = new Solution(tntPieces, null, "tntMatches", null);
         return tntSolution;
     }
     public Solution getColorBombSolution(string color) {
@@ -328,7 +334,22 @@ public class MatchFinder : MonoBehaviour
                 }
             }
         }
-        Solution colorBombSolution = new Solution(colorBombPieces, null, "specialPowerMatches", null);
+        Solution colorBombSolution = new Solution(colorBombPieces, null, "ColorBombMatches", null);
         return colorBombSolution;
+    }
+    public Solution getColorBombRandomSolution() {
+        List<GameObject> colorBombRandomColorPieces = new List<GameObject>();
+        int colorIndex = Random.Range(0, 4);
+        string color = colorBombRandomColors[colorIndex];
+        for(int i = 0; i < board.width; i++) {
+            for(int j = 0; j < board.height; j++) {
+                if(board.allPieces[i, j] != null && board.allPieces[i, j].GetComponent<Piece>().color == color) {
+                    colorBombRandomColorPieces.Add(board.allPieces[i, j]);
+                }
+
+            }
+        }
+        Solution colorBombRandomColorSolution = new Solution(colorBombRandomColorPieces, null, "ColorBombMatches", null);
+        return colorBombRandomColorSolution;
     }
 }

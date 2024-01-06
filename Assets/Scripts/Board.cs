@@ -33,6 +33,7 @@ public class Board : MonoBehaviour
     public bool isCheckClickCoroutineDone;
     public bool isDestroyAllSolutionsDone;
     public bool isDestroySolutionDone;
+    public bool isDestroyColorBombSolutionDone;
     // Start is called before the first frame update
     void Start()
     {
@@ -48,6 +49,7 @@ public class Board : MonoBehaviour
         isFillBoardCoroutineDone = true;
         isDestroyAllSolutionsDone = true;
         isDestroySolutionDone = true;
+        isDestroyColorBombSolutionDone = true;
 
         allTiles = new GameObject[width, height];
         allPieces = new GameObject[width, height];
@@ -158,12 +160,78 @@ public class Board : MonoBehaviour
         }
         yield return new WaitForSeconds(0.15f);
         isDestroySolutionDone = true;
-    }   
+    }
+    private IEnumerator destroyColorBombSolution(Solution solution) {
+        isDestroyColorBombSolutionDone = false;
+        Solution newSolution;
+        foreach(GameObject solutionPiece in solution.solutionPieces.ToList()) {
+            if(solutionPiece != null) {
+                solutionPiece.GetComponent<SpriteRenderer>().color = Color.grey;
+                yield return new WaitForSeconds(0.05f);
+            }
+        }
+        foreach(GameObject solutionPiece in solution.solutionPieces.ToList()) {
+            if(solutionPiece != null) {
+                //creation of special pieces when is necesary
+                //TO DO?
+
+                //new solutions for the matched special pieces
+                if(solutionPiece.GetComponent<Piece>().type == "SpecialTnt") {
+                    //The piece become powerless
+                    solutionPiece.GetComponent<Piece>().type = "Powerless";
+                    newSolution = matchFinder.getTntSolution(solutionPiece);
+                    matchFinder.newCurrentSolutions.Add(newSolution);
+                }
+                else if(solutionPiece.GetComponent<Piece>().type == "SpecialVerticalRocket") {
+                    //The piece become powerless
+                    solutionPiece.GetComponent<Piece>().type = "Powerless";
+                    newSolution = matchFinder.getColumnSolution(solutionPiece);
+                    matchFinder.newCurrentSolutions.Add(newSolution);
+                }
+                else if(solutionPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
+                    //The piece become powerless
+                    solutionPiece.GetComponent<Piece>().type = "Powerless";
+                    newSolution = matchFinder.getRowSolution(solutionPiece);
+                    matchFinder.newCurrentSolutions.Add(newSolution);
+                }
+                // else if(solutionPiece.GetComponent<Piece>().type == "SpecialColorBomb") {
+                    //  //The piece become powerless
+                    // solutionPiece.GetComponent<Piece>().type = "Powerless";
+                    // solution = matchFinder.getColorBombSolution(color);
+                    // newSolutions.Add(newSolution);
+                //    }
+                
+                GameObject destroyEffectParticle = Instantiate(regularDestroyEffect, solutionPiece.transform.position, Quaternion.identity);
+                Destroy(destroyEffectParticle, 1.0f);
+                allPieces[solutionPiece.GetComponent<Piece>().column, solutionPiece.GetComponent<Piece>().row] = null;
+                Destroy(solutionPiece);
+            }
+            yield return new WaitForSeconds(0.1f);
+        }
+        yield return new WaitForSeconds(0.15f);
+        isDestroyColorBombSolutionDone = true;
+    }
+
+
+
+
+
+
+
+
+
+
+
     public IEnumerator destroyAllSolutions() {
         isDestroyAllSolutionsDone = false;
         while(matchFinder.currentSolutions.Count > 0) {
             foreach(Solution solution in matchFinder.currentSolutions.ToList()) {
-                yield return StartCoroutine(destroySolution(solution));
+                if(solution.type != "ColorBombMatches") {
+                    yield return StartCoroutine(destroySolution(solution));
+                }
+                else {
+                    yield return StartCoroutine(destroyColorBombSolution(solution));
+                }
             }
             matchFinder.currentSolutions.Clear();
             if(matchFinder.newCurrentSolutions.Count > 0) {
@@ -297,6 +365,18 @@ public class Board : MonoBehaviour
                     newSolution.addSolutionPieceToSolution(secondPiece);
                     matchFinder.currentSolutions.Add(newSolution);
                 }
+                if(currentPiece.GetComponent<Piece>().type == "SpecialColorBomb") {
+                    currentPiece.GetComponent<Piece>().type = "Powerless";
+                    Solution newSolution = matchFinder.getColorBombSolution(secondPiece.GetComponent<Piece>().color);
+                    newSolution.addSolutionPieceToSolution(currentPiece);
+                    matchFinder.currentSolutions.Add(newSolution);
+                }
+                else if(secondPiece.GetComponent<Piece>().type == "SpecialColorBomb") {
+                    secondPiece.GetComponent<Piece>().type = "Powerless";
+                    Solution newSolution = matchFinder.getColorBombSolution(currentPiece.GetComponent<Piece>().color);
+                    newSolution.addSolutionPieceToSolution(secondPiece);
+                    matchFinder.currentSolutions.Add(newSolution);
+                }
                 StartCoroutine(destroyAllSolutions());
             }
             else if(currentPiece.GetComponent<Piece>().type != "Regular" && secondPiece.GetComponent<Piece>().type != "Regular") {
@@ -317,10 +397,13 @@ public class Board : MonoBehaviour
     public IEnumerator checkClickCoroutine() {
         
         isCheckClickCoroutineDone = false;
-        // if(type == "SpecialColorBomb") {
-        //     matchFinder.matchAllPieceOfSameColor(secondPiece.GetComponent<Piece>().color);
-        //     isMatched = true;
-        // }
+        if(currentPiece.GetComponent<Piece>().type == "SpecialColorBomb") {
+            currentPiece.GetComponent<Piece>().type = "Powerless";
+            Solution newSolution = matchFinder.getColorBombRandomSolution();
+            newSolution.addSolutionPieceToSolution(currentPiece);
+            matchFinder.currentSolutions.Add(newSolution);
+            currentPiece.GetComponent<Piece>().isMatched = true;
+        }
         if(currentPiece.GetComponent<Piece>().type == "SpecialVerticalRocket") {
             currentPiece.GetComponent<Piece>().type = "Powerless";
             Solution newSolution = matchFinder.getColumnSolution(currentPiece);

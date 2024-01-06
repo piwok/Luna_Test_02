@@ -31,6 +31,8 @@ public class Board : MonoBehaviour
     public bool isCollapseCollumnsDone;
     public bool isFillBoardCoroutineDone;
     public bool isCheckClickCoroutineDone;
+    public bool isDestroyAllSolutionsDone;
+    public bool isDestroySolutionDone;
     // Start is called before the first frame update
     void Start()
     {
@@ -44,6 +46,8 @@ public class Board : MonoBehaviour
         isCheckClickCoroutineDone = true;
         isCollapseCollumnsDone = true;
         isFillBoardCoroutineDone = true;
+        isDestroyAllSolutionsDone = true;
+        isDestroySolutionDone = true;
 
         allTiles = new GameObject[width, height];
         allPieces = new GameObject[width, height];
@@ -58,9 +62,6 @@ public class Board : MonoBehaviour
         else {
             currentState = gameState.move;
         }
-
-    }
-    void LateUpdate() {
 
     }
     private void setUp() {
@@ -78,7 +79,6 @@ public class Board : MonoBehaviour
                     newRegularPieceTypeIndex = Random.Range(0, 4);
                     maxIterations++;
                 }
-                maxIterations = 0;
                 Vector2 positionForNewPiece = new Vector2(i, j + offsetNewPieces);
                 GameObject newRegularPiece = Instantiate(piecesPrefabs[newRegularPieceTypeIndex], positionForNewPiece, Quaternion.identity);
                 newRegularPiece.GetComponent<Piece>().column = i;
@@ -117,9 +117,9 @@ public class Board : MonoBehaviour
         return false;
     }
     private IEnumerator destroySolution(Solution solution) {
-        
+        isDestroySolutionDone = false;
         Solution newSolution;
-        foreach(GameObject solutionPiece in solution.solutionPieces) {
+        foreach(GameObject solutionPiece in solution.solutionPieces.ToList()) {
             if(solutionPiece != null) {
                 //creation of special pieces when is necesary
                 //TO DO?
@@ -157,9 +157,10 @@ public class Board : MonoBehaviour
             }
         }
         yield return new WaitForSeconds(0.15f);
+        isDestroySolutionDone = true;
     }   
     public IEnumerator destroyAllSolutions() {
-        /// convertir en coroutine
+        isDestroyAllSolutionsDone = false;
         while(matchFinder.currentSolutions.Count > 0) {
             foreach(Solution solution in matchFinder.currentSolutions.ToList()) {
                 yield return StartCoroutine(destroySolution(solution));
@@ -172,6 +173,7 @@ public class Board : MonoBehaviour
         }
         //Aqui hay que crear las fichas que haya en la lista currentSpecialPiecesToCreate
         StartCoroutine(collapseColumnsCoroutine());
+        isDestroyAllSolutionsDone = false;
     }
     private IEnumerator collapseColumnsCoroutine() {
         isCollapseCollumnsDone = false;
@@ -186,7 +188,7 @@ public class Board : MonoBehaviour
                     allPieces[i, j] = null;
                 }
             }
-        nullCount = 0;
+            nullCount = 0;
         }
         yield return new WaitForSeconds(0.25f);
         StartCoroutine(fillBoardCoroutine());
@@ -211,10 +213,10 @@ public class Board : MonoBehaviour
         isFillBoardCoroutineDone = false;
         refillBoard();
         matchFinder.findAllLegalSolutions();
-        yield return new WaitForSeconds(0.25f);
+        yield return new WaitForSeconds(0.1f);
         
         while(matchFinder.currentSolutions.Count > 0) {
-            yield return new WaitForSeconds(0.25f);
+            yield return new WaitForSeconds(0.1f);
             yield return StartCoroutine(destroyAllSolutions());
             matchFinder.currentSolutions.Clear();
             matchFinder.findAllLegalSolutions();
@@ -222,7 +224,7 @@ public class Board : MonoBehaviour
         }
         matchFinder.currentSolutions.Clear();
         currentPiece = null;
-        yield return new WaitForSeconds(0.25f);
+        yield return new WaitForSeconds(0.1f);
         
         //currentState = gameState.move;
         isFillBoardCoroutineDone = true;

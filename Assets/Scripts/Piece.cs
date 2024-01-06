@@ -37,16 +37,16 @@ public class Piece : MonoBehaviour
         if(Input.GetMouseButtonDown(1)) {
             int pieceToDestroyIndex = -1;
             if(color == "Green") {
-                pieceToDestroyIndex = 12;
+                pieceToDestroyIndex = 16;
             }
             else if(color == "Yellow") {
-                pieceToDestroyIndex = 13;
+                pieceToDestroyIndex = 16;
             }
             else if(color == "Red") {
-                pieceToDestroyIndex = 14;
+                pieceToDestroyIndex = 16;
             }
             else if(color == "Black") {
-                pieceToDestroyIndex = 15;
+                pieceToDestroyIndex = 16;
             }
             Vector2 pieceToDestroyPosition = new Vector2(this.gameObject.transform.position.x, this.gameObject.transform.position.y);
             board.allPieces[column, row] = Instantiate(board.piecesPrefabs[pieceToDestroyIndex], pieceToDestroyPosition, Quaternion.identity);

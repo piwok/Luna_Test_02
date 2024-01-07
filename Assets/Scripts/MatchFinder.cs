@@ -40,7 +40,7 @@ public class MatchFinder : MonoBehaviour
     private Board board;
     public List<Solution> currentSolutions;
     public List<Solution> newCurrentSolutions;
-    public List<GameObject> currentSpecialPiecesToCreate;
+    public List<SpecialPieceToCreate> currentSpecialPiecesToCreate;
     public string[] shapeNames;
     public IDictionary<string, Dictionary<string, int>> shapesBoardLimits;
     private IDictionary<string, int> boardLimits;
@@ -55,14 +55,10 @@ public class MatchFinder : MonoBehaviour
     void Start()
     {
         colorBombRandomColors = new string[] {"Green", "Yellow", "Red", "Black"};
-        Debug.Log(colorBombRandomColors[0]);
-        Debug.Log(colorBombRandomColors[1]);
-        Debug.Log(colorBombRandomColors[2]);
-        Debug.Log(colorBombRandomColors[3]);
         board = FindObjectOfType<Board>();
         currentSolutions = new List<Solution>();
         newCurrentSolutions = new List<Solution>();
-        currentSpecialPiecesToCreate = new List<GameObject>();
+        currentSpecialPiecesToCreate = new List<SpecialPieceToCreate>();
         //initializing all the shape parameters of a match
         shapeNames = new string[15] {"fiveLineShape0", "fiveLineShape1", "fiveTShape0", "fiveTShape1", "fiveTShape2", "fiveTShape3",
         "fiveLShape0", "fiveLShape1", "fiveLShape2", "fiveLShape3", "fourLineShape0", "fourLineShape1", "fourSquareShape0", "threeLineShape0", "threeLineShape1"};
@@ -192,7 +188,7 @@ public class MatchFinder : MonoBehaviour
                 }
             }
         }
-        //looking for 5 size shape matchs in the points of allThreeInitialSolutios
+        //looking for 5 size shape matchs and 4 size straight lines in the points of allThreeInitialSolutions
         foreach(GameObject pieceToExplore in allThreeSizeInitialSolutions) {
             exploringPiece = pieceToExplore;
             if(exploringPiece.GetComponent<Piece>().isMatched == false) {
@@ -203,8 +199,21 @@ public class MatchFinder : MonoBehaviour
                     tempPieces = checkShapeMatch(exploringPiece, exploringColumn, exploringRow, exploringShape);
                     if (tempPieces != null) {
                         //Aqui se van a crear las piezas especiales
-                        tempSolution = new Solution(tempPieces, exploringShape, "regularMatch", exploringPiece.GetComponent<Piece>().color);
-                        currentSolutions.Add(tempSolution);
+                        if(tempPieces.Contains(board.currentPiece)) {
+                            tempSolution = new Solution(tempPieces, exploringShape, "regularMatch", exploringPiece.GetComponent<Piece>().color,
+                            board.currentPiece.GetComponent<Piece>().column, board.currentPiece.GetComponent<Piece>().row);
+                            currentSolutions.Add(tempSolution);
+                        }
+                        else if(tempPieces.Contains(board.secondPiece)) {
+                            tempSolution = new Solution(tempPieces, exploringShape, "regularMatch", exploringPiece.GetComponent<Piece>().color,
+                            board.secondPiece.GetComponent<Piece>().column, board.secondPiece.GetComponent<Piece>().row);
+                            currentSolutions.Add(tempSolution);
+                        }
+                        else {
+                            tempSolution = new Solution(tempPieces, exploringShape, "regularMatch", exploringPiece.GetComponent<Piece>().color,
+                            exploringPiece.GetComponent<Piece>().column, exploringPiece.GetComponent<Piece>().row);
+                            currentSolutions.Add(tempSolution);
+                        }
                     }
                 }
             }
@@ -220,8 +229,21 @@ public class MatchFinder : MonoBehaviour
                     tempPieces = checkShapeMatch(exploringPiece, exploringColumn, exploringRow, exploringShape);
                     if (tempPieces != null) {
                         //Aqui se van a crear las piezas especiales
-                        tempSolution = new Solution(tempPieces, exploringShape, "regularMatch", exploringPiece.GetComponent<Piece>().color);
-                        currentSolutions.Add(tempSolution);
+                        if(tempPieces.Contains(board.currentPiece)) {
+                            tempSolution = new Solution(tempPieces, exploringShape, "regularMatch", exploringPiece.GetComponent<Piece>().color,
+                            board.currentPiece.GetComponent<Piece>().column, board.currentPiece.GetComponent<Piece>().row);
+                            currentSolutions.Add(tempSolution);
+                        }
+                        else if(tempPieces.Contains(board.secondPiece)) {
+                            tempSolution = new Solution(tempPieces, exploringShape, "regularMatch", exploringPiece.GetComponent<Piece>().color,
+                            board.secondPiece.GetComponent<Piece>().column, board.secondPiece.GetComponent<Piece>().row);
+                            currentSolutions.Add(tempSolution);
+                        }
+                        else {
+                            tempSolution = new Solution(tempPieces, exploringShape, "regularMatch", exploringPiece.GetComponent<Piece>().color,
+                            exploringPiece.GetComponent<Piece>().column, exploringPiece.GetComponent<Piece>().row);
+                            currentSolutions.Add(tempSolution);
+                        }
                     }
                 }
             }
@@ -237,8 +259,21 @@ public class MatchFinder : MonoBehaviour
                     tempPieces = checkShapeMatch(exploringPiece, exploringColumn, exploringRow, exploringShape);
                     if (tempPieces != null) {
                         //Aqui se van a crear las piezas especiales
-                        tempSolution = new Solution(tempPieces, exploringShape, "regularMatch", exploringPiece.GetComponent<Piece>().color);
-                        currentSolutions.Add(tempSolution);
+                        if(tempPieces.Contains(board.currentPiece)) {
+                            tempSolution = new Solution(tempPieces, exploringShape, "regularMatch", exploringPiece.GetComponent<Piece>().color,
+                            board.currentPiece.GetComponent<Piece>().column, board.currentPiece.GetComponent<Piece>().row);
+                            currentSolutions.Add(tempSolution);
+                        }
+                        else if(tempPieces.Contains(board.secondPiece)) {
+                            tempSolution = new Solution(tempPieces, exploringShape, "regularMatch", exploringPiece.GetComponent<Piece>().color,
+                            board.secondPiece.GetComponent<Piece>().column, board.secondPiece.GetComponent<Piece>().row);
+                            currentSolutions.Add(tempSolution);
+                        }
+                        else {
+                            tempSolution = new Solution(tempPieces, exploringShape, "regularMatch", exploringPiece.GetComponent<Piece>().color,
+                            exploringPiece.GetComponent<Piece>().column, exploringPiece.GetComponent<Piece>().row);
+                            currentSolutions.Add(tempSolution);
+                        }
                     }
                 }
             }
@@ -269,7 +304,6 @@ public class MatchFinder : MonoBehaviour
                     }
                 }
             }
-            
             if (tempPieces.Count == matchSize) {
                 foreach(GameObject matchedPiece in tempPieces) {
                     matchedPiece.GetComponent<Piece>().isMatched = true;
@@ -293,7 +327,7 @@ public class MatchFinder : MonoBehaviour
         explodingPiece.GetComponent<Piece>().column == board.secondPiece.GetComponent<Piece>().column) {
             columnPieces.Add(board.secondPiece);
         }
-        Solution columnSolution = new Solution(columnPieces, null, "verticalRocketMatches", null);
+        Solution columnSolution = new Solution(columnPieces, null, "verticalRocketMatches", null, -1, -1);
         return columnSolution; 
     }
     public Solution getRowSolution(GameObject explodingPiece) {
@@ -308,7 +342,7 @@ public class MatchFinder : MonoBehaviour
         explodingPiece.GetComponent<Piece>().row == board.secondPiece.GetComponent<Piece>().row) {
             rowPieces.Add(board.secondPiece);
         }
-        Solution rowSolution = new Solution(rowPieces, null, "horizontalRocketMatches", null);
+        Solution rowSolution = new Solution(rowPieces, null, "horizontalRocketMatches", null, -1, -1);
         return rowSolution; 
     }
     public Solution getTntSolution(GameObject explodingPiece) {
@@ -321,7 +355,7 @@ public class MatchFinder : MonoBehaviour
                 }
             }
         }
-        Solution tntSolution = new Solution(tntPieces, null, "tntMatches", null);
+        Solution tntSolution = new Solution(tntPieces, null, "tntMatches", null, -1, -1);
         return tntSolution;
     }
     public Solution getColorBombSolution(string color) {
@@ -330,11 +364,10 @@ public class MatchFinder : MonoBehaviour
             for(int j = 0; j < board.height; j++) {
                 if(board.allPieces[i, j] != null && board.allPieces[i, j].GetComponent<Piece>().color == color) {
                     colorBombPieces.Add(board.allPieces[i, j]);
-                    
                 }
             }
         }
-        Solution colorBombSolution = new Solution(colorBombPieces, null, "ColorBombMatches", null);
+        Solution colorBombSolution = new Solution(colorBombPieces, null, "ColorBombMatches", null, -1, -1);
         return colorBombSolution;
     }
     public Solution getColorBombRandomSolution() {
@@ -349,7 +382,7 @@ public class MatchFinder : MonoBehaviour
 
             }
         }
-        Solution colorBombRandomColorSolution = new Solution(colorBombRandomColorPieces, null, "ColorBombMatches", null);
+        Solution colorBombRandomColorSolution = new Solution(colorBombRandomColorPieces, null, "ColorBombMatches", null, -1, -1);
         return colorBombRandomColorSolution;
     }
 }

@@ -2,15 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.UIElements;
+
 
 public enum gameState {
     wait,
     move
 }
-
-public class Board : MonoBehaviour
-{
+public class Board : MonoBehaviour {
     public gameState currentState;
     public int width;
     public int height;
@@ -35,8 +33,7 @@ public class Board : MonoBehaviour
     public bool isDestroySolutionDone;
     public bool isDestroyColorBombSolutionDone;
     // Start is called before the first frame update
-    void Start()
-    {
+    void Start() {
         matchFinder = FindObjectOfType<MatchFinder>();
         currentState = gameState.move;
         colorBombShapes = new string[] {"fiveLineShape0", "fiveLineShape1"};
@@ -50,21 +47,17 @@ public class Board : MonoBehaviour
         isDestroyAllSolutionsDone = true;
         isDestroySolutionDone = true;
         isDestroyColorBombSolutionDone = true;
-
         allTiles = new GameObject[width, height];
         allPieces = new GameObject[width, height];
         setUp();
-        
     }
     void Update() {
         if(isCheckMoveCoroutineDone == false || isCollapseCollumnsDone == false || isFillBoardCoroutineDone == false) {
-            
             currentState = gameState.wait;
         }
         else {
             currentState = gameState.move;
         }
-
     }
     private void setUp() {
         for (int i = 0; i < width; i++) {
@@ -114,7 +107,6 @@ public class Board : MonoBehaviour
                     return true;
                 }
             }
-
         }
         return false;
     }
@@ -123,9 +115,6 @@ public class Board : MonoBehaviour
         Solution newSolution;
         foreach(GameObject solutionPiece in solution.solutionPieces.ToList()) {
             if(solutionPiece != null) {
-                //creation of special pieces when is necesary
-                //TO DO?
-
                 //new solutions for the matched special pieces
                 if(solutionPiece.GetComponent<Piece>().type == "SpecialTnt") {
                     //The piece become powerless
@@ -145,13 +134,12 @@ public class Board : MonoBehaviour
                     newSolution = matchFinder.getRowSolution(solutionPiece);
                     matchFinder.newCurrentSolutions.Add(newSolution);
                 }
-                // else if(solutionPiece.GetComponent<Piece>().type == "SpecialColorBomb") {
-                    //  //The piece become powerless
-                    // solutionPiece.GetComponent<Piece>().type = "Powerless";
-                    // solution = matchFinder.getColorBombSolution(color);
-                    // newSolutions.Add(newSolution);
-                //    }
-                
+                else if(solutionPiece.GetComponent<Piece>().type == "SpecialColorBomb") {
+                    //The piece become powerless
+                    solutionPiece.GetComponent<Piece>().type = "Powerless";
+                    newSolution = matchFinder.getColorBombRandomSolution();
+                    matchFinder.newCurrentSolutions.Add(newSolution);
+                }
                 GameObject destroyEffectParticle = Instantiate(regularDestroyEffect, solutionPiece.transform.position, Quaternion.identity);
                 Destroy(destroyEffectParticle, 1.0f);
                 allPieces[solutionPiece.GetComponent<Piece>().column, solutionPiece.GetComponent<Piece>().row] = null;
@@ -172,9 +160,6 @@ public class Board : MonoBehaviour
         }
         foreach(GameObject solutionPiece in solution.solutionPieces.ToList()) {
             if(solutionPiece != null) {
-                //creation of special pieces when is necesary
-                //TO DO?
-
                 //new solutions for the matched special pieces
                 if(solutionPiece.GetComponent<Piece>().type == "SpecialTnt") {
                     //The piece become powerless
@@ -194,36 +179,21 @@ public class Board : MonoBehaviour
                     newSolution = matchFinder.getRowSolution(solutionPiece);
                     matchFinder.newCurrentSolutions.Add(newSolution);
                 }
-                // else if(solutionPiece.GetComponent<Piece>().type == "SpecialColorBomb") {
-                    //  //The piece become powerless
-                    // solutionPiece.GetComponent<Piece>().type = "Powerless";
-                    // solution = matchFinder.getColorBombSolution(color);
-                    // newSolutions.Add(newSolution);
-                //    }
-                
                 GameObject destroyEffectParticle = Instantiate(regularDestroyEffect, solutionPiece.transform.position, Quaternion.identity);
                 Destroy(destroyEffectParticle, 1.0f);
                 allPieces[solutionPiece.GetComponent<Piece>().column, solutionPiece.GetComponent<Piece>().row] = null;
                 Destroy(solutionPiece);
             }
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.05f);
         }
         yield return new WaitForSeconds(0.15f);
         isDestroyColorBombSolutionDone = true;
     }
-
-
-
-
-
-
-
-
-
-
-
     public IEnumerator destroyAllSolutions() {
         isDestroyAllSolutionsDone = false;
+        if(matchFinder.currentSolutions.Count > 0) {
+            createListOfSpecialPiecesToCreate();
+        }
         while(matchFinder.currentSolutions.Count > 0) {
             foreach(Solution solution in matchFinder.currentSolutions.ToList()) {
                 if(solution.type != "ColorBombMatches") {
@@ -239,6 +209,7 @@ public class Board : MonoBehaviour
                 matchFinder.newCurrentSolutions.Clear();
             }
         }
+        createAllSpecialPieces();
         //Aqui hay que crear las fichas que haya en la lista currentSpecialPiecesToCreate
         StartCoroutine(collapseColumnsCoroutine());
         isDestroyAllSolutionsDone = false;
@@ -282,13 +253,11 @@ public class Board : MonoBehaviour
         refillBoard();
         matchFinder.findAllLegalSolutions();
         yield return new WaitForSeconds(0.1f);
-        
         while(matchFinder.currentSolutions.Count > 0) {
             yield return new WaitForSeconds(0.1f);
             yield return StartCoroutine(destroyAllSolutions());
             matchFinder.currentSolutions.Clear();
             matchFinder.findAllLegalSolutions();
-            
         }
         matchFinder.currentSolutions.Clear();
         currentPiece = null;
@@ -296,7 +265,6 @@ public class Board : MonoBehaviour
         
         //currentState = gameState.move;
         isFillBoardCoroutineDone = true;
-        
     }
     public void checkMove() {
         StartCoroutine(checkMoveCoroutine());
@@ -319,7 +287,6 @@ public class Board : MonoBehaviour
             else {
                 secondPiece = null;
                 StartCoroutine(destroyAllSolutions());
-                
             }
             secondPiece = null;
             }
@@ -382,14 +349,9 @@ public class Board : MonoBehaviour
             else if(currentPiece.GetComponent<Piece>().type != "Regular" && secondPiece.GetComponent<Piece>().type != "Regular") {
                 matchFinder.findAllLegalSolutions();
                 yield return new WaitForSeconds(0.25f);
-
             }
-                
-            
         }
-        
         isCheckMoveCoroutineDone = true;
-
     }
     public void checkClick() {
         StartCoroutine(checkClickCoroutine());
@@ -404,20 +366,20 @@ public class Board : MonoBehaviour
             matchFinder.currentSolutions.Add(newSolution);
             currentPiece.GetComponent<Piece>().isMatched = true;
         }
-        if(currentPiece.GetComponent<Piece>().type == "SpecialVerticalRocket") {
+        else if(currentPiece.GetComponent<Piece>().type == "SpecialVerticalRocket") {
             currentPiece.GetComponent<Piece>().type = "Powerless";
             Solution newSolution = matchFinder.getColumnSolution(currentPiece);
             matchFinder.currentSolutions.Add(newSolution);
             currentPiece.GetComponent<Piece>().isMatched = true;
             
             }
-        if(currentPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
+        else if(currentPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
             currentPiece.GetComponent<Piece>().type = "Powerless";
             Solution newSolution = matchFinder.getRowSolution(currentPiece);
             matchFinder.currentSolutions.Add(newSolution);
             currentPiece.GetComponent<Piece>().isMatched = true;
         }
-        if(currentPiece.GetComponent<Piece>().type == "SpecialTnt") {
+        else if(currentPiece.GetComponent<Piece>().type == "SpecialTnt") {
             currentPiece.GetComponent<Piece>().type = "Powerless";
             Solution newSolution = matchFinder.getTntSolution(currentPiece);
             matchFinder.currentSolutions.Add(newSolution);
@@ -429,4 +391,125 @@ public class Board : MonoBehaviour
         currentState = gameState.move;
         isCheckClickCoroutineDone = true;
     }
+    private void createListOfSpecialPiecesToCreate() {
+        SpecialPieceToCreate newSpecialPiece;
+        if(matchFinder.currentSolutions.Count > 0) {
+            foreach(Solution solution in matchFinder.currentSolutions.ToList()) {
+                if(solution.type == "regularMatch") {
+                    if(solution.shape == "fiveLineShape0" || solution.shape == "fiveLineShape1") {
+                        //create a color bomb special piece
+                        newSpecialPiece = new SpecialPieceToCreate(solution.newSpecialPieceColumn, solution.newSpecialPieceRow, solution.color, solution.shape);
+                        matchFinder.currentSpecialPiecesToCreate.Add(newSpecialPiece);
+                    }
+                    else if(solution.shape == "fiveTShape0" || solution.shape == "fiveTShape1" || solution.shape == "fiveTShape2" || solution.shape == "fiveTShape3") {
+                        //create a tnt special piece
+                        newSpecialPiece = new SpecialPieceToCreate(solution.newSpecialPieceColumn, solution.newSpecialPieceRow, solution.color, solution.shape);
+                        matchFinder.currentSpecialPiecesToCreate.Add(newSpecialPiece);
+                    }
+                    else if(solution.shape == "fiveLShape0" || solution.shape == "fiveLShape1" || solution.shape == "fiveLShape2" || solution.shape == "fiveLShape3") {
+                        //create a tnt special piece
+                        newSpecialPiece = new SpecialPieceToCreate(solution.newSpecialPieceColumn, solution.newSpecialPieceRow, solution.color, solution.shape);
+                        matchFinder.currentSpecialPiecesToCreate.Add(newSpecialPiece);
+                    }
+                    else if(solution.shape == "fourLineShape0") {
+                        //create a vertical rocket special piece
+                        newSpecialPiece = new SpecialPieceToCreate(solution.newSpecialPieceColumn, solution.newSpecialPieceRow, solution.color, solution.shape);
+                        matchFinder.currentSpecialPiecesToCreate.Add(newSpecialPiece);
+                    }
+                    else if(solution.shape == "fourLineShape1") {
+                        //create a horizontal rocket special piece
+                        newSpecialPiece = new SpecialPieceToCreate(solution.newSpecialPieceColumn, solution.newSpecialPieceRow, solution.color, solution.shape);
+                        matchFinder.currentSpecialPiecesToCreate.Add(newSpecialPiece);
+                    }
+                    else if(solution.shape == "fourSquareShape0") {
+                        //create a dove special piece
+                        newSpecialPiece = new SpecialPieceToCreate(solution.newSpecialPieceColumn, solution.newSpecialPieceRow, solution.color, solution.shape);
+                        matchFinder.currentSpecialPiecesToCreate.Add(newSpecialPiece);
+                    }
+                }
+            }
+        }
+    }
+    private void createAllSpecialPieces() {
+        int newSpecialPieceColorIndex = -1;
+        Vector2 newSpecialPiecePosition;
+        GameObject newSpecialPieceCreated;
+        foreach(SpecialPieceToCreate newSpecialPiece in matchFinder.currentSpecialPiecesToCreate.ToList()) {
+            newSpecialPiecePosition = new Vector2(newSpecialPiece.column, newSpecialPiece.row);
+            if(newSpecialPiece.matchShape == "fiveLineShape0" || newSpecialPiece.matchShape == "fiveLineShape1") {
+                newSpecialPieceColorIndex = 16;
+            }
+            else if(newSpecialPiece.matchShape == "fourLineShape0") {
+                
+                if(newSpecialPiece.color == "Green") {
+                    newSpecialPieceColorIndex = 8;
+                }
+                else if(newSpecialPiece.color == "Yellow") {
+                    newSpecialPieceColorIndex = 9;
+                }
+                else if(newSpecialPiece.color == "Red") {
+                    newSpecialPieceColorIndex = 10;
+                }
+                else if(newSpecialPiece.color == "Black") {
+                    newSpecialPieceColorIndex = 11;
+                }
+            }
+            else if(newSpecialPiece.matchShape == "fourLineShape1") {
+                
+                if(newSpecialPiece.color == "Green") {
+                    newSpecialPieceColorIndex = 4;
+                }
+                else if(newSpecialPiece.color == "Yellow") {
+                    newSpecialPieceColorIndex = 5;
+                }
+                else if(newSpecialPiece.color == "Red") {
+                    newSpecialPieceColorIndex = 6;
+                }
+                else if(newSpecialPiece.color == "Black") {
+                    newSpecialPieceColorIndex = 7;
+                }
+            }
+            else if(newSpecialPiece.matchShape == "fiveTShape0" || newSpecialPiece.matchShape == "fiveTShape1" || newSpecialPiece.matchShape == "fiveTShape2" || newSpecialPiece.matchShape == "fiveTShape3") {
+                
+                if(newSpecialPiece.color == "Green") {
+                    newSpecialPieceColorIndex = 12;
+                }
+                else if(newSpecialPiece.color == "Yellow") {
+                    newSpecialPieceColorIndex = 13;
+                }
+                else if(newSpecialPiece.color == "Red") {
+                    newSpecialPieceColorIndex = 14;
+                }
+                else if(newSpecialPiece.color == "Black") {
+                    newSpecialPieceColorIndex = 15;
+                }
+            }
+            else if(newSpecialPiece.matchShape == "fiveLShape0" || newSpecialPiece.matchShape == "fiveLShape1" || newSpecialPiece.matchShape == "fiveLShape2" || newSpecialPiece.matchShape == "fiveLShape3") {
+                
+                if(newSpecialPiece.color == "Green") {
+                    newSpecialPieceColorIndex = 12;
+                }
+                else if(newSpecialPiece.color == "Yellow") {
+                    newSpecialPieceColorIndex = 13;
+                }
+                else if(newSpecialPiece.color == "Red") {
+                    newSpecialPieceColorIndex = 14;
+                }
+                else if(newSpecialPiece.color == "Black") {
+                    newSpecialPieceColorIndex = 15;
+                }
+            }
+            if(newSpecialPieceColorIndex != -1) {
+                newSpecialPieceCreated = Instantiate(piecesPrefabs[newSpecialPieceColorIndex], newSpecialPiecePosition, Quaternion.identity);
+                newSpecialPieceCreated.GetComponent<Piece>().column = newSpecialPiece.column;
+                newSpecialPieceCreated.GetComponent<Piece>().row = newSpecialPiece.row;
+                newSpecialPieceCreated.GetComponent<Piece>().previousColumn = newSpecialPiece.column;
+                newSpecialPieceCreated.GetComponent<Piece>().previousRow = newSpecialPiece.row;
+                newSpecialPieceCreated.transform.parent = this.transform;
+                allPieces[newSpecialPiece.column, newSpecialPiece.row] = newSpecialPieceCreated;
+                matchFinder.currentSpecialPiecesToCreate.Clear();
+            }
+        }
+    }
 }
+

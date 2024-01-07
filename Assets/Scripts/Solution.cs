@@ -17,11 +17,13 @@ public class Solution
     public int newSpecialPieceColumn;
     public int newSpecialPieceRow;
     public int size;
-    public Solution(List<GameObject> asolutionPieces, string ashape, string atype, string acolor) {
+    public Solution(List<GameObject> asolutionPieces, string ashape, string atype, string acolor, int anewSpecialPieceColumn, int anewSpecialPieceRow) {
         solutionPieces = asolutionPieces;
         shape = ashape;
         type = atype;
         color = acolor;
+        newSpecialPieceColumn = anewSpecialPieceColumn;
+        newSpecialPieceRow = anewSpecialPieceRow;
         size = asolutionPieces.Count;
     }
     public void addSolutionPieceToSolution(GameObject newSolutionPiece) {

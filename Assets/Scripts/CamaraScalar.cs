@@ -7,16 +7,16 @@ public class CamaraScalar : MonoBehaviour
     private Board board;
     public float cameraOffset;
     public float aspectRatio;
-    public float padding = 0.25f;
+    public float padding;
 
     // Start is called before the first frame update
     void Start()
     {
         Application.targetFrameRate = 60;
-        Debug.Log(Screen.width);
-        Debug.Log(Screen.height);
+        
         aspectRatio = (float) Screen.width/(float) Screen.height;
         cameraOffset = -10f;
+        padding = 0.25f;
         board = FindObjectOfType<Board>();
         if(board != null) {
             repositionCamara(board.width - 1, board.height - 1);

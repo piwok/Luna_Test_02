@@ -13,7 +13,6 @@ public class CamaraScalar : MonoBehaviour
     void Start()
     {
         Application.targetFrameRate = 60;
-        
         aspectRatio = (float) Screen.width/(float) Screen.height;
         cameraOffset = -10f;
         padding = 0.25f;
@@ -21,7 +20,6 @@ public class CamaraScalar : MonoBehaviour
         if(board != null) {
             repositionCamara(board.width - 1, board.height - 1);
         }
-        
     }
     private void repositionCamara(float x, float y) {
         Vector3 tempPosition = new Vector3(x/2, y/2, cameraOffset);

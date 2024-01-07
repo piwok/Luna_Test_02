@@ -20,6 +20,7 @@ public class Board : MonoBehaviour {
     public GameObject currentPiece;
     public GameObject secondPiece;
     public GameObject regularDestroyEffect;
+    public GameObject regularCreationEffect;
     public int offsetNewPieces;
     private string[] colorBombShapes;
     private string[] tntShapes;
@@ -500,6 +501,8 @@ public class Board : MonoBehaviour {
                 }
             }
             if(newSpecialPieceColorIndex != -1) {
+                GameObject creationEffectParticle = Instantiate(regularCreationEffect,  newSpecialPiecePosition, Quaternion.identity);
+                Destroy(creationEffectParticle, 1.0f);
                 newSpecialPieceCreated = Instantiate(piecesPrefabs[newSpecialPieceColorIndex], newSpecialPiecePosition, Quaternion.identity);
                 newSpecialPieceCreated.GetComponent<Piece>().column = newSpecialPiece.column;
                 newSpecialPieceCreated.GetComponent<Piece>().row = newSpecialPiece.row;

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3353874152225137342}
   - component: {fileID: 8353186344031667449}
   m_Layer: 0
-  m_Name: WhiteCircleEffect
+  m_Name: GoldenCircleEffect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1038,7 +1038,7 @@ ParticleSystem:
     curve:
       serializedVersion: 2
       minMaxState: 1
-      scalar: 8
+      scalar: 20
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -1063,7 +1063,7 @@ ParticleSystem:
           outWeight: 0.12385214
         - serializedVersion: 3
           time: 1
-          value: 0.05343628
+          value: 0.059295654
           inSlope: 0.064104795
           outSlope: 0.064104795
           tangentMode: 0
@@ -4844,7 +4844,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 71b7c9bf4578d234fa85fae8b77f36d9, type: 2}
+  - {fileID: 2100000, guid: f7b1177f0cf586e41af9f4ec818b7b60, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

@@ -94,6 +94,7 @@ public class Board : MonoBehaviour {
             exploringPiece.GetComponent<Piece>().color == allPieces[column, row - 2].GetComponent<Piece>().color) {
                 return true;
             }
+            
         }
         else if(column <= 1 || row <= 1) {
             if(row > 1) {
@@ -109,6 +110,14 @@ public class Board : MonoBehaviour {
                 }
             }
         }
+        if(column > 0 && row > 0) {
+            if(allPieces[column, row - 1].GetComponent<Piece>().color == exploringPiece.GetComponent<Piece>().color &&
+            exploringPiece.GetComponent<Piece>().color == allPieces[column - 1, row].GetComponent<Piece>().color &&
+            exploringPiece.GetComponent<Piece>().color == allPieces[column - 1, row - 1].GetComponent<Piece>().color) {
+                return true;
+            }
+        }
+        
         return false;
     }
     private IEnumerator destroySolution(Solution solution) {

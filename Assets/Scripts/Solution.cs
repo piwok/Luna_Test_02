@@ -2,51 +2,34 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Solution {
+public class Solution
+{
+    //There is threee types of solution:
+    // - "swipeMatches": the matches are the product of a swipe movement: matches in current and second piece
+    // - "regularMatches": the matches are product of collapse columns and refill board pieces, with the new positions and pieces matches are generated
+    // - "specialPowerMatches": the matches are product of a tnt explosion, a vertical or horizontal rocket, a color bomb, a dove or double special power
+    // the color parameter is the color of the matched pieces in "movementMatches" and "regularMatches". "specialPowerMatches" color is null
+    // the shape parameter is the shape of the regular match, "specialPowerMatch" shape is null
     public List<GameObject> solutionPieces;
-    private string shape;
+    public string shape;
     public string type;
-    private string color;
-    public int numStepsTodestruccion;
-    private int size;
-    public Solution(List<GameObject> asolutionPieces, string ashape, string atype, string acolor) {
+    public string color;
+    public int newSpecialPieceColumn;
+    public int newSpecialPieceRow;
+    public int size;
+    public Solution(List<GameObject> asolutionPieces, string ashape, string atype, string acolor, int anewSpecialPieceColumn, int anewSpecialPieceRow) {
         solutionPieces = asolutionPieces;
         shape = ashape;
         type = atype;
         color = acolor;
+        newSpecialPieceColumn = anewSpecialPieceColumn;
+        newSpecialPieceRow = anewSpecialPieceRow;
         size = asolutionPieces.Count;
-
     }
-    //Setters and getters
-    public void setSolutionPieces(List<GameObject> value) {
-        solutionPieces = value;
+    public void addSolutionPieceToSolution(GameObject newSolutionPiece) {
+        solutionPieces.Add(newSolutionPiece);
     }
-    public void setShape(string value) {
-        shape = value;
+    public void removeSolutionPieceFromSolution(GameObject SolutionPiece) {
+        solutionPieces.Remove(SolutionPiece);
     }
-    public void setType(string value) {
-        type = value;
-    }
-    public void setColor(string value) {
-        color = value;
-    }
-    public void setNumStepsToDestruccion(int value) {
-        numStepsTodestruccion = value;
-    }
-    public List<GameObject> getSolutionPieces() {
-        return solutionPieces;
-    }
-    public string getShape() {
-        return shape;
-    }
-    public string getType() {
-        return type;
-    }
-    public string getColor() {
-        return color;
-    }
-    public int getSize() {
-        return size;
-    }
-
 }

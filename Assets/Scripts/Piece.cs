@@ -15,7 +15,7 @@ public class Piece : MonoBehaviour
     private int targetRow;
     private Vector2 targetPosition;
     public bool isMatched;
-    public bool isSeedOfSpecialPiece;
+    public bool wrongPosition;
     private Board board;
     
 
@@ -28,8 +28,10 @@ public class Piece : MonoBehaviour
     void Start() {
         swipeThreshold = 1f;
         isMatched = false;
-        isSeedOfSpecialPiece = false;
         board = FindObjectOfType<Board>();
+        wrongPosition = true;
+        targetColumn = column;
+        targetRow = row;
         
     }
     //this is for testing and debugging
@@ -87,6 +89,10 @@ public class Piece : MonoBehaviour
             targetPosition = new Vector2(transform.position.x, targetRow);
             transform.position = targetPosition;
             board.allPieces[column, row] = this.gameObject;
+        }
+        if(Mathf.Abs(targetColumn - transform.position.x) < 0.1f && Mathf.Abs(targetRow - transform.position.y) < 0.1f) {
+            board.allPieces[column, row] = this.gameObject;
+            wrongPosition = false;
         }
     }
     private void OnMouseDown() {

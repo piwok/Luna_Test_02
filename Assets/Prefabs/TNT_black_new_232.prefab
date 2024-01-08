@@ -75,7 +75,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 3
-  m_Sprite: {fileID: 21300000, guid: 3632201c20c572a4996b7c4f3486a50e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ce2b0ad3601b1ac4d93da91e366ca22d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -105,6 +105,7 @@ MonoBehaviour:
   previousColumn: 0
   previousRow: 0
   isMatched: 0
+  isSeedOfSpecialPiece: 0
   swipeAngle: 0
   swipeThreshold: 0
 --- !u!61 &-5830277746435446444

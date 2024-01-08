@@ -79,6 +79,8 @@ public class Board : MonoBehaviour {
                 GameObject newRegularPiece = Instantiate(piecesPrefabs[newRegularPieceTypeIndex], positionForNewPiece, Quaternion.identity);
                 newRegularPiece.GetComponent<Piece>().column = i;
                 newRegularPiece.GetComponent<Piece>().row = j;
+                newRegularPiece.GetComponent<Piece>().previousColumn = i;
+                newRegularPiece.GetComponent<Piece>().previousRow = j;
                 newRegularPiece.transform.parent = this.transform;
                 allPieces[i, j] = newRegularPiece;
             }
@@ -124,7 +126,7 @@ public class Board : MonoBehaviour {
         isDestroySolutionDone = false;
         Solution newSolution;
         foreach(GameObject solutionPiece in solution.solutionPieces.ToList()) {
-            if(solutionPiece != null) {
+            //if(solutionPiece != null) {
                 //new solutions for the matched special pieces
                 if(solutionPiece.GetComponent<Piece>().type == "SpecialTnt") {
                     //The piece become powerless
@@ -154,7 +156,7 @@ public class Board : MonoBehaviour {
                 Destroy(destroyEffectParticle, 1.0f);
                 allPieces[solutionPiece.GetComponent<Piece>().column, solutionPiece.GetComponent<Piece>().row] = null;
                 Destroy(solutionPiece);
-            }
+            //}
         }
         yield return new WaitForSeconds(0.15f);
         isDestroySolutionDone = true;
@@ -202,13 +204,13 @@ public class Board : MonoBehaviour {
     public IEnumerator destroyAllSolutions() {
         isDestroyAllSolutionsDone = false;
         if(matchFinder.currentSolutions.Count > 0) {
-            createListOfSpecialPiecesToCreate();
+            //createListOfSpecialPiecesToCreate();
         }
         while(matchFinder.currentSolutions.Count > 0) {
             foreach(Solution solution in matchFinder.currentSolutions.ToList()) {
                 if(solution.type != "ColorBombMatches") {
                     yield return StartCoroutine(destroySolution(solution));
-                }
+                } 
                 else {
                     yield return StartCoroutine(destroyColorBombSolution(solution));
                 }
@@ -219,12 +221,13 @@ public class Board : MonoBehaviour {
                 matchFinder.newCurrentSolutions.Clear();
             }
         }
-        createAllSpecialPieces();
+        //createAllSpecialPieces();
         //Aqui hay que crear las fichas que haya en la lista currentSpecialPiecesToCreate
         StartCoroutine(collapseColumnsCoroutine());
-        isDestroyAllSolutionsDone = false;
+        isDestroyAllSolutionsDone = true;
     }
     private IEnumerator collapseColumnsCoroutine() {
+        yield return new WaitUntil(() => isDestroyAllSolutionsDone == true);
         isCollapseCollumnsDone = false;
         int nullCount = 0;
         for(int i = 0; i < width; i++) {
@@ -251,20 +254,25 @@ public class Board : MonoBehaviour {
                     int newPieceindex = Random.Range(0, 4);
                     GameObject newPiece = Instantiate(piecesPrefabs[newPieceindex], newPiecePosition, Quaternion.identity);
                     allPieces[i, j] = newPiece;
+                    newPiece.GetComponent<Piece>().wrongPosition = true;
                     newPiece.GetComponent<Piece>().column = i;
                     newPiece.GetComponent<Piece>().row = j;
+                    newPiece.GetComponent<Piece>().previousColumn = i;
+                    newPiece.GetComponent<Piece>().previousRow = j;
                     newPiece.transform.parent = this.transform;
                 }
             }
         }
     }
     private IEnumerator fillBoardCoroutine() {
+        yield return new WaitUntil(() => isCollapseCollumnsDone == true);
         isFillBoardCoroutineDone = false;
         refillBoard();
+        yield return new WaitUntil(() => areAllPiecesInPosition());
         matchFinder.findAllLegalSolutions();
-        yield return new WaitForSeconds(0.1f);
+        
         while(matchFinder.currentSolutions.Count > 0) {
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitUntil(() => isDestroyAllSolutionsDone);
             yield return StartCoroutine(destroyAllSolutions());
             matchFinder.currentSolutions.Clear();
             matchFinder.findAllLegalSolutions();
@@ -367,37 +375,37 @@ public class Board : MonoBehaviour {
         StartCoroutine(checkClickCoroutine());
     }
     public IEnumerator checkClickCoroutine() {
-        
         isCheckClickCoroutineDone = false;
         if(currentPiece.GetComponent<Piece>().type == "SpecialColorBomb") {
             currentPiece.GetComponent<Piece>().type = "Powerless";
             Solution newSolution = matchFinder.getColorBombRandomSolution();
             newSolution.addSolutionPieceToSolution(currentPiece);
             matchFinder.currentSolutions.Add(newSolution);
-            currentPiece.GetComponent<Piece>().isMatched = true;
+            //currentPiece.GetComponent<Piece>().isMatched = true;
         }
         else if(currentPiece.GetComponent<Piece>().type == "SpecialVerticalRocket") {
             currentPiece.GetComponent<Piece>().type = "Powerless";
             Solution newSolution = matchFinder.getColumnSolution(currentPiece);
             matchFinder.currentSolutions.Add(newSolution);
-            currentPiece.GetComponent<Piece>().isMatched = true;
+            //currentPiece.GetComponent<Piece>().isMatched = true;
             
             }
         else if(currentPiece.GetComponent<Piece>().type == "SpecialHorizontalRocket") {
             currentPiece.GetComponent<Piece>().type = "Powerless";
             Solution newSolution = matchFinder.getRowSolution(currentPiece);
             matchFinder.currentSolutions.Add(newSolution);
-            currentPiece.GetComponent<Piece>().isMatched = true;
+            //currentPiece.GetComponent<Piece>().isMatched = true;
         }
         else if(currentPiece.GetComponent<Piece>().type == "SpecialTnt") {
             currentPiece.GetComponent<Piece>().type = "Powerless";
             Solution newSolution = matchFinder.getTntSolution(currentPiece);
             matchFinder.currentSolutions.Add(newSolution);
-            currentPiece.GetComponent<Piece>().isMatched = true;
+            //currentPiece.GetComponent<Piece>().isMatched = true;
         }
-        StartCoroutine(destroyAllSolutions());
-        matchFinder.currentSolutions.Clear();
+        
+        yield return StartCoroutine(destroyAllSolutions());
         yield return new WaitForSeconds(0.25f);
+        matchFinder.currentSolutions.Clear();
         currentState = gameState.move;
         isCheckClickCoroutineDone = true;
     }
@@ -522,6 +530,16 @@ public class Board : MonoBehaviour {
                 matchFinder.currentSpecialPiecesToCreate.Clear();
             }
         }
+    }
+    public bool areAllPiecesInPosition() {
+        for(int i = 0; i < width; i++) {
+            for(int j = 0; j < height; j++) {
+                if(allPieces[i, j] == null || allPieces[i, j].GetComponent<Piece>().wrongPosition == true) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }
 

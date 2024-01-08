@@ -1,9 +1,9 @@
 fileFormatVersion: 2
-<<<<<<< HEAD:Assets/Art/Rocket_horizontal_red_232.png.meta
-guid: 55b2b9b1fa018464ab572164be7f6c70
-=======
-guid: ad72d7b05cfe43641a71963c4dce947d
->>>>>>> master:Assets/Art/Bel art/231116/Rocket_horizontal_red_232.png.meta
+<<<<<<<< HEAD:Assets/Art/Bel art/231206/Rocket_vertical_red_232 .png.meta
+guid: b395573709f6c3a4a9304f257fc8068b
+========
+guid: d6f5189272109cd468ece09d51c41471
+>>>>>>>> dce597bdb014742e62f068b4770fa0d733aaf8ea:Assets/Art/Bel art/231206/Diamond_card_blue_232.png.meta
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}

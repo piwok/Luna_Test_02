@@ -8,11 +8,18 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
+<<<<<<< HEAD:Assets/Prefabs/DestroyEffect.prefab
   - component: {fileID: 3037715480948925230}
   - component: {fileID: 3353874152225137342}
   - component: {fileID: 8353186344031667449}
   m_Layer: 0
   m_Name: WhiteCircleEffect
+=======
+  - component: {fileID: 1469144987137019986}
+  - component: {fileID: 807365679439402968}
+  m_Layer: 1
+  m_Name: RegularDestroyEffect
+>>>>>>> master:Assets/Prefabs/RegularDestroyEffect.prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

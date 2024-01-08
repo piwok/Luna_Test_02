@@ -8,6 +8,7 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
+<<<<<<< HEAD:Assets/Prefabs/Diamond_232.prefab
   - component: {fileID: 288765612104220952}
   - component: {fileID: 8593301902035001937}
   - component: {fileID: -4725190607872751260}
@@ -15,6 +16,15 @@ GameObject:
   m_Layer: 0
   m_Name: Diamond_232
   m_TagString: yellow piece
+=======
+  - component: {fileID: 3126461496364483704}
+  - component: {fileID: 2844694022596132023}
+  - component: {fileID: 5835591405398334773}
+  - component: {fileID: -8922355876500026625}
+  m_Layer: 7
+  m_Name: RegularSpadePiece
+  m_TagString: Untagged
+>>>>>>> master:Assets/Prefabs/RegularSpadePiece.prefab
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
